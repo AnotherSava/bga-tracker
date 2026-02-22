@@ -1,0 +1,9 @@
+.chrome_bga_profile/
+.claude/settings.local.json
+.claude/skills/commit/
+.env
+.idea/
+output/
+venv/
+data/*
+!data/cardinfo.json
