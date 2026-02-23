@@ -23,6 +23,11 @@ Create a `.env` file in the project root:
 PLAYER_NAME=YourBGAUsername
 ```
 
+Icon and card image assets are committed to the repo in `assets/`. To regenerate them from the upstream BGA sprite sheets (requires Pillow):
+```
+venv/Scripts/python scripts/download_assets.py
+```
+
 ## How it works
 
 1. A Playwright-controlled browser navigates to the BGA game page and fetches the full notification history via the BGA API
@@ -77,10 +82,14 @@ On first run, renames the data folder to include the opponent name (e.g. `809765
 scripts/
   browse.py                     — Playwright-based browser helper
   fetch_full_history.js         — BGA notification history fetch (generic, any game)
+  download_assets.py            — download BGA sprites + extract icons & card images
   innovation/
     extract_log.js              — notification parser (browser)
     track_state.py              — card state tracker
     format_state.py             — HTML summary formatter
+assets/                         — icon and card image assets
+  icons/                        — extracted icon PNGs (resource, hex, bonus, cities special)
+  cards/                        — full card face images (750x550, used for hover tooltips)
 data/
   cardinfo.json                 — shared card database (sets 0 + 3, 210 cards)
   <TABLE_ID> <opponent>/        — per-game data
@@ -112,6 +121,17 @@ Cards grouped by location with full metadata:
 - Each card: `{name, age, color, set}`. Hand/score cards also have `known: true/false`.
 - `deck_stacks`: ordered draw piles per (age, set). Index 0 = top. `null` = unknown, `"Card Name"` = known (from a visible return). `achievement`: `null` = unknown card removed, `false` = no achievement (age 10).
 
+### download_assets.py
+
+Downloads sprite sheets from the [bga-innovation](https://github.com/micahstairs/bga-innovation) GitHub repo and extracts individual assets:
+- 30 resource icons (6 types x 5 colors) from `resource_icons.jpg`
+- 210 hex icons (105 base + 105 cities) from `hexagon_icons.png`
+- 11 bonus icons from `bonus_icons.png`
+- 20 cities special icons from `cities_special_icons.png`
+- 210 card face images (105 base + 105 cities) from `misc/cards/`
+
+Assets are committed to the repo, so this only needs to be re-run if upstream images change.
+
 ### game_state_player.json
 
 ```json
@@ -130,17 +150,31 @@ Cards grouped by location with full metadata:
 - `actual_deck`: draw piles grouped by age. `"?"` = unknown, `"(C) Name"` = known card, `"(C*) Name"` = known to both players. Only ages with cards remaining.
 - Color initials: B=blue, R=red, G=green, Y=yellow, P=purple.
 - `*` = card known to opponent.
+- `"?6"` = unknown card of age 6 (tracked from hidden draws/scores).
 
 ### summary.html
 
 ![summary.html example](screenshots/summary.png)
 
-Colored HTML page (dark theme, monospace) with five sections:
-- **DECK (base)** — draw pile by age, known cards colored by Innovation color
-- **Opponent hand** — named cards shown, unknowns grouped as `? x N`
-- **My hand** — two-column layout: known to opponent vs hidden
-- **Opponent score** — same format as opponent hand
-- **My score** — known to opponent vs hidden count
+Dark-themed HTML page with visual card elements. Each card shows its color, resource/hex icons, name (base) or icons-only (cities), and age number. Hovering a base card shows the full card face image; hovering a cities card shows name and dogma text.
+
+Sections:
+- **Hand — opponent** — cards sorted by age (known before unknown per age)
+- **Hand — me** — two rows: hidden (closed-eye icon) and revealed (open-eye icon)
+- **Score — opponent/me** — same layout (omitted if empty)
+- **Base deck** — draw pile by age, visible by default (collapsible)
+- **Cities deck** — draw pile by age (collapsed by default)
+- **Base list** — all 105 base cards for reference (collapsed by default)
+- **Cities list** — all 105 cities cards for reference (collapsed by default)
+
+Deck and list sections have a toggle eye icon to show/hide their contents.
+
+Card layout:
+- Base (set 0): 2x3 CSS grid — hex icon + name in top row, resource icons + age in bottom row
+- Cities (set 3): 2x2 CSS grid — 6 icons in two rows, age in bottom-right, name only in tooltip
+- Unknown cards: gray cards showing age number (or blank in deck rows)
+
+Fonts: Barlow Condensed for card names, Russo One for age numbers.
 
 ## Innovation-specific notes
 
@@ -162,6 +196,10 @@ Initialization from `cardinfo.json`:
 
 Hidden transfers include "from base" or "from cities" suffix in the extracted log.
 
+### Unknown hand and score tracking
+
+Hidden draws and scores (where the card name isn't visible) are tracked by age. The tracker maintains per-player lists of unknown card ages in hand (`unknown_hand`) and score pile (`unknown_score`). When a named action later reveals the card, it's removed from the unknown list. Output format: `"?6"` = unknown card of age 6.
+
 ### Known flag
 
 A card is marked `known` (visible to opponent) when:
@@ -175,3 +213,7 @@ The flag is sticky — once set, it stays true regardless of further movements.
 ### Name resolution
 
 BGA lowercases some words in card names (e.g. "The wheel" vs "The Wheel"). The tracker uses case-insensitive lookup.
+
+## Acknowledgments
+
+Card icons and images are from [bga-innovation](https://github.com/micahstairs/bga-innovation), Micah Stairs' BGA implementation of [Innovation](https://boardgamegeek.com/boardgame/63888/innovation) (Carl Chudyk, Asmadi Games).

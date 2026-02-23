@@ -7,3 +7,8 @@ output/
 venv/
 data/*
 !data/cardinfo.json
+
+assets/sprites/
+
+# ralphex progress logs
+.ralphex/progress/

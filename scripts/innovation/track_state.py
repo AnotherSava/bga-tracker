@@ -188,10 +188,13 @@ def parse_log(card_db, name_lookup, game_log_path):
     # Cards whose state was changed by hidden pattern handlers
     hidden_moved = set()
 
-    # Count of unidentified cards in each player's hand
+    # Ages of unidentified cards in each player's hand
     # (from hidden draws that we can't resolve to a specific card)
-    # Starts at 2 per player: initial deal of 2 base age 1 cards (unlogged)
-    unknown_hand = {p: 2 for p in players}
+    # Starts with two age-1 cards per player: initial deal (unlogged)
+    unknown_hand = {p: [1, 1] for p in players}
+
+    # Ages of unidentified cards in each player's score pile
+    unknown_score = {p: [] for p in players}
 
     # --- Transfer patterns (with named cards) ---
     # Order matters: more specific patterns first
@@ -390,10 +393,24 @@ def parse_log(card_db, name_lookup, game_log_path):
                     else:
                         print(f"WARNING: Unknown stack ({age}, {set_label}): {msg}")
 
-                # Hidden draw to hand: track unknown hand card
+                # Hidden draw to hand or score: track unknown card with age
                 if deck_effect == "pop" and not state_from and not state_to:
-                    if "draws and scores" not in msg:
-                        unknown_hand[player] += 1
+                    if "draws and scores" in msg:
+                        unknown_score[player].append(age)
+                    else:
+                        unknown_hand[player].append(age)
+
+                # Hidden hand→score: move unknown tracking
+                if state_from == "hand" and state_to == "score":
+                    if age in unknown_hand[player]:
+                        unknown_hand[player].remove(age)
+                        unknown_score[player].append(age)
+                # Hidden score→hand: move unknown tracking
+                elif state_from == "score" and state_to != "deck":
+                    if age in unknown_score[player]:
+                        unknown_score[player].remove(age)
+                        if state_to == "hand":
+                            unknown_hand[player].append(age)
 
                 # Card state tracking — find matching card and update
                 if state_from and state_to:
@@ -414,7 +431,12 @@ def parse_log(card_db, name_lookup, game_log_path):
                         hidden_moved.add(candidates[0])
                     elif state_from == "hand":
                         # No named card found — an unknown card left the hand
-                        unknown_hand[player] -= 1
+                        if age in unknown_hand[player]:
+                            unknown_hand[player].remove(age)
+                    elif state_from == "score":
+                        # No named card found — an unknown card left the score
+                        if age in unknown_score[player]:
+                            unknown_score[player].remove(age)
 
                 break
         if hidden_matched:
@@ -457,7 +479,9 @@ def parse_log(card_db, name_lookup, game_log_path):
                         and current_loc == "deck"
                         and card_name not in hidden_moved):
                     hand_player = from_loc.split(":", 1)[1]
-                    unknown_hand[hand_player] -= 1
+                    card_age = card_db[card_name]["age"]
+                    if card_age in unknown_hand[hand_player]:
+                        unknown_hand[hand_player].remove(card_age)
 
                 # Correct hidden handler misattribution: if a hidden return
                 # moved this card to deck but a named action says it's
@@ -522,7 +546,7 @@ def parse_log(card_db, name_lookup, game_log_path):
     # Mark all cards that were ever on a board as known
     known.update(was_on_board)
 
-    return players, state, known, deck_stacks, unknown_hand
+    return players, state, known, deck_stacks, unknown_hand, unknown_score
 
 
 def build_output(card_db, state, known, deck_stacks, players):
@@ -600,7 +624,7 @@ def stack_entry_to_player(entry, card_db, known=None):
     return entry
 
 
-def build_player_output(full_state, card_db, players, unknown_hand=None, known=None):
+def build_player_output(full_state, card_db, players, unknown_hand=None, unknown_score=None, known=None):
     """Build human-readable player perspective output."""
     result = {
         "actual_deck": {},
@@ -616,10 +640,12 @@ def build_player_output(full_state, card_db, players, unknown_hand=None, known=N
     for p in players:
         result["board"][p] = [card_to_short(c) for c in full_state["board"][p]]
         result["hand"][p] = [card_to_short(c, include_known=True) for c in full_state["hand"][p]]
-        # Add unknown hand cards (from hidden draws we can't identify)
-        if unknown_hand and unknown_hand.get(p, 0) > 0:
-            result["hand"][p] += ["?"] * unknown_hand[p]
+        # Add unknown hand cards with ages (from hidden draws we can't identify)
+        if unknown_hand and unknown_hand.get(p):
+            result["hand"][p] += [f"?{age}" for age in sorted(unknown_hand[p])]
         result["score"][p] = [card_to_short(c, include_known=True) for c in full_state["score"][p]]
+        if unknown_score and unknown_score.get(p):
+            result["score"][p] += [f"?{age}" for age in sorted(unknown_score[p])]
 
     # Build actual_deck from deck_stacks — only ages with cards remaining
     for age_str, stacks in full_state["deck_stacks"].items():
@@ -650,7 +676,7 @@ def print_summary(full_state, deck_stacks, players, unknown_hand=None):
     for p in players:
         b = len(full_state["board"][p])
         h = len(full_state["hand"][p])
-        uh = unknown_hand.get(p, 0) if unknown_hand else 0
+        uh = len(unknown_hand.get(p, [])) if unknown_hand else 0
         s = len(full_state["score"][p])
         hand_str = str(h + uh) if uh == 0 else f"{h}+{uh}?"
         print(f"{p}: board={b}, hand={hand_str}, score={s}")
@@ -692,7 +718,7 @@ def main():
     card_db, name_lookup = load_card_database()
     print(f"Loaded {len(card_db)} cards from database (sets 0+3)")
 
-    players, state, known, deck_stacks, unknown_hand = parse_log(card_db, name_lookup, game_log_path)
+    players, state, known, deck_stacks, unknown_hand, unknown_score = parse_log(card_db, name_lookup, game_log_path)
     print(f"Known cards (to opponent): {len(known)}")
 
     full_state = build_output(card_db, state, known, deck_stacks, players)
@@ -702,7 +728,7 @@ def main():
         json.dump(full_state, f, indent=2)
     print(f"Written: {state_out}")
 
-    player_state = build_player_output(full_state, card_db, players, unknown_hand, known)
+    player_state = build_player_output(full_state, card_db, players, unknown_hand, unknown_score, known)
     with open(player_out, "w") as f:
         json.dump(player_state, f, indent=2)
     print(f"Written: {player_out}")
