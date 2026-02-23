@@ -39,8 +39,29 @@ if not PERSPECTIVE:
     print("ERROR: PLAYER_NAME not set in .env or environment")
     sys.exit(1)
 
+# Default section visibility
+DEFAULT_BASE_DECK = os.environ.get("DEFAULT_BASE_DECK", "show").lower()
+DEFAULT_CITIES_DECK = os.environ.get("DEFAULT_CITIES_DECK", "hide").lower()
+DEFAULT_BASE_LIST = os.environ.get("DEFAULT_BASE_LIST", "none").lower()
+DEFAULT_CITIES_LIST = os.environ.get("DEFAULT_CITIES_LIST", "none").lower()
+DEFAULT_BASE_LAYOUT = os.environ.get("DEFAULT_BASE_LAYOUT", "wide").lower()
+DEFAULT_CITIES_LAYOUT = os.environ.get("DEFAULT_CITIES_LAYOUT", "wide").lower()
+
+# Section placement: column.position
+_SECTION_KEYS = [
+    "HAND_OPPONENT", "HAND_ME", "SCORE_OPPONENT", "SCORE_ME",
+    "BASE_DECK", "CITIES_DECK", "BASE_LIST", "CITIES_LIST",
+]
+_SECTION_DEFAULTS = {k: f"1.{i+1}" for i, k in enumerate(_SECTION_KEYS)}
+SECTION_POS = {}
+for _k in _SECTION_KEYS:
+    _val = os.environ.get(f"SECTION_{_k}", _SECTION_DEFAULTS[_k])
+    _parts = _val.split(".", 1)
+    SECTION_POS[_k] = (int(_parts[0]), float(_val))
+
 # Color letter → full name mapping
 COLOR_LETTER = {"B": "blue", "R": "red", "G": "green", "Y": "yellow", "P": "purple"}
+COLOR_ORDER = {"blue": 0, "red": 1, "green": 2, "yellow": 3, "purple": 4}  # BRGYP
 
 # Icon position mapping (from isotropic Rg = [0, 5, 4, 1, 2, 3])
 # Top row:    icons[0]  icons[5]  icons[4]
@@ -49,7 +70,7 @@ TOP_POSITIONS = [0, 5, 4]
 BOT_POSITIONS = [1, 2, 3]
 
 _CARD_RE = re.compile(r'^\[(\d+)([BRGPY])\] (.+)$')
-_UNKNOWN_RE = re.compile(r'^\?(\d+)?$')  # "?" or "?6"
+_UNKNOWN_RE = re.compile(r'^\?(\d+)?([bc])?$')  # "?6b" (base) / "?6c" (cities) / "?6" / "?"
 _DECK_RE = re.compile(r'^\(([BRGPY])(\*)?\) (.+)$')
 
 # Eye icons for Hidden/Revealed labels
@@ -182,11 +203,17 @@ def render_card(name, age, color_letter, star=False, is_deck=False):
         )
 
 
-def render_unknown(age=None):
+def render_unknown(age=None, card_set=None):
     """Render a single hidden card, same size as a regular base card."""
     display_age = age if age is not None else ""
+    if card_set == "b":
+        cls = "b-gray-base"
+    elif card_set == "c":
+        cls = "b-gray-cities"
+    else:
+        cls = "b-gray"
     return (
-        f'<div class="card card-base b-gray">'
+        f'<div class="card card-base {cls}">'
         f'<div class="cb-tl"></div>'
         f'<div class="cb-name"></div>'
         f'<div class="cb-bl"></div>'
@@ -247,33 +274,87 @@ def format_cities_section(actual_deck):
     return _format_deck(actual_deck, "cities")
 
 
-def format_all_cards(card_set):
-    """Format all cards of a given set, grouped by age."""
+_COLOR_TO_LETTER = {"blue": "B", "red": "R", "green": "G", "yellow": "Y", "purple": "P"}
+_COLOR_NAMES_ORDERED = ["blue", "red", "green", "yellow", "purple"]  # BRGYP
+
+
+def _render_card_with_known(card, known_names):
+    """Render a card and mark it with data-known if in known_names."""
+    cl = _COLOR_TO_LETTER.get(card["color"], "B")
+    html = render_card(card["name"], card["age"], cl)
+    if known_names is not None and card["name"] in known_names:
+        html = html.replace('<div class="card ', '<div data-known class="card ', 1)
+    return html
+
+
+def _format_all_wide(cards_by_age, known_names):
+    """Wide layout: one row per age, all cards in a line."""
+    rows = []
+    for age in range(1, 11):
+        cards = sorted(cards_by_age.get(age, []),
+                       key=lambda c: (COLOR_ORDER.get(c["color"], 99), c["name"]))
+        cards_html = [_render_card_with_known(c, known_names) for c in cards]
+        rows.append(
+            f'<div class="deck-age">'
+            f'<span class="deck-age-label">{age}</span>'
+            f'<div class="card-row">{"".join(cards_html)}</div>'
+            f'</div>'
+        )
+    return "\n".join(rows)
+
+
+def _format_all_tall(cards_by_age, known_names):
+    """Tall layout: 5 color columns (BRGYP), age label on the left."""
+    # Group cards by (age, color) -> sorted list
+    grid = {}  # (age, color) -> [card, ...]
+    for age in range(1, 11):
+        for card in cards_by_age.get(age, []):
+            grid.setdefault((age, card["color"]), []).append(card)
+    for k in grid:
+        grid[k].sort(key=lambda c: c["name"])
+
+    rows = []
+    for age in range(1, 11):
+        # Find max cards per color at this age (= number of sub-rows)
+        max_per_color = max(
+            (len(grid.get((age, color), [])) for color in _COLOR_NAMES_ORDERED), default=0)
+        if max_per_color == 0:
+            continue
+
+        age_rows = []
+        for row_idx in range(max_per_color):
+            cells = []
+            for color in _COLOR_NAMES_ORDERED:
+                color_cards = grid.get((age, color), [])
+                if row_idx < len(color_cards):
+                    cells.append(f'<td>{_render_card_with_known(color_cards[row_idx], known_names)}</td>')
+                else:
+                    cells.append('<td></td>')
+            age_rows.append(f'<tr>{"".join(cells)}</tr>')
+
+        # First row gets the age label with rowspan
+        age_rows[0] = age_rows[0].replace(
+            '<tr>',
+            f'<tr><td class="deck-age-label" rowspan="{max_per_color}">{age}</td>',
+            1)
+
+        rows.extend(age_rows)
+
+    return f'<table class="tall-grid">{"".join(rows)}</table>'
+
+
+def format_all_cards(card_set, known_names=None):
+    """Format all cards of a given set. Returns (wide_html, tall_html)."""
     _load_cardinfo()
     cards_by_age = {}
     for card in _card_by_name.values():
         if card.get("set") != card_set:
             continue
-        age = card["age"]
-        cards_by_age.setdefault(age, []).append(card)
+        cards_by_age.setdefault(card["age"], []).append(card)
 
-    rows = []
-    for age in range(1, 11):
-        cards = sorted(cards_by_age.get(age, []), key=lambda c: (COLOR_LETTER.get(c["color"][0].upper(), c["color"]), c["name"]))
-        cards_html = []
-        for card in cards:
-            ci = card["color"][0].upper()
-            # Reverse lookup color letter
-            cl = {"blue": "B", "red": "R", "green": "G", "yellow": "Y", "purple": "P"}.get(card["color"], "B")
-            cards_html.append(render_card(card["name"], age, cl))
-        row_content = "".join(cards_html)
-        rows.append(
-            f'<div class="deck-age">'
-            f'<span class="deck-age-label">{age}</span>'
-            f'<div class="card-row">{row_content}</div>'
-            f'</div>'
-        )
-    return "\n".join(rows)
+    wide = _format_all_wide(cards_by_age, known_names)
+    tall = _format_all_tall(cards_by_age, known_names)
+    return wide, tall
 
 
 def format_opponent_zone(entries):
@@ -286,7 +367,7 @@ def format_opponent_zone(entries):
         um = _UNKNOWN_RE.match(entry)
         if um:
             age = int(um.group(1)) if um.group(1) else 0
-            parsed.append((age, 1, render_unknown(age if age else None)))
+            parsed.append((age, 1, render_unknown(age if age else None, um.group(2))))
         else:
             star = entry.endswith(" *")
             raw = entry[:-2] if star else entry
@@ -355,7 +436,7 @@ def format_my_hand(entries):
         um = _UNKNOWN_RE.match(entry)
         if um:
             age = int(um.group(1)) if um.group(1) else None
-            hidden.append(render_unknown(age))
+            hidden.append(render_unknown(age, um.group(2)))
             continue
         star = entry.endswith(" *")
         raw = entry[:-2] if star else entry
@@ -390,6 +471,36 @@ def format_my_hand(entries):
     return "\n".join(parts)
 
 
+def _tri_toggle(target_id, options, default):
+    """Build a tri-toggle span and the initial style/class for the target div.
+
+    options: list of (mode, label) pairs, e.g. [("none", "Hide"), ("all", "Show")]
+    default: the env value that should be active initially.
+             Aliases: "show" -> "all", "hide" -> "none".
+    Returns (toggle_html, div_attrs) where div_attrs is the extra attributes string.
+    """
+    mode_aliases = {"show": "all", "hide": "none"}
+    default_mode = mode_aliases.get(default, default)
+    valid_modes = {m for m, _ in options}
+    if default_mode not in valid_modes:
+        default_mode = options[0][0]
+
+    parts = []
+    for i, (mode, label) in enumerate(options):
+        active = " active" if mode == default_mode else ""
+        parts.append(f'<span class="tri-opt{active}" data-mode="{mode}">{label}</span>')
+        if i < len(options) - 1:
+            parts.append('<span class="tri-sep">|</span>')
+    toggle = f'<span class="tri-toggle" data-target="{target_id}">[{"".join(parts)}]</span>'
+
+    attrs = ""
+    if default_mode == "none":
+        attrs += ' style="display:none"'
+    if default_mode == "unknown":
+        attrs += ' class="mode-unknown"'
+    return toggle, attrs
+
+
 # --- HTML template ---
 
 HTML_TEMPLATE = """\
@@ -408,8 +519,12 @@ body {{
   padding: 20px;
 }}
 
+/* Multi-column page layout */
+.page-grid {{ display: grid; gap: 20px; align-items: start; }}
+.page-col {{ min-width: 0; }}
+
 .section {{ margin-bottom: 12px; }}
-.section-title {{ font-size: 13px; margin-bottom: 4px; font-weight: bold; }}
+.section-title {{ font-size: 13px; margin-bottom: 4px; font-weight: bold; color: #eee; }}
 .dim {{ color: #666; }}
 .empty-card {{ width: 92px; height: 49px; display: inline-flex; align-items: center; justify-content: center; color: #666; font-size: 12px; }}
 
@@ -430,6 +545,8 @@ body {{
 .card.b-yellow {{ background: #4c4a1a; border-color: #ccaa00; color: #eedd66; }}
 .card.b-purple {{ background: #3a1a5c; border-color: #bb66ff; color: #dd99ff; }}
 .card.b-gray   {{ background: #333; border-color: #555; color: #888; }}
+.card.b-gray-base   {{ background: #363328; border-color: #6b6545; color: #999078; }}
+.card.b-gray-cities {{ background: #362833; border-color: #6b4565; color: #997088; }}
 .card img {{ width: 20px; height: 20px; display: block; }}
 
 /* Set 0 (base) — 2×3 CSS grid */
@@ -525,6 +642,10 @@ body {{
   flex-wrap: wrap;
   align-items: flex-start;
 }}
+/* Tall grid layout */
+.tall-grid {{ border-collapse: collapse; }}
+.tall-grid td {{ padding: 0; vertical-align: top; }}
+.tall-grid .deck-age-label {{ vertical-align: middle; }}
 .hand-row {{
   display: flex;
   align-items: flex-start;
@@ -538,9 +659,24 @@ body {{
   text-align: center;
 }}
 .row-label svg {{ width: 20px; height: 20px; fill: #888; }}
-.toggle-btn {{ cursor: pointer; vertical-align: middle; }}
-.toggle-btn svg {{ width: 16px; height: 16px; fill: #888; }}
-.toggle-btn:hover svg {{ fill: #bbb; }}
+/* Tri-toggle (Hide | Show | None | All | Unknown) */
+.tri-toggle {{ font-size: 12px; font-weight: normal; vertical-align: baseline; color: #aaa; }}
+.tri-sep {{ color: #555; margin: 0 2px; }}
+.tri-opt {{ cursor: pointer; color: #555; padding: 1px 3px; border-radius: 2px; }}
+.tri-opt:hover {{ color: #bbb; }}
+.tri-opt.active {{ color: #aaa; }}
+
+/* Unknown mode: mask known cards to look like b-gray unknowns */
+.mode-unknown [data-known] {{ background: #333 !important; border-color: #555 !important; color: #888 !important; }}
+.mode-unknown [data-known] .cb-tl,
+.mode-unknown [data-known] .cb-name,
+.mode-unknown [data-known] .cb-bl,
+.mode-unknown [data-known] .cb-mid,
+.mode-unknown [data-known] .cc-top,
+.mode-unknown [data-known] .cc-bot,
+.mode-unknown [data-known] .card-age,
+.mode-unknown [data-known] .card-tip,
+.mode-unknown [data-known] .card-tip-text {{ visibility: hidden; }}
 </style>
 </head>
 <body>
@@ -561,18 +697,35 @@ document.addEventListener('mousemove', function(e) {{
     tip.style.top = y + 'px';
   }});
 }});
-function toggleDeck(btn, id) {{
-  var deck = document.getElementById(id);
-  var open = btn.getAttribute('data-open');
-  var closed = btn.getAttribute('data-closed');
-  if (deck.style.display === 'none') {{
-    deck.style.display = '';
-    btn.innerHTML = closed;
-  }} else {{
-    deck.style.display = 'none';
-    btn.innerHTML = open;
-  }}
-}}
+document.querySelectorAll('.tri-toggle').forEach(function(toggle) {{
+  toggle.addEventListener('click', function(e) {{
+    var opt = e.target.closest('.tri-opt');
+    if (!opt) return;
+    var mode = opt.getAttribute('data-mode');
+    var target = document.getElementById(toggle.getAttribute('data-target'));
+    if (!target) return;
+    toggle.querySelectorAll('.tri-opt').forEach(function(o) {{ o.classList.remove('active'); }});
+    opt.classList.add('active');
+    if (mode === 'none') {{
+      target.style.display = 'none';
+      target.classList.remove('mode-unknown');
+    }} else if (mode === 'all') {{
+      target.style.display = '';
+      target.classList.remove('mode-unknown');
+    }} else if (mode === 'unknown') {{
+      target.style.display = '';
+      target.classList.add('mode-unknown');
+    }} else if (mode === 'wide' || mode === 'tall') {{
+      var id = toggle.getAttribute('data-target');
+      document.querySelectorAll('.layout-wide[data-list="'+id+'"]').forEach(function(el) {{
+        el.style.display = mode === 'wide' ? '' : 'none';
+      }});
+      document.querySelectorAll('.layout-tall[data-list="'+id+'"]').forEach(function(el) {{
+        el.style.display = mode === 'tall' ? '' : 'none';
+      }});
+    }}
+  }});
+}});
 </script>
 </body>
 </html>"""
@@ -582,79 +735,167 @@ def format_summary(state, table_id):
     """Assemble the full summary as HTML."""
     me, opponent = find_players(state)
 
-    sections = []
-    eye_open_esc = esc(ICON_EYE_OPEN)
-    eye_closed_esc = esc(ICON_EYE_CLOSED)
+    # Build sets of card names known to me, by set
+    known_base = set()
+    known_cities = set()
 
-    # Opponent hand
-    sections.append(
+    def _add_known(name):
+        card = get_card(name)
+        if not card:
+            return
+        if card.get("set") == 0:
+            known_base.add(name)
+        elif card.get("set") == 3:
+            known_cities.add(name)
+
+    # My hand/score — all cards known to me
+    for zone in ("hand", "score"):
+        for entry in state.get(zone, {}).get(me, []):
+            raw = entry[:-2] if entry.endswith(" *") else entry
+            m = _CARD_RE.match(raw)
+            if m:
+                _add_known(m.group(3))
+    # Opponent hand/score — only starred (revealed) cards
+    for zone in ("hand", "score"):
+        for entry in state.get(zone, {}).get(opponent, []):
+            if not entry.endswith(" *"):
+                continue
+            m = _CARD_RE.match(entry[:-2])
+            if m:
+                _add_known(m.group(3))
+    # Board — all cards visible
+    for player_entries in state.get("board", {}).values():
+        for entry in player_entries:
+            m = _CARD_RE.match(entry)
+            if m:
+                _add_known(m.group(3))
+    # Deck — named cards (known position)
+    for age_stacks in state.get("actual_deck", {}).values():
+        for key in ("base", "cities"):
+            for entry in age_stacks.get(key, []):
+                dm = _DECK_RE.match(entry) if entry != "?" else None
+                if dm:
+                    _add_known(dm.group(3))
+
+    # --- Build named sections ---
+    named = {}
+
+    named["HAND_OPPONENT"] = (
         f'<div class="section">'
         f'<div class="section-title">Hand &mdash; opponent</div>'
         f'{format_opponent_zone(state.get("hand", {}).get(opponent, []))}'
         f'</div>'
     )
 
-    # My hand
-    sections.append(
+    named["HAND_ME"] = (
         f'<div class="section">'
         f'<div class="section-title">Hand &mdash; me</div>'
         f'{format_my_hand(state.get("hand", {}).get(me, []))}'
         f'</div>'
     )
 
-    # Opponent score
     opp_score = state.get("score", {}).get(opponent, [])
-    if opp_score:
-        sections.append(
-            f'<div class="section">'
-            f'<div class="section-title">Score &mdash; opponent</div>'
-            f'{format_opponent_zone(opp_score)}'
-            f'</div>'
-        )
+    named["SCORE_OPPONENT"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Score &mdash; opponent</div>'
+        f'{format_opponent_zone(opp_score)}'
+        f'</div>'
+    ) if opp_score else ""
 
-    # My score
     my_score = state.get("score", {}).get(me, [])
-    if my_score:
-        sections.append(
-            f'<div class="section">'
-            f'<div class="section-title">Score &mdash; me</div>'
-            f'{format_my_zone(my_score)}'
-            f'</div>'
+    named["SCORE_ME"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Score &mdash; me</div>'
+        f'{format_my_zone(my_score)}'
+        f'</div>'
+    ) if my_score else ""
+
+    bd_toggle, bd_attrs = _tri_toggle("base-deck",
+        [("none", "Hide"), ("all", "Show")], DEFAULT_BASE_DECK)
+    named["BASE_DECK"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Base deck {bd_toggle}</div>'
+        f'<div id="base-deck"{bd_attrs}>{format_deck_section(state.get("actual_deck", {}))}</div>'
+        f'</div>'
+    )
+
+    cd_toggle, cd_attrs = _tri_toggle("cities-deck",
+        [("none", "Hide"), ("all", "Show")], DEFAULT_CITIES_DECK)
+    named["CITIES_DECK"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Cities deck {cd_toggle}</div>'
+        f'<div id="cities-deck"{cd_attrs}>{format_cities_section(state.get("actual_deck", {}))}</div>'
+        f'</div>'
+    )
+
+    bl_toggle, bl_attrs = _tri_toggle("base-list",
+        [("none", "None"), ("all", "All"), ("unknown", "Unknown")], DEFAULT_BASE_LIST)
+    bll_toggle, _ = _tri_toggle("base-list",
+        [("wide", "Wide"), ("tall", "Tall")], DEFAULT_BASE_LAYOUT)
+    base_wide, base_tall = format_all_cards(0, known_base)
+    bl_wide_hide = ' style="display:none"' if DEFAULT_BASE_LAYOUT == "tall" else ""
+    bl_tall_hide = ' style="display:none"' if DEFAULT_BASE_LAYOUT != "tall" else ""
+    named["BASE_LIST"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Base list {bl_toggle} {bll_toggle}</div>'
+        f'<div id="base-list"{bl_attrs}>'
+        f'<div class="layout-wide" data-list="base-list"{bl_wide_hide}>{base_wide}</div>'
+        f'<div class="layout-tall" data-list="base-list"{bl_tall_hide}>{base_tall}</div>'
+        f'</div>'
+        f'</div>'
+    )
+
+    cl_toggle, cl_attrs = _tri_toggle("cities-list",
+        [("none", "None"), ("all", "All"), ("unknown", "Unknown")], DEFAULT_CITIES_LIST)
+    cll_toggle, _ = _tri_toggle("cities-list",
+        [("wide", "Wide"), ("tall", "Tall")], DEFAULT_CITIES_LAYOUT)
+    cities_wide, cities_tall = format_all_cards(3, known_cities)
+    cl_wide_hide = ' style="display:none"' if DEFAULT_CITIES_LAYOUT == "tall" else ""
+    cl_tall_hide = ' style="display:none"' if DEFAULT_CITIES_LAYOUT != "tall" else ""
+    named["CITIES_LIST"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Cities list {cl_toggle} {cll_toggle}</div>'
+        f'<div id="cities-list"{cl_attrs}>'
+        f'<div class="layout-wide" data-list="cities-list"{cl_wide_hide}>{cities_wide}</div>'
+        f'<div class="layout-tall" data-list="cities-list"{cl_tall_hide}>{cities_tall}</div>'
+        f'</div>'
+        f'</div>'
+    )
+
+    # --- Arrange sections into columns ---
+    # Group by column number, sort by position within each column
+    columns = {}  # col_num -> [(pos, key, html)]
+    list_sections = {"BASE_LIST", "CITIES_LIST"}
+    for key, html in named.items():
+        if not html:
+            continue
+        col_num, pos = SECTION_POS[key]
+        columns.setdefault(col_num, []).append((pos, key, html))
+    for col_num in columns:
+        columns[col_num].sort()
+
+    num_cols = max(columns) if columns else 1
+    if num_cols == 1:
+        # Single column — no wrapper needed
+        col_sections = columns.get(1, [])
+        content = "\n".join(html for _, _, html in col_sections)
+    else:
+        # Multi-column layout
+        col_divs = []
+        col_widths = []
+        for col_num in range(1, num_cols + 1):
+            col_sections = columns.get(col_num, [])
+            has_list = any(k in list_sections for _, k, _ in col_sections)
+            col_widths.append("auto" if has_list else "1fr")
+            inner = "\n".join(html for _, _, html in col_sections)
+            col_divs.append(f'<div class="page-col">{inner}</div>')
+        grid_cols = " ".join(col_widths)
+        content = (
+            f'<div class="page-grid" style="grid-template-columns: {grid_cols};">'
+            + "\n".join(col_divs)
+            + '</div>'
         )
 
-    # DECK (base)
-    sections.append(
-        f'<div class="section">'
-        f'<div class="section-title">Base deck <span class="toggle-btn" data-open="{eye_open_esc}" data-closed="{eye_closed_esc}" onclick="toggleDeck(this, \'base-deck\')">{ICON_EYE_CLOSED}</span></div>'
-        f'<div id="base-deck">{format_deck_section(state.get("actual_deck", {}))}</div>'
-        f'</div>'
-    )
-
-    # Cities deck
-    sections.append(
-        f'<div class="section">'
-        f'<div class="section-title">Cities deck <span class="toggle-btn" data-open="{eye_open_esc}" data-closed="{eye_closed_esc}" onclick="toggleDeck(this, \'cities-deck\')">{ICON_EYE_OPEN}</span></div>'
-        f'<div id="cities-deck" style="display:none">{format_cities_section(state.get("actual_deck", {}))}</div>'
-        f'</div>'
-    )
-
-    # Base list (all base cards)
-    sections.append(
-        f'<div class="section">'
-        f'<div class="section-title">Base list <span class="toggle-btn" data-open="{eye_open_esc}" data-closed="{eye_closed_esc}" onclick="toggleDeck(this, \'base-list\')">{ICON_EYE_OPEN}</span></div>'
-        f'<div id="base-list" style="display:none">{format_all_cards(0)}</div>'
-        f'</div>'
-    )
-
-    # Cities list (all cities cards)
-    sections.append(
-        f'<div class="section">'
-        f'<div class="section-title">Cities list <span class="toggle-btn" data-open="{eye_open_esc}" data-closed="{eye_closed_esc}" onclick="toggleDeck(this, \'cities-list\')">{ICON_EYE_OPEN}</span></div>'
-        f'<div id="cities-list" style="display:none">{format_all_cards(3)}</div>'
-        f'</div>'
-    )
-
-    content = "\n".join(sections)
     return HTML_TEMPLATE.format(table_id=esc(table_id), content=content)
 
 

@@ -21,7 +21,31 @@ venv/Scripts/playwright install chromium
 Create a `.env` file in the project root:
 ```
 PLAYER_NAME=YourBGAUsername
+
+# Default section visibility (format_state.py)
+# Deck sections: show / hide
+DEFAULT_BASE_DECK=show
+DEFAULT_CITIES_DECK=hide
+# List sections: none / all / unknown
+DEFAULT_BASE_LIST=none
+DEFAULT_CITIES_LIST=none
+# List layout: wide / tall
+DEFAULT_BASE_LAYOUT=wide
+DEFAULT_CITIES_LAYOUT=wide
+
+# Section placement: column.position (e.g. 1.3 = column 1, 3rd section)
+# All in column 1 by default; set column 2+ to create multi-column layout
+SECTION_HAND_OPPONENT=1.1
+SECTION_HAND_ME=1.2
+SECTION_SCORE_OPPONENT=1.3
+SECTION_SCORE_ME=1.4
+SECTION_BASE_DECK=1.5
+SECTION_CITIES_DECK=1.6
+SECTION_BASE_LIST=1.7
+SECTION_CITIES_LIST=1.8
 ```
+
+Only `PLAYER_NAME` is required. All other settings are optional with sensible defaults.
 
 Icon and card image assets are committed to the repo in `assets/`. To regenerate them from the upstream BGA sprite sheets (requires Pillow):
 ```
@@ -97,7 +121,7 @@ data/
     game_state.json              — full structured state (output)
     game_state_player.json       — human-readable player view (output)
     summary.html                 — colored HTML summary (output)
-.env                            — player name config (not committed)
+.env                            — player name + display config (not committed)
 ```
 
 ## Output format
@@ -162,17 +186,24 @@ Sections:
 - **Hand — opponent** — cards sorted by age (known before unknown per age)
 - **Hand — me** — two rows: hidden (closed-eye icon) and revealed (open-eye icon)
 - **Score — opponent/me** — same layout (omitted if empty)
-- **Base deck** — draw pile by age, visible by default (collapsible)
-- **Cities deck** — draw pile by age (collapsed by default)
-- **Base list** — all 105 base cards for reference (collapsed by default)
-- **Cities list** — all 105 cities cards for reference (collapsed by default)
+- **Base deck** — draw pile by age `[Hide|Show]`
+- **Cities deck** — draw pile by age `[Hide|Show]`
+- **Base list** — all 105 base cards `[None|All|Unknown]` `[Wide|Tall]`
+- **Cities list** — all 105 cities cards `[None|All|Unknown]` `[Wide|Tall]`
 
-Deck and list sections have a toggle eye icon to show/hide their contents.
+Section toggles:
+- `[Hide|Show]` — collapse/expand section content
+- `[None|All|Unknown]` — hide, show all, or show only cards not accounted for elsewhere (hand, score, board, deck). Known cards are masked as gray unknowns in Unknown mode.
+- `[Wide|Tall]` — Wide shows one row per age; Tall shows 5 color columns (BRGYP) with age labels on the left
+
+Default visibility and layout for each section can be configured in `.env`. Sections can also be arranged into multiple page columns using `SECTION_*` placement values (see Setup).
 
 Card layout:
 - Base (set 0): 2x3 CSS grid — hex icon + name in top row, resource icons + age in bottom row
 - Cities (set 3): 2x2 CSS grid — 6 icons in two rows, age in bottom-right, name only in tooltip
 - Unknown cards: gray cards showing age number (or blank in deck rows)
+
+Color order: BRGYP (blue, red, green, yellow, purple) throughout.
 
 Fonts: Barlow Condensed for card names, Russo One for age numbers.
 
