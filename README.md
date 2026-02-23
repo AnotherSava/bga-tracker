@@ -150,7 +150,7 @@ Assets are committed to the repo, so this only needs to be re-run if upstream im
 - `actual_deck`: draw piles grouped by age. `"?"` = unknown, `"(C) Name"` = known card, `"(C*) Name"` = known to both players. Only ages with cards remaining.
 - Color initials: B=blue, R=red, G=green, Y=yellow, P=purple.
 - `*` = card known to opponent.
-- `"?6"` = unknown card of age 6 (tracked from hidden draws/scores).
+- `"?6b"` = unknown base card of age 6, `"?6c"` = unknown cities card of age 6 (tracked from hidden draws/scores).
 
 ### summary.html
 
@@ -198,7 +198,13 @@ Hidden transfers include "from base" or "from cities" suffix in the extracted lo
 
 ### Unknown hand and score tracking
 
-Hidden draws and scores (where the card name isn't visible) are tracked by age. The tracker maintains per-player lists of unknown card ages in hand (`unknown_hand`) and score pile (`unknown_score`). When a named action later reveals the card, it's removed from the unknown list. Output format: `"?6"` = unknown card of age 6.
+Hidden draws and scores (where the card name isn't visible) are tracked as counts per `(age, card_set)` using a count matrix (`defaultdict(int)`). When a named action later reveals the card, the corresponding count is decremented.
+
+Unknown count adjustments happen in two places:
+- **Hidden pattern handler**: when no named candidate is found for a transfer (e.g., unknown card moved from hand to score), counts are adjusted directly
+- **Named pattern handler**: when a named card's tracked state doesn't match its declared source (e.g., card is "from hand" but tracked as "deck"), the card entered that zone via a hidden draw, so the unknown count is decremented
+
+Output format: `"?6b"` = unknown base card of age 6, `"?6c"` = unknown cities card of age 6.
 
 ### Known flag
 

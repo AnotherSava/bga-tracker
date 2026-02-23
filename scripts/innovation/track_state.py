@@ -185,16 +185,14 @@ def parse_log(card_db, name_lookup, game_log_path):
     # Cards that have been on a board at any point (public knowledge)
     was_on_board = set()
 
-    # Cards whose state was changed by hidden pattern handlers
-    hidden_moved = set()
+    # Count of unidentified cards in each player's hand, keyed by (age, card_set)
+    # Starts with two age-1 base cards per player: initial deal (unlogged)
+    unknown_hand = {p: defaultdict(int) for p in players}
+    for p in players:
+        unknown_hand[p][(1, 0)] = 2
 
-    # Ages of unidentified cards in each player's hand
-    # (from hidden draws that we can't resolve to a specific card)
-    # Starts with two age-1 cards per player: initial deal (unlogged)
-    unknown_hand = {p: [1, 1] for p in players}
-
-    # Ages of unidentified cards in each player's score pile
-    unknown_score = {p: [] for p in players}
+    # Count of unidentified cards in each player's score pile, keyed by (age, card_set)
+    unknown_score = {p: defaultdict(int) for p in players}
 
     # --- Transfer patterns (with named cards) ---
     # Order matters: more specific patterns first
@@ -393,24 +391,12 @@ def parse_log(card_db, name_lookup, game_log_path):
                     else:
                         print(f"WARNING: Unknown stack ({age}, {set_label}): {msg}")
 
-                # Hidden draw to hand or score: track unknown card with age
+                # Hidden draw to hand or score: track unknown card count
                 if deck_effect == "pop" and not state_from and not state_to:
                     if "draws and scores" in msg:
-                        unknown_score[player].append(age)
+                        unknown_score[player][key] += 1
                     else:
-                        unknown_hand[player].append(age)
-
-                # Hidden hand→score: move unknown tracking
-                if state_from == "hand" and state_to == "score":
-                    if age in unknown_hand[player]:
-                        unknown_hand[player].remove(age)
-                        unknown_score[player].append(age)
-                # Hidden score→hand: move unknown tracking
-                elif state_from == "score" and state_to != "deck":
-                    if age in unknown_score[player]:
-                        unknown_score[player].remove(age)
-                        if state_to == "hand":
-                            unknown_hand[player].append(age)
+                        unknown_hand[player][key] += 1
 
                 # Card state tracking — find matching card and update
                 if state_from and state_to:
@@ -422,21 +408,18 @@ def parse_log(card_db, name_lookup, game_log_path):
                         and card_db[name]["age"] == age
                         and card_db[name]["set"] == card_set
                     ]
-                    if len(candidates) == 1:
+                    if candidates:
                         state[candidates[0]] = to_loc
-                        hidden_moved.add(candidates[0])
-                    elif candidates:
-                        # Multiple candidates — can't determine which; pick first
-                        state[candidates[0]] = to_loc
-                        hidden_moved.add(candidates[0])
-                    elif state_from == "hand":
-                        # No named card found — an unknown card left the hand
-                        if age in unknown_hand[player]:
-                            unknown_hand[player].remove(age)
-                    elif state_from == "score":
-                        # No named card found — an unknown card left the score
-                        if age in unknown_score[player]:
-                            unknown_score[player].remove(age)
+                    else:
+                        # No named card found — adjust unknown counts
+                        if state_from == "hand" and unknown_hand[player][key] > 0:
+                            unknown_hand[player][key] -= 1
+                            if state_to == "score":
+                                unknown_score[player][key] += 1
+                        elif state_from == "score" and unknown_score[player][key] > 0:
+                            unknown_score[player][key] -= 1
+                            if state_to == "hand":
+                                unknown_hand[player][key] += 1
 
                 break
         if hidden_matched:
@@ -469,37 +452,21 @@ def parse_log(card_db, name_lookup, game_log_path):
                 if from_loc is None:
                     from_loc = state.get(card_name, "deck")
 
-                # Resolve unknown hand card: named action moves a card
-                # FROM hand but card's state is "deck" (entered hand via
-                # hidden draw, never tracked in state). Don't count if
-                # the mismatch is from a hidden return (handled by swap).
-                # Must check BEFORE swap correction modifies hidden_moved.
+                # Reconcile unknown tracking: if a named card is FROM hand/score
+                # but its tracked state doesn't match, it was an unknown card
                 current_loc = state.get(card_name)
-                if (from_loc and from_loc.startswith("hand:")
-                        and current_loc == "deck"
-                        and card_name not in hidden_moved):
-                    hand_player = from_loc.split(":", 1)[1]
+                if from_loc and current_loc != from_loc:
                     card_age = card_db[card_name]["age"]
-                    if card_age in unknown_hand[hand_player]:
-                        unknown_hand[hand_player].remove(card_age)
-
-                # Correct hidden handler misattribution: if a hidden return
-                # moved this card to deck but a named action says it's
-                # actually elsewhere, swap with another candidate.
-                # Only fire when the hidden handler explicitly changed this card.
-                if (from_loc and current_loc and current_loc != from_loc
-                        and card_name in hidden_moved):
-                    card_info_c = card_db[card_name]
-                    swap = [
-                        n for n, loc in state.items()
-                        if loc == from_loc
-                        and card_db[n]["age"] == card_info_c["age"]
-                        and card_db[n]["set"] == card_info_c["set"]
-                        and n != card_name
-                    ]
-                    if swap:
-                        state[swap[0]] = current_loc
-                    hidden_moved.discard(card_name)
+                    card_cs = card_db[card_name]["set"]
+                    key = (card_age, card_cs)
+                    if from_loc.startswith("hand:"):
+                        hand_player = from_loc.split(":", 1)[1]
+                        if unknown_hand[hand_player][key] > 0:
+                            unknown_hand[hand_player][key] -= 1
+                    elif from_loc.startswith("score:"):
+                        score_player = from_loc.split(":", 1)[1]
+                        if unknown_score[score_player][key] > 0:
+                            unknown_score[score_player][key] -= 1
 
                 # Update state
                 state[card_name] = to_loc
@@ -642,10 +609,16 @@ def build_player_output(full_state, card_db, players, unknown_hand=None, unknown
         result["hand"][p] = [card_to_short(c, include_known=True) for c in full_state["hand"][p]]
         # Add unknown hand cards with ages (from hidden draws we can't identify)
         if unknown_hand and unknown_hand.get(p):
-            result["hand"][p] += [f"?{age}" for age in sorted(unknown_hand[p])]
+            for (age, cs), count in sorted(unknown_hand[p].items()):
+                if count > 0:
+                    suffix = 'b' if cs == 0 else 'c'
+                    result["hand"][p] += [f"?{age}{suffix}"] * count
         result["score"][p] = [card_to_short(c, include_known=True) for c in full_state["score"][p]]
         if unknown_score and unknown_score.get(p):
-            result["score"][p] += [f"?{age}" for age in sorted(unknown_score[p])]
+            for (age, cs), count in sorted(unknown_score[p].items()):
+                if count > 0:
+                    suffix = 'b' if cs == 0 else 'c'
+                    result["score"][p] += [f"?{age}{suffix}"] * count
 
     # Build actual_deck from deck_stacks — only ages with cards remaining
     for age_str, stacks in full_state["deck_stacks"].items():
@@ -676,7 +649,7 @@ def print_summary(full_state, deck_stacks, players, unknown_hand=None):
     for p in players:
         b = len(full_state["board"][p])
         h = len(full_state["hand"][p])
-        uh = len(unknown_hand.get(p, [])) if unknown_hand else 0
+        uh = sum(unknown_hand[p].values()) if unknown_hand and unknown_hand.get(p) else 0
         s = len(full_state["score"][p])
         hand_str = str(h + uh) if uh == 0 else f"{h}+{uh}?"
         print(f"{p}: board={b}, hand={hand_str}, score={s}")
