@@ -37,13 +37,15 @@ if not PERSPECTIVE:
     sys.exit(1)
 
 COLOR_ORDER = {"blue": 0, "red": 1, "green": 2, "yellow": 3, "purple": 4}
-SET_LABEL = {0: "base", 3: "cities"}
-LABEL_TO_SET = {"base": 0, "cities": 3}
+SET_BASE = 0
+SET_CITIES = 3
+SET_LABEL = {SET_BASE: "base", SET_CITIES: "cities"}
+LABEL_TO_SET = {"base": SET_BASE, "cities": SET_CITIES}
 
 
 def load_card_database():
-    """Load card info from cardinfo.json. Returns dict keyed by card name.
-    Also returns a lowercase->canonical name mapping for fuzzy lookup."""
+    """Load card info from cardinfo.json. Returns dict keyed by lowercase card name.
+    BGA lowercases some words in multi-word names, so lowercase keys handle that."""
     with open(CARDINFO_PATH) as f:
         raw = json.load(f)
 
@@ -55,63 +57,21 @@ def load_card_database():
         if "age" not in item or "color" not in item:
             continue  # skip achievements and other non-card entries
         s = item.get("set")
-        if s not in (0, 3):
+        if s not in (SET_BASE, SET_CITIES):
             continue  # only base + cities of destiny
-        cards[item["name"]] = {
+        cards[item["name"].lower()] = {
             "name": item["name"],
             "age": item["age"],
             "color": item["color"],
             "set": s,
         }
 
-    # Build case-insensitive lookup (BGA lowercases some words in multi-word names)
-    name_lookup = {}
-    for name in cards:
-        name_lookup[name.lower()] = name
-
-    return cards, name_lookup
-
-
-def extract_players(log_data):
-    """Extract player names from log entries.
-    Looks for 'PLAYER chooses a card.' messages at the start of the game."""
-    players = []
-    choose_re = re.compile(r"^(.+?) chooses a card\.$")
-    for entry in log_data["log"]:
-        m = choose_re.match(entry["msg"])
-        if m:
-            name = m.group(1)
-            if name not in players:
-                players.append(name)
-        if len(players) >= 2:
-            break
-    if not players:
-        # Fallback: extract from first meld messages
-        meld_re = re.compile(r"^(.+?) melds \[")
-        for entry in log_data["log"]:
-            m = meld_re.match(entry["msg"])
-            if m:
-                name = m.group(1)
-                if name not in players:
-                    players.append(name)
-            if len(players) >= 2:
-                break
-    return players
+    return cards
 
 
 def build_player_pattern(players):
     """Build regex alternation for player names."""
     return "|".join(re.escape(p) for p in players)
-
-
-def resolve_name(raw_name, card_db, name_lookup):
-    """Resolve a card name from the log to its canonical DB name."""
-    if raw_name in card_db:
-        return raw_name
-    lower = raw_name.lower()
-    if lower in name_lookup:
-        return name_lookup[lower]
-    return None
 
 
 def init_deck_stacks(card_db, num_players):
@@ -135,33 +95,22 @@ def init_deck_stacks(card_db, num_players):
     stacks = {}
     for (age, card_set), count in sorted(counts.items()):
         n = count
-        if card_set == 0 and 1 <= age <= 9:
+        if card_set == SET_BASE and 1 <= age <= 9:
             n -= 1  # achievement card removed
-        if card_set == 0 and age == 1:
+        if card_set == SET_BASE and age == 1:
             n -= initial_deal  # initial deal (unlogged)
         stacks[(age, card_set)] = [None] * n
 
     return stacks
 
 
-def parse_log(card_db, name_lookup, game_log_path):
+def parse_log(card_db, players, game_log_path):
     """
     Parse game_log.json and track card locations and deck stack order.
-    Returns (players, state, known_set, deck_stacks) where:
-      players: list of player names extracted from the log
-      state: dict card_name -> location string
-      known_set: set of card names known to opponent
-      deck_stacks: dict (age, set) -> ordered list (index 0 = top),
-                   entries are card_name (str) or None (unknown)
+    Returns (state, known_set, deck_stacks, unknown_hand, unknown_score).
     """
     with open(game_log_path) as f:
         log_data = json.load(f)
-
-    players = extract_players(log_data)
-    if not players:
-        print("ERROR: Could not extract player names from log")
-        sys.exit(1)
-    print(f"Players: {', '.join(players)}")
 
     PP = build_player_pattern(players)
 
@@ -189,7 +138,12 @@ def parse_log(card_db, name_lookup, game_log_path):
     unknown_score = {p: defaultdict(int) for p in players}
 
     # --- Transfer patterns (with named cards) ---
-    # Order matters: more specific patterns first
+    # Each entry: (compiled regex, extractor function)
+    # The extractor returns (from_loc, to_loc, card_name) where locations are
+    # "deck", "hand:Player", "board:Player", "score:Player", "achieved",
+    # or None (skip / infer from current state).
+    # Order matters: more specific patterns must come before general ones
+    # (e.g. "melds from hand" before "melds", "achieves [A] CARD" before "achieves CARD").
     patterns = [
         # P melds [A] CARD from hand.
         (re.compile(rf"^({PP}) melds \[(\d+)\] (.+?) from hand\.$"),
@@ -286,12 +240,15 @@ def parse_log(card_db, name_lookup, game_log_path):
                      m.group(3))),
     ]
 
-    # Hidden patterns — no card name visible, has age + set info
-    # "from base" = set 0, "from cities" = set 3
+    # --- Hidden patterns (opponent's hidden transfers, no card name visible) ---
+    # These match messages where the card identity is hidden (opponent's private actions).
+    # The "from base"/"from cities" suffix is appended by extract_log.js.
+    # Each entry: (compiled regex, action tuple)
     # Action tuple: (deck_effect, state_from, state_to)
-    #   deck_effect: "pop" (draw), "push" (return to deck), None
-    #   state_from: "hand"/"board"/"score"/None (source location prefix)
-    #   state_to: "deck"/"score"/None (destination)
+    #   deck_effect: "pop" = remove top of deck stack, "push" = add to deck stack, None
+    #   state_from/state_to: location prefix ("hand"/"board"/"score"/"deck") or None
+    #   When state_from and state_to are both set, we try to find and move a matching
+    #   card by (age, set); otherwise we adjust unknown_hand/unknown_score counts.
     hidden_patterns = [
         # P draws a [N] from base/cities.
         (re.compile(rf"^({PP}) draws a \[(\d+)\] from (base|cities)\.$"),
@@ -341,9 +298,7 @@ def parse_log(card_db, name_lookup, game_log_path):
                 for part in card_list_str.split(", "):
                     space_idx = part.index(" ")
                     card_name = part[space_idx + 1:]
-                    canonical = resolve_name(card_name, card_db, name_lookup)
-                    if canonical:
-                        known.add(canonical)
+                    known.add(card_name.lower())
             continue  # logWithCardTooltips are not transfer entries
 
         # Only process transfer entries
@@ -378,12 +333,12 @@ def parse_log(card_db, name_lookup, game_log_path):
                     if key in deck_stacks and deck_stacks[key]:
                         deck_stacks[key].pop(0)
                     else:
-                        print(f"WARNING: Drew from empty stack ({age}, {set_label}): {msg}")
+                        raise ValueError(f"Drew from empty stack ({age}, {set_label}): {msg}")
                 elif deck_effect == "push":
                     if key in deck_stacks:
                         deck_stacks[key].append(None)
                     else:
-                        print(f"WARNING: Unknown stack ({age}, {set_label}): {msg}")
+                        raise ValueError(f"Unknown stack ({age}, {set_label}): {msg}")
 
                 # Hidden draw to hand or score: track unknown card count
                 if deck_effect == "pop" and not state_from and not state_to:
@@ -431,11 +386,7 @@ def parse_log(card_db, name_lookup, game_log_path):
                     matched = True
                     break
 
-                card_name = resolve_name(raw_card_name, card_db, name_lookup)
-                if card_name is None:
-                    print(f"WARNING: Unknown card '{raw_card_name}' in: {msg}")
-                    matched = True
-                    break
+                card_name = raw_card_name.lower()
 
                 # "places in hand" is a skip (redundant)
                 if from_loc is None and to_loc is None:
@@ -475,7 +426,7 @@ def parse_log(card_db, name_lookup, game_log_path):
                     if stack:
                         stack.pop(0)
                     else:
-                        print(f"WARNING: Drew '{card_name}' from empty stack {stack_key}: {msg}")
+                        raise ValueError(f"Drew '{card_name}' from empty stack {stack_key}: {msg}")
 
                 if to_loc == "deck" and stack_key in deck_stacks:
                     # Card returned to deck — append named card to bottom
@@ -500,14 +451,12 @@ def parse_log(card_db, name_lookup, game_log_path):
                 break
 
         if not matched:
-            print(f"WARNING: Unrecognized transfer pattern: {msg}")
-            if clean_msg != msg:
-                print(f"  (cleaned: {clean_msg})")
+            raise ValueError(f"Unrecognized transfer pattern: {msg}")
 
     # Mark all cards that were ever on a board as known
     known.update(was_on_board)
 
-    return players, state, known, deck_stacks, unknown_hand, unknown_score
+    return state, known, deck_stacks, unknown_hand, unknown_score
 
 
 def _sort_key(card_db, name):
@@ -540,7 +489,7 @@ def deduce_achievements(card_db, state, deck_stacks):
             name for name, loc in state.items()
             if loc == "deck"
             and card_db[name]["age"] == age
-            and card_db[name]["set"] == 0
+            and card_db[name]["set"] == SET_BASE
             and name not in named_in_deck
         ]
         achievements[age] = hidden
@@ -584,13 +533,13 @@ def build_player_output(card_db, state, known, deck_stacks, players, unknown_han
     for p in players:
         # Board: {"name": "..."}
         result["board"][p] = [
-            {"name": name}
+            {"name": card_db[name]["name"]}
             for name in sorted(board_cards[p], key=lambda n: _sort_key(card_db, n))
         ]
 
         # Hand: known cards + unknown cards
         named = [
-            {"name": name, "revealed": name in known}
+            {"name": card_db[name]["name"], "revealed": name in known}
             for name in sorted(hand_cards[p], key=lambda n: _sort_key(card_db, n))
         ]
         unknown = []
@@ -602,7 +551,7 @@ def build_player_output(card_db, state, known, deck_stacks, players, unknown_han
 
         # Score: known cards + unknown cards
         named = [
-            {"name": name, "revealed": name in known}
+            {"name": card_db[name]["name"], "revealed": name in known}
             for name in sorted(score_cards[p], key=lambda n: _sort_key(card_db, n))
         ]
         unknown = []
@@ -621,30 +570,29 @@ def build_player_output(card_db, state, known, deck_stacks, players, unknown_han
             result["actual_deck"][age_str] = {"base": [], "cities": []}
         label = SET_LABEL[card_set]
         result["actual_deck"][age_str][label] = [
-            None if entry is None else {"name": entry, "revealed": entry in known}
+            None if entry is None else {"name": card_db[entry]["name"], "revealed": entry in known}
             for entry in stack
         ]
 
     # Achievements (ages 1-9)
     for age in range(1, 10):
         candidates = achievements.get(age, [])
-        if len(candidates) == 1 and candidates[0] in card_db:
-            result["achievements"].append({"name": candidates[0]})
+        if len(candidates) == 1:
+            result["achievements"].append({"name": card_db[candidates[0]]["name"]})
         else:
             result["achievements"].append(None)
 
     return result
 
 
-def find_table_dir(table_id):
-    """Find table data directory — matches TABLE_ID or 'TABLE_ID opponent'."""
-    exact = DATA_DIR / table_id
-    if exact.exists():
-        return exact
+def find_table(table_id):
+    """Find table data directory and opponent name from 'TABLE_ID opponent' folder."""
     matches = list(DATA_DIR.glob(f"{table_id} *"))
-    if len(matches) == 1:
-        return matches[0]
-    return exact  # will fail later with "not found"
+    if len(matches) != 1:
+        raise FileNotFoundError(f"No unique table directory for '{table_id}' in {DATA_DIR}")
+    table_dir = matches[0]
+    opponent = table_dir.name.split(" ", 1)[1]
+    return table_dir, opponent
 
 
 def main():
@@ -653,36 +601,18 @@ def main():
         sys.exit(1)
 
     table_id = sys.argv[1]
-    table_dir = find_table_dir(table_id)
-
-    if not table_dir.exists():
-        print(f"ERROR: Table directory not found: {DATA_DIR / table_id}")
-        sys.exit(1)
+    table_dir, opponent = find_table(table_id)
+    players = [PERSPECTIVE, opponent]
+    print(f"Players: {', '.join(players)}")
 
     game_log_path = table_dir / "game_log.json"
     out_path = table_dir / "game_state.json"
 
-    card_db, name_lookup = load_card_database()
+    card_db = load_card_database()
     print(f"Loaded {len(card_db)} cards from database (sets 0+3)")
 
-    players, state, known, deck_stacks, unknown_hand, unknown_score = parse_log(card_db, name_lookup, game_log_path)
-    print(f"Known cards (to opponent): {len(known)}")
-
+    state, known, deck_stacks, unknown_hand, unknown_score = parse_log(card_db, players, game_log_path)
     achievements = deduce_achievements(card_db, state, deck_stacks)
-    deduced = sum(1 for v in achievements.values() if len(v) == 1)
-    print(f"Achievements deduced: {deduced}/9")
-
-    # Card count diagnostics
-    deck_count = sum(1 for loc in state.values() if loc == "deck")
-    total = len(state)
-    for p in players:
-        b = sum(1 for loc in state.values() if loc == f"board:{p}")
-        h = sum(1 for loc in state.values() if loc == f"hand:{p}")
-        uh = sum(unknown_hand[p].values()) if unknown_hand.get(p) else 0
-        s = sum(1 for loc in state.values() if loc == f"score:{p}")
-        hand_str = str(h + uh) if uh == 0 else f"{h}+{uh}?"
-        print(f"{p}: board={b}, hand={hand_str}, score={s}")
-    print(f"Deck: {deck_count}, Total cards tracked: {total}")
 
     game_state = build_player_output(card_db, state, known, deck_stacks, players, unknown_hand, unknown_score, achievements)
     with open(out_path, "w") as f:
