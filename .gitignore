@@ -1,6 +1,6 @@
 .chrome_bga_profile/
+.claude/settings.json
 .claude/settings.local.json
-.claude/skills/commit/
 .env
 .idea/
 output/
