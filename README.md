@@ -10,6 +10,15 @@ My initial focus is on 2p games of **Innovation** with Cities of Destiny expansi
 
 > **Note:** Only tested on Windows. Scripts, paths, and commands all assume a Windows environment.
 
+## How it works
+
+1. A Playwright-controlled browser navigates to the BGA game page and fetches the full notification history via the BGA API
+2. A JS script (running in the browser context) extracts card transfer events into a structured game log
+3. A Python script replays every card movement from the log, tracking current locations, deck stack order, and which cards the opponent knows about
+4. A formatter produces a colored HTML summary of the current game state from both perspectives
+
+Player names are detected automatically from the game log. The `PLAYER_NAME` in `.env` determines which side is "me" vs "opponent".
+
 ## Setup
 
 ```
@@ -52,15 +61,6 @@ Icon and card image assets are committed to the repo in `assets/`. To regenerate
 venv/Scripts/python scripts/download_assets.py
 ```
 
-## How it works
-
-1. A Playwright-controlled browser navigates to the BGA game page and fetches the full notification history via the BGA API
-2. A JS script (running in the browser context) extracts card transfer events into a structured game log
-3. A Python script replays every card movement from the log, tracking current locations, deck stack order, and which cards the opponent knows about
-4. A formatter produces a colored HTML summary of the current game state from both perspectives
-
-Player names are detected automatically from the game log. The `PLAYER_NAME` in `.env` determines which side is "me" vs "opponent".
-
 ## Usage
 
 ### 1. Start the browser helper
@@ -88,7 +88,7 @@ Save the final output to `data/<TABLE_ID>/game_log.json`.
 venv/Scripts/python scripts/innovation/track_state.py TABLE_ID
 ```
 
-Produces `game_state.json` (full structured state) and `game_state_player.json` (human-readable player view).
+Produces `game_state.json` — structured game state with card objects.
 
 ### 4. Format summary
 
@@ -118,8 +118,7 @@ data/
   cardinfo.json                 — shared card database (sets 0 + 3, 210 cards)
   <TABLE_ID> <opponent>/        — per-game data
     game_log.json                — extracted game log (input)
-    game_state.json              — full structured state (output)
-    game_state_player.json       — human-readable player view (output)
+    game_state.json              — structured game state (output)
     summary.html                 — colored HTML summary (output)
 .env                            — player name + display config (not committed)
 ```
@@ -128,22 +127,29 @@ data/
 
 ### game_state.json
 
-Cards grouped by location with full metadata:
+Structured game state with card objects. Card metadata (age, color, icons) is looked up from `cardinfo.json` by name — not duplicated in the output.
 
 ```json
 {
-  "deck": { "base": [...], "cities": [...] },
-  "deck_stacks": {
-    "1": { "base": [null, ...], "cities": [null, ...], "achievement": null }
+  "actual_deck": {
+    "1": {
+      "base": [null, {"name": "Sailing", "revealed": true}],
+      "cities": [null, null]
+    }
   },
-  "board": { "Player1": [...] },
-  "hand":  { "Player1": [...] },
-  "score": { "Player1": [...] }
+  "board": { "Player1": [{"name": "Clothing"}] },
+  "hand":  { "Player1": [{"name": "Optics", "revealed": true}, {"age": 5, "set": 0}] },
+  "score": { "Player1": [{"name": "The Wheel", "revealed": false}, {"age": 3, "set": 0}] },
+  "achievements": [{"name": "Oars"}, null, null, null, null, null, null, null, null]
 }
 ```
 
-- Each card: `{name, age, color, set}`. Hand/score cards also have `known: true/false`.
-- `deck_stacks`: ordered draw piles per (age, set). Index 0 = top. `null` = unknown, `"Card Name"` = known (from a visible return). `achievement`: `null` = unknown card removed, `false` = no achievement (age 10).
+- **Known card** (hand/score): `{"name": "...", "revealed": bool}` — `revealed` = known to opponent
+- **Unknown card** (hand/score): `{"age": int, "set": int}` — `0` = base, `3` = cities
+- **Board card**: `{"name": "..."}` — always public
+- **Deck entry**: `null` (unknown) or `{"name": "...", "revealed": bool}`
+- **Achievement**: `{"name": "..."}` or `null` — age implied by index + 1
+- `actual_deck`: ordered draw piles per (age, set). Index 0 = top. Only ages with cards remaining.
 
 ### download_assets.py
 
@@ -155,26 +161,6 @@ Downloads sprite sheets from the [bga-innovation](https://github.com/micahstairs
 - 210 card face images (105 base + 105 cities) from `misc/cards/`
 
 Assets are committed to the repo, so this only needs to be re-run if upstream images change.
-
-### game_state_player.json
-
-```json
-{
-  "actual_deck": {
-    "1": { "base": ["?", "?"], "cities": ["?", "?", "?"] },
-    "6": { "base": ["?", "(G*) Sailing"], "cities": ["?"] }
-  },
-  "deck": ["[6B] Astronomy", ...],
-  "board": { "Player1": ["[1B] Clothing", ...] },
-  "hand":  { "Player1": ["[3R] Optics *", ...] },
-  "score": { "Player1": [...] }
-}
-```
-
-- `actual_deck`: draw piles grouped by age. `"?"` = unknown, `"(C) Name"` = known card, `"(C*) Name"` = known to both players. Only ages with cards remaining.
-- Color initials: B=blue, R=red, G=green, Y=yellow, P=purple.
-- `*` = card known to opponent.
-- `"?6b"` = unknown base card of age 6, `"?6c"` = unknown cities card of age 6 (tracked from hidden draws/scores).
 
 ### summary.html
 

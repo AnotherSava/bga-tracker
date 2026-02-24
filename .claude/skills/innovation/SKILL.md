@@ -94,13 +94,11 @@ Run:
 python scripts/innovation/track_state.py <TABLE_ID>
 ```
 
-This produces:
-- `data/<TABLE_ID>/game_state.json` — full structured state
-- `data/<TABLE_ID>/game_state_player.json` — human-readable player view
+This produces `data/<TABLE_ID>/game_state.json` — structured game state with card objects.
 
 ### Step 7: Report results
 
-Read `data/<TABLE_ID>/game_state_player.json` and present a summary to the user showing:
+Read `data/<TABLE_ID>/game_state.json` and present a summary to the user showing:
 - Player names and their board/hand/score card counts
 - Total cards in deck
 - Any warnings from track_state.py output

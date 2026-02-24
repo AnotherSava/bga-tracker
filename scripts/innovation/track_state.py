@@ -7,7 +7,7 @@ and outputs the current location of every card.
 Usage: python track_state.py TABLE_ID
 
 Input:  data/cardinfo.json, data/<TABLE_ID>/game_log.json
-Output: data/<TABLE_ID>/game_state.json, data/<TABLE_ID>/game_state_player.json
+Output: data/<TABLE_ID>/game_state.json
 """
 
 import json
@@ -37,7 +37,6 @@ if not PERSPECTIVE:
     sys.exit(1)
 
 COLOR_ORDER = {"blue": 0, "red": 1, "green": 2, "yellow": 3, "purple": 4}
-COLOR_INITIAL = {"blue": "B", "red": "R", "green": "G", "yellow": "Y", "purple": "P"}
 SET_LABEL = {0: "base", 3: "cities"}
 LABEL_TO_SET = {"base": 0, "cities": 3}
 
@@ -71,11 +70,6 @@ def load_card_database():
         name_lookup[name.lower()] = name
 
     return cards, name_lookup
-
-
-def sort_cards(card_list):
-    """Sort cards by age, then color order, then name."""
-    return sorted(card_list, key=lambda c: (c["age"], COLOR_ORDER.get(c["color"], 99), c["name"]))
 
 
 def extract_players(log_data):
@@ -516,56 +510,10 @@ def parse_log(card_db, name_lookup, game_log_path):
     return players, state, known, deck_stacks, unknown_hand, unknown_score
 
 
-def build_output(card_db, state, known, deck_stacks, players):
-    """Build the structured game_state.json output."""
-    result = {
-        "deck": {"base": [], "cities": []},
-        "deck_stacks": {},
-        "board": {p: [] for p in players},
-        "hand": {p: [] for p in players},
-        "score": {p: [] for p in players},
-    }
-
-    for name, loc in state.items():
-        card = dict(card_db[name])  # copy
-
-        if loc == "deck":
-            key = "base" if card["set"] == 0 else "cities"  # set 0=base, 3=cities
-            result["deck"][key].append(card)
-        elif loc.startswith("board:"):
-            player = loc.split(":", 1)[1]
-            result["board"][player].append(card)
-        elif loc.startswith("hand:"):
-            player = loc.split(":", 1)[1]
-            card["known"] = name in known
-            result["hand"][player].append(card)
-        elif loc.startswith("score:"):
-            player = loc.split(":", 1)[1]
-            card["known"] = name in known
-            result["score"][player].append(card)
-
-    # Sort all lists
-    result["deck"]["base"] = sort_cards(result["deck"]["base"])
-    result["deck"]["cities"] = sort_cards(result["deck"]["cities"])
-    for p in players:
-        result["board"][p] = sort_cards(result["board"][p])
-        result["hand"][p] = sort_cards(result["hand"][p])
-        result["score"][p] = sort_cards(result["score"][p])
-
-    # Build deck_stacks output grouped by age
-    for (age, card_set), stack in sorted(deck_stacks.items()):
-        age_str = str(age)
-        if age_str not in result["deck_stacks"]:
-            result["deck_stacks"][age_str] = {
-                "base": [],
-                "cities": [],
-                # null = unknown card removed as achievement, false = no achievement
-                "achievement": None if 1 <= age <= 9 else False,
-            }
-        label = SET_LABEL[card_set]
-        result["deck_stacks"][age_str][label] = stack  # list with None/card_name
-
-    return result
+def _sort_key(card_db, name):
+    """Sort key for a card by (age, color order, name)."""
+    info = card_db[name]
+    return (info["age"], COLOR_ORDER.get(info["color"], 99), name)
 
 
 def deduce_achievements(card_db, state, deck_stacks):
@@ -599,107 +547,93 @@ def deduce_achievements(card_db, state, deck_stacks):
     return achievements
 
 
-def card_to_short(card, include_known=False):
-    """Format card as short string like '[3R] Optics' or '[3R] Optics *'."""
-    ci = COLOR_INITIAL.get(card["color"], "?")
-    s = f"[{card['age']}{ci}] {card['name']}"
-    if include_known and card.get("known"):
-        s += " *"
-    return s
+def build_player_output(card_db, state, known, deck_stacks, players, unknown_hand, unknown_score, achievements):
+    """Build structured game state output.
 
-
-def stack_entry_to_player(entry, card_db, known=None):
-    """Format a deck stack entry for player output.
-    None -> '?', card_name -> '(C) Name' where C is color initial.
-    Known cards (visible to opponent) get '(C*) Name'."""
-    if entry is None:
-        return "?"
-    card = card_db.get(entry)
-    if card:
-        ci = COLOR_INITIAL.get(card["color"], "?")
-        star = "*" if known and entry in known else ""
-        return f"({ci}{star}) {entry}"
-    return entry
-
-
-def build_player_output(full_state, card_db, players, unknown_hand=None, unknown_score=None, known=None, achievements=None):
-    """Build human-readable player perspective output."""
+    Card representations:
+    - Known card (hand/score): {"name": "...", "revealed": bool}
+    - Unknown card (hand/score): {"age": int, "set": int}
+    - Board card: {"name": "..."}
+    - Deck entry: null or {"name": "...", "revealed": bool}
+    - Achievement: {"name": "..."} or null
+    """
     result = {
         "actual_deck": {},
-        "deck": [],  # base only (backward compat)
         "board": {p: [] for p in players},
         "hand": {p: [] for p in players},
         "score": {p: [] for p in players},
         "achievements": [],
     }
 
-    # Deck: base only (backward compat)
-    result["deck"] = [card_to_short(c) for c in full_state["deck"]["base"]]
+    # Collect cards by location
+    board_cards = {p: [] for p in players}
+    hand_cards = {p: [] for p in players}
+    score_cards = {p: [] for p in players}
+
+    for name, loc in state.items():
+        if loc.startswith("board:"):
+            player = loc.split(":", 1)[1]
+            board_cards[player].append(name)
+        elif loc.startswith("hand:"):
+            player = loc.split(":", 1)[1]
+            hand_cards[player].append(name)
+        elif loc.startswith("score:"):
+            player = loc.split(":", 1)[1]
+            score_cards[player].append(name)
 
     for p in players:
-        result["board"][p] = [card_to_short(c) for c in full_state["board"][p]]
-        result["hand"][p] = [card_to_short(c, include_known=True) for c in full_state["hand"][p]]
-        # Add unknown hand cards with ages (from hidden draws we can't identify)
+        # Board: {"name": "..."}
+        result["board"][p] = [
+            {"name": name}
+            for name in sorted(board_cards[p], key=lambda n: _sort_key(card_db, n))
+        ]
+
+        # Hand: known cards + unknown cards
+        named = [
+            {"name": name, "revealed": name in known}
+            for name in sorted(hand_cards[p], key=lambda n: _sort_key(card_db, n))
+        ]
+        unknown = []
         if unknown_hand and unknown_hand.get(p):
             for (age, cs), count in sorted(unknown_hand[p].items()):
-                if count > 0:
-                    suffix = 'b' if cs == 0 else 'c'
-                    result["hand"][p] += [f"?{age}{suffix}"] * count
-        result["score"][p] = [card_to_short(c, include_known=True) for c in full_state["score"][p]]
+                for _ in range(count):
+                    unknown.append({"age": age, "set": cs})
+        result["hand"][p] = named + unknown
+
+        # Score: known cards + unknown cards
+        named = [
+            {"name": name, "revealed": name in known}
+            for name in sorted(score_cards[p], key=lambda n: _sort_key(card_db, n))
+        ]
+        unknown = []
         if unknown_score and unknown_score.get(p):
             for (age, cs), count in sorted(unknown_score[p].items()):
-                if count > 0:
-                    suffix = 'b' if cs == 0 else 'c'
-                    result["score"][p] += [f"?{age}{suffix}"] * count
+                for _ in range(count):
+                    unknown.append({"age": age, "set": cs})
+        result["score"][p] = named + unknown
 
     # Build actual_deck from deck_stacks — only ages with cards remaining
-    for age_str, stacks in full_state["deck_stacks"].items():
-        base = stacks.get("base", [])
-        cities = stacks.get("cities", [])
-        if not base and not cities:
+    for (age, card_set), stack in sorted(deck_stacks.items()):
+        if not stack:
             continue
-        result["actual_deck"][age_str] = {
-            "base": [stack_entry_to_player(e, card_db, known) for e in base],
-            "cities": [stack_entry_to_player(e, card_db, known) for e in cities],
-        }
+        age_str = str(age)
+        if age_str not in result["actual_deck"]:
+            result["actual_deck"][age_str] = {"base": [], "cities": []}
+        label = SET_LABEL[card_set]
+        result["actual_deck"][age_str][label] = [
+            None if entry is None else {"name": entry, "revealed": entry in known}
+            for entry in stack
+        ]
 
     # Achievements (ages 1-9)
-    if achievements:
-        for age in range(1, 10):
-            candidates = achievements.get(age, [])
-            if len(candidates) == 1 and candidates[0] in card_db:
-                result["achievements"].append(card_to_short(card_db[candidates[0]]))
-            else:
-                result["achievements"].append(f"?{age}")
+    for age in range(1, 10):
+        candidates = achievements.get(age, [])
+        if len(candidates) == 1 and candidates[0] in card_db:
+            result["achievements"].append({"name": candidates[0]})
+        else:
+            result["achievements"].append(None)
 
     return result
-
-
-def print_summary(full_state, deck_stacks, players, unknown_hand=None):
-    """Print a summary of card counts."""
-    deck_base = len(full_state["deck"]["base"])
-    deck_cities = len(full_state["deck"]["cities"])
-    total = deck_base + deck_cities
-
-    for p in players:
-        total += len(full_state["board"][p])
-        total += len(full_state["hand"][p])
-        total += len(full_state["score"][p])
-
-    print(f"Deck: {deck_base} base + {deck_cities} cities = {deck_base + deck_cities}")
-    for p in players:
-        b = len(full_state["board"][p])
-        h = len(full_state["hand"][p])
-        uh = sum(unknown_hand[p].values()) if unknown_hand and unknown_hand.get(p) else 0
-        s = len(full_state["score"][p])
-        hand_str = str(h + uh) if uh == 0 else f"{h}+{uh}?"
-        print(f"{p}: board={b}, hand={hand_str}, score={s}")
-    print(f"Total cards tracked: {total}")
-
-    # Deck stack summary
-    total_stack = sum(len(s) for s in deck_stacks.values())
-    named_in_stack = sum(1 for s in deck_stacks.values() for e in s if e is not None)
-    print(f"Deck stacks: {total_stack} cards ({named_in_stack} known positions)")
 
 
 def find_table_dir(table_id):
@@ -726,8 +660,7 @@ def main():
         sys.exit(1)
 
     game_log_path = table_dir / "game_log.json"
-    state_out = table_dir / "game_state.json"
-    player_out = table_dir / "game_state_player.json"
+    out_path = table_dir / "game_state.json"
 
     card_db, name_lookup = load_card_database()
     print(f"Loaded {len(card_db)} cards from database (sets 0+3)")
@@ -739,17 +672,22 @@ def main():
     deduced = sum(1 for v in achievements.values() if len(v) == 1)
     print(f"Achievements deduced: {deduced}/9")
 
-    full_state = build_output(card_db, state, known, deck_stacks, players)
-    print_summary(full_state, deck_stacks, players, unknown_hand)
+    # Card count diagnostics
+    deck_count = sum(1 for loc in state.values() if loc == "deck")
+    total = len(state)
+    for p in players:
+        b = sum(1 for loc in state.values() if loc == f"board:{p}")
+        h = sum(1 for loc in state.values() if loc == f"hand:{p}")
+        uh = sum(unknown_hand[p].values()) if unknown_hand.get(p) else 0
+        s = sum(1 for loc in state.values() if loc == f"score:{p}")
+        hand_str = str(h + uh) if uh == 0 else f"{h}+{uh}?"
+        print(f"{p}: board={b}, hand={hand_str}, score={s}")
+    print(f"Deck: {deck_count}, Total cards tracked: {total}")
 
-    with open(state_out, "w") as f:
-        json.dump(full_state, f, indent=2)
-    print(f"Written: {state_out}")
-
-    player_state = build_player_output(full_state, card_db, players, unknown_hand, unknown_score, known, achievements)
-    with open(player_out, "w") as f:
-        json.dump(player_state, f, indent=2)
-    print(f"Written: {player_out}")
+    game_state = build_player_output(card_db, state, known, deck_stacks, players, unknown_hand, unknown_score, achievements)
+    with open(out_path, "w") as f:
+        json.dump(game_state, f, indent=2)
+    print(f"Written: {out_path}")
 
 
 if __name__ == "__main__":

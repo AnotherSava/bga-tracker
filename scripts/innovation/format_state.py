@@ -1,12 +1,12 @@
 """
 Innovation Game State Summary Formatter
 
-Reads game_state_player.json and produces summary.html showing
+Reads game_state.json and produces summary.html showing
 hidden information from both perspectives, with card images.
 
 Usage: python scripts/innovation/format_state.py TABLE_ID
 
-Input:  data/<TABLE_ID>/game_state_player.json + .env for PLAYER_NAME
+Input:  data/<TABLE_ID>/game_state.json + .env for PLAYER_NAME
 Output: data/<TABLE_ID>/summary.html
 """
 
@@ -70,10 +70,6 @@ COLOR_ORDER = {"blue": 0, "red": 1, "green": 2, "yellow": 3, "purple": 4}  # BRG
 # Bottom row: icons[1]  icons[2]  icons[3]
 TOP_POSITIONS = [0, 5, 4]
 BOT_POSITIONS = [1, 2, 3]
-
-_CARD_RE = re.compile(r'^\[(\d+)([BRGPY])\] (.+)$')
-_UNKNOWN_RE = re.compile(r'^\?(\d+)?([bc])?$')  # "?6b" (base) / "?6c" (cities) / "?6" / "?"
-_DECK_RE = re.compile(r'^\(([BRGPY])(\*)?\) (.+)$')
 
 # Eye icons for Hidden/Revealed labels
 ICON_EYE_OPEN = '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>'
@@ -248,13 +244,14 @@ def _format_deck(actual_deck, key):
         entries = actual_deck.get(str(age), {}).get(key, [])
         cards_html = []
         for entry in entries:
-            if entry == "?":
+            if entry is None:
                 cards_html.append(render_unknown())
             else:
-                m = _DECK_RE.match(entry)
-                if m:
-                    color_letter, star, name = m.group(1), m.group(2), m.group(3)
-                    cards_html.append(render_card(name, age, color_letter, star=bool(star), is_deck=True))
+                name = entry["name"]
+                card = get_card(name)
+                if card:
+                    cl = _COLOR_TO_LETTER.get(card["color"], "B")
+                    cards_html.append(render_card(name, age, cl, star=entry.get("revealed", False), is_deck=True))
                 else:
                     cards_html.append(render_unknown())
 
@@ -377,19 +374,19 @@ def format_opponent_zone(entries):
     # Parse entries into (age, is_unknown, html) tuples for sorting
     parsed = []
     for entry in entries:
-        um = _UNKNOWN_RE.match(entry)
-        if um:
-            age = int(um.group(1)) if um.group(1) else 0
-            parsed.append((age, 1, render_unknown(age if age else None, um.group(2))))
-        else:
-            star = entry.endswith(" *")
-            raw = entry[:-2] if star else entry
-            m = _CARD_RE.match(raw)
-            if m:
-                age, color_letter, name = int(m.group(1)), m.group(2), m.group(3)
-                parsed.append((age, 0, render_card(name, age, color_letter)))
+        name = entry.get("name")
+        if name:
+            card = get_card(name)
+            if card:
+                age = card["age"]
+                cl = _COLOR_TO_LETTER.get(card["color"], "B")
+                parsed.append((age, 0, render_card(name, age, cl)))
             else:
                 parsed.append((0, 1, render_unknown()))
+        else:
+            age = entry.get("age", 0)
+            card_set = "b" if entry.get("set") == 0 else "c" if entry.get("set") == 3 else None
+            parsed.append((age, 1, render_unknown(age if age else None, card_set)))
     parsed.sort(key=lambda x: (x[0], x[1]))
     cards = [html for _, _, html in parsed]
     return f'<div class="hand-row"><span class="row-label"> </span><div class="card-row">{"".join(cards)}</div></div>'
@@ -402,21 +399,22 @@ def format_my_zone(entries):
     revealed = []
     hidden = []
     for entry in entries:
-        if entry.endswith(" *"):
-            raw = entry[:-2]
-            m = _CARD_RE.match(raw)
-            if m:
-                age, color_letter, name = m.group(1), m.group(2), m.group(3)
-                revealed.append(render_card(name, int(age), color_letter, star=True))
-            else:
-                revealed.append(render_unknown())
+        name = entry.get("name")
+        if not name:
+            # Unknown card
+            age = entry.get("age")
+            card_set = "b" if entry.get("set") == 0 else "c" if entry.get("set") == 3 else None
+            hidden.append(render_unknown(age, card_set))
+            continue
+        card = get_card(name)
+        if not card:
+            hidden.append(render_unknown())
+            continue
+        cl = _COLOR_TO_LETTER.get(card["color"], "B")
+        if entry.get("revealed"):
+            revealed.append(render_card(name, card["age"], cl, star=True))
         else:
-            m = _CARD_RE.match(entry)
-            if m:
-                age, color_letter, name = m.group(1), m.group(2), m.group(3)
-                hidden.append(render_card(name, int(age), color_letter))
-            else:
-                hidden.append(render_unknown())
+            hidden.append(render_card(name, card["age"], cl))
 
     if not revealed and not hidden:
         return '<div class="card-row"><div class="empty-card">empty</div></div>'
@@ -446,19 +444,20 @@ def format_my_hand(entries):
     revealed = []
     hidden = []
     for entry in entries:
-        um = _UNKNOWN_RE.match(entry)
-        if um:
-            age = int(um.group(1)) if um.group(1) else None
-            hidden.append(render_unknown(age, um.group(2)))
+        name = entry.get("name")
+        if not name:
+            # Unknown card
+            age = entry.get("age")
+            card_set = "b" if entry.get("set") == 0 else "c" if entry.get("set") == 3 else None
+            hidden.append(render_unknown(age, card_set))
             continue
-        star = entry.endswith(" *")
-        raw = entry[:-2] if star else entry
-        m = _CARD_RE.match(raw)
-        if not m:
+        card = get_card(name)
+        if not card:
             continue
-        age, color_letter, name = m.group(1), m.group(2), m.group(3)
-        card_html = render_card(name, int(age), color_letter, star=star)
-        if star:
+        cl = _COLOR_TO_LETTER.get(card["color"], "B")
+        is_revealed = entry.get("revealed", False)
+        card_html = render_card(name, card["age"], cl, star=is_revealed)
+        if is_revealed:
             revealed.append(card_html)
         else:
             hidden.append(card_html)
@@ -765,36 +764,27 @@ def format_summary(state, table_id):
     # My hand/score — all cards known to me
     for zone in ("hand", "score"):
         for entry in state.get(zone, {}).get(me, []):
-            raw = entry[:-2] if entry.endswith(" *") else entry
-            m = _CARD_RE.match(raw)
-            if m:
-                _add_known(m.group(3))
-    # Opponent hand/score — only starred (revealed) cards
+            if "name" in entry:
+                _add_known(entry["name"])
+    # Opponent hand/score — only revealed cards
     for zone in ("hand", "score"):
         for entry in state.get(zone, {}).get(opponent, []):
-            if not entry.endswith(" *"):
-                continue
-            m = _CARD_RE.match(entry[:-2])
-            if m:
-                _add_known(m.group(3))
+            if entry.get("revealed") and "name" in entry:
+                _add_known(entry["name"])
     # Board — all cards visible
     for player_entries in state.get("board", {}).values():
         for entry in player_entries:
-            m = _CARD_RE.match(entry)
-            if m:
-                _add_known(m.group(3))
+            _add_known(entry["name"])
     # Deck — named cards (known position)
     for age_stacks in state.get("actual_deck", {}).values():
         for key in ("base", "cities"):
             for entry in age_stacks.get(key, []):
-                dm = _DECK_RE.match(entry) if entry != "?" else None
-                if dm:
-                    _add_known(dm.group(3))
+                if entry is not None:
+                    _add_known(entry["name"])
     # Achievements — deduced cards
     for entry in state.get("achievements", []):
-        m = _CARD_RE.match(entry)
-        if m:
-            _add_known(m.group(3))
+        if entry is not None:
+            _add_known(entry["name"])
 
     # --- Build named sections ---
     named = {}
@@ -838,13 +828,13 @@ def format_summary(state, table_id):
     ach_cards = []
     for i, entry in enumerate(ach_entries):
         age = i + 1
-        um = _UNKNOWN_RE.match(entry)
-        if um:
+        if entry is None:
             ach_cards.append(render_unknown(age))
         else:
-            m = _CARD_RE.match(entry)
-            if m:
-                ach_cards.append(render_card(m.group(3), int(m.group(1)), m.group(2)))
+            card = get_card(entry["name"])
+            if card:
+                cl = _COLOR_TO_LETTER.get(card["color"], "B")
+                ach_cards.append(render_card(entry["name"], card["age"], cl))
             else:
                 ach_cards.append(render_unknown(age))
     # Pad to 9 if fewer entries
@@ -992,12 +982,12 @@ def main():
         print(f"ERROR: Table directory not found: {DATA_DIR / table_id}")
         sys.exit(1)
 
-    player_json = table_dir / "game_state_player.json"
-    if not player_json.exists():
-        print(f"ERROR: File not found: {player_json}")
+    state_json = table_dir / "game_state.json"
+    if not state_json.exists():
+        print(f"ERROR: File not found: {state_json}")
         sys.exit(1)
 
-    with open(player_json) as f:
+    with open(state_json) as f:
         state = json.load(f)
 
     # Rename folder to include opponent name
