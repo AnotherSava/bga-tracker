@@ -5,7 +5,7 @@ Downloads sprites from the bga-innovation GitHub repo, then uses Pillow
 to extract individual resource icons, hexagon icons, bonus icons, and
 cities special icons.
 
-Usage: python scripts/download_assets.py
+Usage: python scripts/innovation/download_assets.py
 """
 
 import json
