@@ -1,0 +1,1667 @@
+{
+  "total_entries": 277,
+  "log": [
+    {
+      "move": 2,
+      "time": 1771650414,
+      "type": "log",
+      "msg": "TrinaCat chooses a card."
+    },
+    {
+      "move": 3,
+      "time": 1771650718,
+      "type": "log",
+      "msg": "AnotherSava chooses a card."
+    },
+    {
+      "move": 3,
+      "time": 1771650718,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Mysticism from hand."
+    },
+    {
+      "move": 3,
+      "time": 1771650718,
+      "type": "transfer",
+      "msg": "TrinaCat melds [1] Tools from hand."
+    },
+    {
+      "move": 3,
+      "time": 1771650718,
+      "type": "log",
+      "msg": "AnotherSava melded the first card in English alphabetical order (Mysticism): he plays first."
+    },
+    {
+      "move": 4,
+      "time": 1771650730,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Writing from hand."
+    },
+    {
+      "move": 4,
+      "time": 1771650730,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Uruk."
+    },
+    {
+      "move": 5,
+      "time": 1771650755,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [1] from base."
+    },
+    {
+      "move": 6,
+      "time": 1771650757,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [1] from base."
+    },
+    {
+      "move": 7,
+      "time": 1771650797,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Uruk from hand."
+    },
+    {
+      "move": 7,
+      "time": 1771650797,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] Oars."
+    },
+    {
+      "move": 7,
+      "time": 1771650797,
+      "type": "transfer",
+      "msg": "AnotherSava places [1] Oars in hand."
+    },
+    {
+      "move": 7,
+      "time": 1771650797,
+      "type": "log",
+      "msg": "The revealed cards with a [castle] will be kept and the others will be returned."
+    },
+    {
+      "move": 7,
+      "time": 1771650797,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Memphis."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 1 Mysticism with [castle] as the featured icon."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Oars from hand."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "log",
+      "msg": "TrinaCat has 1 [castle]."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "log",
+      "msg": "AnotherSava has 9 [castle]."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] Masonry."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "log",
+      "msg": "This card is yellow; AnotherSava has this color on his board."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Masonry."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Clothing."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] Domestication."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "log",
+      "msg": "This card is yellow; AnotherSava has this color on his board."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Domestication."
+    },
+    {
+      "move": 8,
+      "time": 1771650815,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Metalworking."
+    },
+    {
+      "move": 9,
+      "time": 1771653480,
+      "type": "logWithCardTooltips",
+      "msg": "TrinaCat activates the dogma of 1 Tools with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 9,
+      "time": 1771653480,
+      "type": "log",
+      "msg": "TrinaCat has 2 [lightbulb]."
+    },
+    {
+      "move": 9,
+      "time": 1771653480,
+      "type": "log",
+      "msg": "AnotherSava has 2 [lightbulb]."
+    },
+    {
+      "move": 9,
+      "time": 1771653480,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 10,
+      "time": 1771653990,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 10,
+      "time": 1771653990,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 11,
+      "time": 1771654100,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [1] from his hand from base."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [1] from his hand from base."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [1] from his hand from base."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "transfer",
+      "msg": "TrinaCat draws and melds [3] Translation."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 12,
+      "time": 1771654102,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "logWithCardTooltips",
+      "msg": "TrinaCat activates the dogma of 3 Translation with [crown] as the featured icon."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "TrinaCat has 3 [crown]."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "AnotherSava has 3 [crown]."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "log",
+      "msg": "Each top card on TrinaCat board has a [crown]."
+    },
+    {
+      "move": 13,
+      "time": 1771654114,
+      "type": "transfer",
+      "msg": "TrinaCat achieves [null] World."
+    },
+    {
+      "move": 14,
+      "time": 1771654161,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Memphis from hand."
+    },
+    {
+      "move": 14,
+      "time": 1771654161,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] City states."
+    },
+    {
+      "move": 14,
+      "time": 1771654161,
+      "type": "transfer",
+      "msg": "AnotherSava places [1] City states in hand."
+    },
+    {
+      "move": 14,
+      "time": 1771654161,
+      "type": "log",
+      "msg": "The revealed cards with a [castle] will be kept and the others will be returned."
+    },
+    {
+      "move": 14,
+      "time": 1771654161,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Thebes."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 1 Mysticism with [castle] as the featured icon."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Thebes from hand."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "log",
+      "msg": "TrinaCat has 0 [castle]."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "log",
+      "msg": "AnotherSava has 11 [castle]."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] Archery."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "log",
+      "msg": "This card is red; AnotherSava has this color on his board."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Archery."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Code of laws."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] The wheel."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "log",
+      "msg": "This card is green; AnotherSava has this color on his board."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] The wheel."
+    },
+    {
+      "move": 15,
+      "time": 1771654179,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Agriculture."
+    },
+    {
+      "move": 16,
+      "time": 1771654187,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from base."
+    },
+    {
+      "move": 17,
+      "time": 1771654190,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Alchemy from hand."
+    },
+    {
+      "move": 18,
+      "time": 1771654219,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 1 Domestication with [castle] as the featured icon."
+    },
+    {
+      "move": 18,
+      "time": 1771654219,
+      "type": "log",
+      "msg": "TrinaCat has 2 [castle]."
+    },
+    {
+      "move": 18,
+      "time": 1771654219,
+      "type": "log",
+      "msg": "AnotherSava has 10 [castle]."
+    },
+    {
+      "move": 18,
+      "time": 1771654219,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 19,
+      "time": 1771654221,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Clothing from hand."
+    },
+    {
+      "move": 19,
+      "time": 1771654221,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Sailing."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 1 Clothing with [leaf] as the featured icon."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "log",
+      "msg": "TrinaCat has 1 [leaf]."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "log",
+      "msg": "AnotherSava has 2 [leaf]."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "log",
+      "msg": "AnotherSava has four color(s) present on his board not present on any of his opponents' boards."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Canal building."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Mapmaking."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Construction."
+    },
+    {
+      "move": 20,
+      "time": 1771654225,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Philosophy."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "logWithCardTooltips",
+      "msg": "TrinaCat activates the dogma of 3 Alchemy with [castle] as the featured icon."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "TrinaCat has 2 [castle]."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "AnotherSava has 7 [castle]."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "AnotherSava has 7 [castle]."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [4] Invention."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [4] Experimentation."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "AnotherSava did not draw a red card."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "transfer",
+      "msg": "AnotherSava places [4] Invention in hand."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "transfer",
+      "msg": "AnotherSava places [4] Experimentation in hand."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "TrinaCat has 2 [castle]."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "TrinaCat did not draw a red card."
+    },
+    {
+      "move": 21,
+      "time": 1771654233,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 22,
+      "time": 1771654240,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [4] Experimentation from hand."
+    },
+    {
+      "move": 23,
+      "time": 1771654242,
+      "type": "transfer",
+      "msg": "AnotherSava scores [4] Invention from hand."
+    },
+    {
+      "move": 23,
+      "time": 1771654242,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 23,
+      "time": 1771654242,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 23,
+      "time": 1771654242,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 23,
+      "time": 1771654242,
+      "type": "log",
+      "msg": "Sharing bonus."
+    },
+    {
+      "move": 23,
+      "time": 1771654242,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from base."
+    },
+    {
+      "move": 24,
+      "time": 1771654261,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Compass from hand."
+    },
+    {
+      "move": 24,
+      "time": 1771654261,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 25,
+      "time": 1771654287,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 4 Experimentation with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 25,
+      "time": 1771654287,
+      "type": "log",
+      "msg": "TrinaCat has 0 [lightbulb]."
+    },
+    {
+      "move": 25,
+      "time": 1771654287,
+      "type": "log",
+      "msg": "AnotherSava has 4 [lightbulb]."
+    },
+    {
+      "move": 25,
+      "time": 1771654287,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 25,
+      "time": 1771654287,
+      "type": "transfer",
+      "msg": "AnotherSava draws and melds [5] Physics."
+    },
+    {
+      "move": 26,
+      "time": 1771654306,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 1 Archery with [castle] as the featured icon."
+    },
+    {
+      "move": 26,
+      "time": 1771654306,
+      "type": "log",
+      "msg": "TrinaCat has 2 [castle]."
+    },
+    {
+      "move": 26,
+      "time": 1771654306,
+      "type": "log",
+      "msg": "AnotherSava has 7 [castle]."
+    },
+    {
+      "move": 26,
+      "time": 1771654306,
+      "type": "log",
+      "msg": "TrinaCat has to execute the I demand effect."
+    },
+    {
+      "move": 26,
+      "time": 1771654306,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [2] from base."
+    },
+    {
+      "move": 26,
+      "time": 1771654306,
+      "type": "transfer",
+      "msg": "TrinaCat transfers [3] Delhi from hand to AnotherSava's hand."
+    },
+    {
+      "move": 27,
+      "time": 1771654318,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from base."
+    },
+    {
+      "move": 28,
+      "time": 1771654320,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Engineering from hand."
+    },
+    {
+      "move": 28,
+      "time": 1771654320,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 29,
+      "time": 1771654333,
+      "type": "transfer",
+      "msg": "AnotherSava melds [3] Delhi from hand."
+    },
+    {
+      "move": 29,
+      "time": 1771654333,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Amsterdam."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 1 Clothing with [leaf] as the featured icon."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Metalworking from hand."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "TrinaCat has 2 [leaf]."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has 3 [leaf]."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has two color(s) present on his board not present on any of his opponents' boards."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Mathematics."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Currency."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "log",
+      "msg": "AnotherSava has two color(s) present on his board not present on any of his opponents' boards."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Road building."
+    },
+    {
+      "move": 30,
+      "time": 1771654350,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [2] Monotheism."
+    },
+    {
+      "move": 31,
+      "time": 1771654358,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Cordoba from hand."
+    },
+    {
+      "move": 31,
+      "time": 1771654358,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Jakarta from hand."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat draws and reveals [3] Medicine."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat places [3] Medicine in hand."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat draws and reveals [3] Paper."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat places [3] Paper in hand."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat draws and reveals [3] Education."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "transfer",
+      "msg": "TrinaCat places [3] Education in hand."
+    },
+    {
+      "move": 32,
+      "time": 1771654362,
+      "type": "log",
+      "msg": "The revealed cards with a [leaf] will be kept and the others will be returned."
+    },
+    {
+      "move": 33,
+      "time": 1771654443,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [3] from his hand from base."
+    },
+    {
+      "move": 33,
+      "time": 1771654443,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [3] from his hand from base."
+    },
+    {
+      "move": 33,
+      "time": 1771654443,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 34,
+      "time": 1771654490,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 1 Domestication with [castle] as the featured icon."
+    },
+    {
+      "move": 34,
+      "time": 1771654490,
+      "type": "log",
+      "msg": "TrinaCat has 4 [castle]."
+    },
+    {
+      "move": 34,
+      "time": 1771654490,
+      "type": "log",
+      "msg": "AnotherSava has 8 [castle]."
+    },
+    {
+      "move": 34,
+      "time": 1771654490,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 35,
+      "time": 1771654512,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Agriculture from hand."
+    },
+    {
+      "move": 35,
+      "time": 1771654512,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Optics."
+    },
+    {
+      "move": 36,
+      "time": 1771654526,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 1 Agriculture with [leaf] as the featured icon."
+    },
+    {
+      "move": 36,
+      "time": 1771654526,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Sailing from hand."
+    },
+    {
+      "move": 36,
+      "time": 1771654526,
+      "type": "log",
+      "msg": "TrinaCat has 4 [leaf]."
+    },
+    {
+      "move": 36,
+      "time": 1771654526,
+      "type": "log",
+      "msg": "AnotherSava has 6 [leaf]."
+    },
+    {
+      "move": 36,
+      "time": 1771654526,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 37,
+      "time": 1771654529,
+      "type": "transfer",
+      "msg": "AnotherSava returns [5] Amsterdam from hand."
+    },
+    {
+      "move": 37,
+      "time": 1771654529,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [6] Industrialization."
+    },
+    {
+      "move": 37,
+      "time": 1771654529,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 38,
+      "time": 1771654532,
+      "type": "transfer",
+      "msg": "AnotherSava returns [3] Optics from hand."
+    },
+    {
+      "move": 38,
+      "time": 1771654532,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [4] Navigation."
+    },
+    {
+      "move": 39,
+      "time": 1771654559,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Barcelona from hand."
+    },
+    {
+      "move": 39,
+      "time": 1771654559,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [4] from base."
+    },
+    {
+      "move": 40,
+      "time": 1771654562,
+      "type": "transfer",
+      "msg": "TrinaCat melds [4] Printing press from hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 5 Physics with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Code of laws from hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "log",
+      "msg": "TrinaCat has 3 [lightbulb]."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "log",
+      "msg": "AnotherSava has 6 [lightbulb]."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Encyclopedia."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Metric system."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Canning."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "log",
+      "msg": "All the cards AnotherSava drew have different colors."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Encyclopedia in hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Metric system in hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Canning in hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Atomic theory."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Classification."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Democracy."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "log",
+      "msg": "All the cards AnotherSava drew have different colors."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Atomic theory in hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Classification in hand."
+    },
+    {
+      "move": 41,
+      "time": 1771654641,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Democracy in hand."
+    },
+    {
+      "move": 42,
+      "time": 1771654669,
+      "type": "transfer",
+      "msg": "AnotherSava melds [6] Atomic theory from hand."
+    },
+    {
+      "move": 43,
+      "time": 1771654934,
+      "type": "transfer",
+      "msg": "TrinaCat melds [2] Calendar from hand."
+    },
+    {
+      "move": 44,
+      "time": 1771654937,
+      "type": "logWithCardTooltips",
+      "msg": "TrinaCat endorses the dogma of 3 Compass with [crown] as the featured icon."
+    },
+    {
+      "move": 44,
+      "time": 1771654937,
+      "type": "transfer",
+      "msg": "TrinaCat tucks [3] Medicine from hand."
+    },
+    {
+      "move": 44,
+      "time": 1771654937,
+      "type": "log",
+      "msg": "TrinaCat has 7 [crown]."
+    },
+    {
+      "move": 44,
+      "time": 1771654937,
+      "type": "log",
+      "msg": "AnotherSava has 1 [crown]."
+    },
+    {
+      "move": 44,
+      "time": 1771654937,
+      "type": "log",
+      "msg": "AnotherSava has to execute the I demand effect."
+    },
+    {
+      "move": 45,
+      "time": 1771655390,
+      "type": "transfer",
+      "msg": "AnotherSava moves [1] Agriculture (board -> board)."
+    },
+    {
+      "move": 45,
+      "time": 1771655390,
+      "type": "transfer",
+      "msg": "AnotherSava moves [3] Barcelona (board -> board)."
+    },
+    {
+      "move": 45,
+      "time": 1771655390,
+      "type": "log",
+      "msg": "AnotherSava has to execute the I demand effect again because it was endorsed."
+    },
+    {
+      "move": 45,
+      "time": 1771655390,
+      "type": "log",
+      "msg": "No card matches the criteria of the effect."
+    },
+    {
+      "move": 45,
+      "time": 1771655390,
+      "type": "transfer",
+      "msg": "AnotherSava moves [3] Engineering (board -> board)."
+    },
+    {
+      "move": 46,
+      "time": 1771655427,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 6 Atomic theory with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 46,
+      "time": 1771655427,
+      "type": "log",
+      "msg": "TrinaCat has 2 [lightbulb]."
+    },
+    {
+      "move": 46,
+      "time": 1771655427,
+      "type": "log",
+      "msg": "AnotherSava has 6 [lightbulb]."
+    },
+    {
+      "move": 46,
+      "time": 1771655427,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 47,
+      "time": 1771655429,
+      "type": "transfer",
+      "msg": "AnotherSava draws [6] New York City."
+    },
+    {
+      "move": 47,
+      "time": 1771655429,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 47,
+      "time": 1771655429,
+      "type": "transfer",
+      "msg": "AnotherSava draws and melds [7] Lighting."
+    },
+    {
+      "move": 48,
+      "time": 1771655477,
+      "type": "transfer",
+      "msg": "AnotherSava melds [6] Encyclopedia from hand."
+    },
+    {
+      "move": 49,
+      "time": 1771667211,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from base."
+    },
+    {
+      "move": 50,
+      "time": 1771667213,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Feudalism from hand."
+    },
+    {
+      "move": 50,
+      "time": 1771667213,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 51,
+      "time": 1771695009,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [1] from base."
+    },
+    {
+      "move": 52,
+      "time": 1771695013,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [2] from base."
+    },
+    {
+      "move": 53,
+      "time": 1771751154,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Baghdad from hand."
+    },
+    {
+      "move": 53,
+      "time": 1771751154,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 54,
+      "time": 1771751187,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Constantinople from hand."
+    },
+    {
+      "move": 54,
+      "time": 1771751187,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 55,
+      "time": 1771782000,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [3] from base."
+    },
+    {
+      "move": 56,
+      "time": 1771782002,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [4] from base."
+    },
+    {
+      "move": 57,
+      "time": 1771826416,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Kaifeng from hand."
+    },
+    {
+      "move": 57,
+      "time": 1771826416,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Mecca from hand."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat draws and reveals [3] Education."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat places [3] Education in hand."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat draws and reveals [3] Paper."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat places [3] Paper in hand."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat draws and reveals [3] Optics."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "transfer",
+      "msg": "TrinaCat places [3] Optics in hand."
+    },
+    {
+      "move": 58,
+      "time": 1771826424,
+      "type": "log",
+      "msg": "The revealed cards with a [leaf] will be kept and the others will be returned."
+    },
+    {
+      "move": 59,
+      "time": 1771826459,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [3] from his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771826461,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [3] from his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771826461,
+      "type": "transfer",
+      "msg": "TrinaCat returns a [3] from his hand from base."
+    },
+    {
+      "move": 61,
+      "time": 1771826581,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [5] from base."
+    },
+    {
+      "move": 62,
+      "time": 1771826583,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [6] from base."
+    },
+    {
+      "move": 63,
+      "time": 1771826597,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from base."
+    },
+    {
+      "move": 64,
+      "time": 1771826599,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Paper from hand."
+    },
+    {
+      "move": 65,
+      "time": 1771826623,
+      "type": "transfer",
+      "msg": "AnotherSava melds [6] New York City from hand."
+    },
+    {
+      "move": 65,
+      "time": 1771826623,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Sanitation."
+    },
+    {
+      "move": 65,
+      "time": 1771826623,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Railroad."
+    },
+    {
+      "move": 66,
+      "time": 1771826636,
+      "type": "transfer",
+      "msg": "AnotherSava melds [7] Railroad from hand."
+    },
+    {
+      "move": 67,
+      "time": 1771826713,
+      "type": "logWithCardTooltips",
+      "msg": "TrinaCat activates the dogma of 3 Paper with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 67,
+      "time": 1771826713,
+      "type": "log",
+      "msg": "TrinaCat has 4 [lightbulb]."
+    },
+    {
+      "move": 67,
+      "time": 1771826713,
+      "type": "log",
+      "msg": "AnotherSava has 8 [lightbulb]."
+    },
+    {
+      "move": 67,
+      "time": 1771826713,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Munich."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "No stack matches the criteria of the effect for splaying."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "AnotherSava has 2 colors splayed left."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Gunpowder."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Reformation."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "TrinaCat has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "TrinaCat has 4 colors splayed left."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [4] from base."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [4] from base."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [4] from base."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [5] from base."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "log",
+      "msg": "Sharing bonus."
+    },
+    {
+      "move": 68,
+      "time": 1771826867,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from base."
+    },
+    {
+      "move": 69,
+      "time": 1771826901,
+      "type": "transfer",
+      "msg": "TrinaCat melds [3] Optics from hand."
+    },
+    {
+      "move": 69,
+      "time": 1771826901,
+      "type": "transfer",
+      "msg": "TrinaCat draws a [3] from cities."
+    },
+    {
+      "move": 70,
+      "time": 1771826909,
+      "type": "transfer",
+      "msg": "AnotherSava melds [7] Munich from hand."
+    },
+    {
+      "move": 70,
+      "time": 1771826909,
+      "type": "transfer",
+      "msg": "AnotherSava achieves [null] Repute."
+    },
+    {
+      "move": 70,
+      "time": 1771826909,
+      "type": "transfer",
+      "msg": "AnotherSava draws [8] Antibiotics."
+    },
+    {
+      "move": 71,
+      "time": 1771826951,
+      "type": "transfer",
+      "msg": "AnotherSava melds [4] Gunpowder from hand."
+    },
+    {
+      "move": 71,
+      "time": 1771826951,
+      "type": "transfer",
+      "msg": "AnotherSava achieves [null] Empire."
+    },
+    {
+      "move": 71,
+      "time": 1771826951,
+      "type": "log",
+      "msg": "END OF GAME BY ACHIEVEMENTS: AnotherSava has got 8 achievements. He wins!"
+    }
+  ]
+}

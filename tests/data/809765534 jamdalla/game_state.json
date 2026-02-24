@@ -1,0 +1,506 @@
+{
+  "actual_deck": {
+    "1": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "2": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "3": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "4": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "5": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "6": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        {
+          "name": "Paris",
+          "revealed": true
+        }
+      ]
+    },
+    "7": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "8": {
+      "base": [
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "9": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "10": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "board": {
+    "AnotherSava": [
+      {
+        "name": "Writing"
+      },
+      {
+        "name": "Archery"
+      },
+      {
+        "name": "Metalworking"
+      },
+      {
+        "name": "Babylon"
+      },
+      {
+        "name": "Clothing"
+      },
+      {
+        "name": "Jerusalem"
+      },
+      {
+        "name": "Carthage"
+      },
+      {
+        "name": "Construction"
+      },
+      {
+        "name": "Currency"
+      },
+      {
+        "name": "Fermenting"
+      },
+      {
+        "name": "Monotheism"
+      },
+      {
+        "name": "Philosophy"
+      },
+      {
+        "name": "Rome"
+      },
+      {
+        "name": "Delhi"
+      },
+      {
+        "name": "Optics"
+      },
+      {
+        "name": "Compass"
+      },
+      {
+        "name": "Paper"
+      },
+      {
+        "name": "Machinery"
+      },
+      {
+        "name": "Medicine"
+      },
+      {
+        "name": "Education"
+      },
+      {
+        "name": "Feudalism"
+      },
+      {
+        "name": "Colonialism"
+      },
+      {
+        "name": "Gunpowder"
+      },
+      {
+        "name": "Invention"
+      },
+      {
+        "name": "Navigation"
+      },
+      {
+        "name": "Anatomy"
+      },
+      {
+        "name": "Perspective"
+      },
+      {
+        "name": "Reformation"
+      },
+      {
+        "name": "The Pirate Code"
+      },
+      {
+        "name": "Measurement"
+      },
+      {
+        "name": "Stockholm"
+      },
+      {
+        "name": "Statistics"
+      },
+      {
+        "name": "Steam Engine"
+      },
+      {
+        "name": "Astronomy"
+      },
+      {
+        "name": "Edinburgh"
+      },
+      {
+        "name": "Machine Tools"
+      },
+      {
+        "name": "Canning"
+      },
+      {
+        "name": "Democracy"
+      },
+      {
+        "name": "Flight"
+      }
+    ],
+    "jamdalla": [
+      {
+        "name": "Tools"
+      },
+      {
+        "name": "Troy"
+      },
+      {
+        "name": "Athens"
+      },
+      {
+        "name": "Oars"
+      },
+      {
+        "name": "Sailing"
+      },
+      {
+        "name": "The Wheel"
+      },
+      {
+        "name": "Agriculture"
+      },
+      {
+        "name": "Damascus"
+      },
+      {
+        "name": "Domestication"
+      },
+      {
+        "name": "Masonry"
+      },
+      {
+        "name": "City States"
+      },
+      {
+        "name": "Code of Laws"
+      },
+      {
+        "name": "Mysticism"
+      },
+      {
+        "name": "Calendar"
+      },
+      {
+        "name": "Mapmaking"
+      },
+      {
+        "name": "Canal Building"
+      },
+      {
+        "name": "Cordoba"
+      },
+      {
+        "name": "Baghdad"
+      },
+      {
+        "name": "Mecca"
+      },
+      {
+        "name": "Chemistry"
+      },
+      {
+        "name": "Physics"
+      },
+      {
+        "name": "Publications"
+      },
+      {
+        "name": "Electricity"
+      },
+      {
+        "name": "Rocketry"
+      }
+    ]
+  },
+  "hand": {
+    "AnotherSava": [
+      {
+        "name": "Experimentation",
+        "revealed": true
+      },
+      {
+        "name": "Atomic Theory",
+        "revealed": true
+      },
+      {
+        "name": "Classification",
+        "revealed": true
+      },
+      {
+        "name": "Vaccination",
+        "revealed": true
+      },
+      {
+        "name": "Emancipation",
+        "revealed": true
+      },
+      {
+        "name": "Explosives",
+        "revealed": true
+      },
+      {
+        "name": "Lighting",
+        "revealed": true
+      },
+      {
+        "name": "Railroad",
+        "revealed": true
+      }
+    ],
+    "jamdalla": [
+      {
+        "name": "Encyclopedia",
+        "revealed": true
+      },
+      {
+        "age": 7,
+        "set": 0
+      },
+      {
+        "age": 7,
+        "set": 0
+      },
+      {
+        "age": 7,
+        "set": 3
+      },
+      {
+        "age": 8,
+        "set": 0
+      }
+    ]
+  },
+  "score": {
+    "AnotherSava": [
+      {
+        "name": "Hangzhou",
+        "revealed": false
+      },
+      {
+        "name": "Engineering",
+        "revealed": true
+      },
+      {
+        "name": "Coal",
+        "revealed": true
+      },
+      {
+        "name": "Antibiotics",
+        "revealed": false
+      },
+      {
+        "name": "Empiricism",
+        "revealed": false
+      },
+      {
+        "name": "Socialism",
+        "revealed": false
+      }
+    ],
+    "jamdalla": [
+      {
+        "name": "Mathematics",
+        "revealed": true
+      },
+      {
+        "name": "Translation",
+        "revealed": true
+      },
+      {
+        "name": "Enterprise",
+        "revealed": true
+      },
+      {
+        "name": "Societies",
+        "revealed": true
+      },
+      {
+        "name": "Industrialization",
+        "revealed": true
+      },
+      {
+        "name": "Combustion",
+        "revealed": true
+      },
+      {
+        "name": "Refrigeration",
+        "revealed": true
+      }
+    ]
+  },
+  "achievements": [
+    {
+      "name": "Pottery"
+    },
+    {
+      "name": "Road Building"
+    },
+    {
+      "name": "Alchemy"
+    },
+    {
+      "name": "Printing Press"
+    },
+    {
+      "name": "Banking"
+    },
+    {
+      "name": "Metric System"
+    },
+    null,
+    null,
+    null
+  ]
+}

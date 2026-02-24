@@ -1,0 +1,2651 @@
+{
+  "total_entries": 441,
+  "log": [
+    {
+      "move": 2,
+      "time": 1771635061,
+      "type": "log",
+      "msg": "AnotherSava chooses a card."
+    },
+    {
+      "move": 3,
+      "time": 1771635403,
+      "type": "log",
+      "msg": "jamdalla chooses a card."
+    },
+    {
+      "move": 3,
+      "time": 1771635403,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Clothing from hand."
+    },
+    {
+      "move": 3,
+      "time": 1771635403,
+      "type": "transfer",
+      "msg": "jamdalla melds [1] The wheel from hand."
+    },
+    {
+      "move": 3,
+      "time": 1771635403,
+      "type": "log",
+      "msg": "AnotherSava melded the first card in English alphabetical order (Clothing): he plays first."
+    },
+    {
+      "move": 4,
+      "time": 1771635438,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Archery from hand."
+    },
+    {
+      "move": 4,
+      "time": 1771635438,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Jerusalem."
+    },
+    {
+      "move": 5,
+      "time": 1771635626,
+      "type": "transfer",
+      "msg": "jamdalla melds [1] Code of laws from hand."
+    },
+    {
+      "move": 5,
+      "time": 1771635626,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from cities."
+    },
+    {
+      "move": 6,
+      "time": 1771635631,
+      "type": "transfer",
+      "msg": "jamdalla melds [1] Athens from hand."
+    },
+    {
+      "move": 6,
+      "time": 1771635631,
+      "type": "transfer",
+      "msg": "jamdalla draws a [2] from base."
+    },
+    {
+      "move": 6,
+      "time": 1771635631,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from cities."
+    },
+    {
+      "move": 7,
+      "time": 1771635986,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Jerusalem from hand."
+    },
+    {
+      "move": 7,
+      "time": 1771635986,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [1] Metalworking."
+    },
+    {
+      "move": 7,
+      "time": 1771635986,
+      "type": "transfer",
+      "msg": "AnotherSava places [1] Metalworking in hand."
+    },
+    {
+      "move": 7,
+      "time": 1771635986,
+      "type": "log",
+      "msg": "The revealed cards with a [castle] will be kept and the others will be returned."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 1 Archery with [castle] as the featured icon."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Metalworking from hand."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "log",
+      "msg": "AnotherSava has 5 [castle]."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "log",
+      "msg": "jamdalla has 3 [castle]."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "transfer",
+      "msg": "jamdalla transfers [2] Currency from hand to AnotherSava's hand."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect again because it was endorsed."
+    },
+    {
+      "move": 8,
+      "time": 1771635995,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 9,
+      "time": 1771636288,
+      "type": "transfer",
+      "msg": "jamdalla transfers [1] Writing from hand to AnotherSava's hand."
+    },
+    {
+      "move": 10,
+      "time": 1771636294,
+      "type": "transfer",
+      "msg": "jamdalla melds [1] Damascus from hand."
+    },
+    {
+      "move": 10,
+      "time": 1771636294,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [1] Sailing."
+    },
+    {
+      "move": 10,
+      "time": 1771636294,
+      "type": "transfer",
+      "msg": "jamdalla places [1] Sailing in hand."
+    },
+    {
+      "move": 10,
+      "time": 1771636294,
+      "type": "log",
+      "msg": "The revealed cards with a [castle] will be kept and the others will be returned."
+    },
+    {
+      "move": 10,
+      "time": 1771636294,
+      "type": "transfer",
+      "msg": "jamdalla returns a [1] from his hand from base."
+    },
+    {
+      "move": 10,
+      "time": 1771636294,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from cities."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla endorses the dogma of 1 The wheel with [castle] as the featured icon."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] Troy from hand."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "log",
+      "msg": "AnotherSava has 5 [castle]."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "log",
+      "msg": "jamdalla has 6 [castle]."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 11,
+      "time": 1771636303,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 12,
+      "time": 1771636367,
+      "type": "transfer",
+      "msg": "AnotherSava melds [1] Writing from hand."
+    },
+    {
+      "move": 12,
+      "time": 1771636367,
+      "type": "transfer",
+      "msg": "AnotherSava draws [1] Babylon."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 1 Writing with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [1] Babylon from hand."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "log",
+      "msg": "AnotherSava has 5 [lightbulb]."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "log",
+      "msg": "jamdalla has 3 [lightbulb]."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "transfer",
+      "msg": "AnotherSava draws [2] Construction."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 13,
+      "time": 1771636376,
+      "type": "transfer",
+      "msg": "AnotherSava draws [2] Monotheism."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla endorses the dogma of 1 The wheel with [castle] as the featured icon."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] Tools from hand."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "log",
+      "msg": "AnotherSava has 5 [castle]."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "log",
+      "msg": "jamdalla has 6 [castle]."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "transfer",
+      "msg": "jamdalla draws a [1] from base."
+    },
+    {
+      "move": 14,
+      "time": 1771674997,
+      "type": "transfer",
+      "msg": "jamdalla draws a [2] from base."
+    },
+    {
+      "move": 15,
+      "time": 1771675019,
+      "type": "transfer",
+      "msg": "jamdalla melds [1] Masonry from hand."
+    },
+    {
+      "move": 16,
+      "time": 1771694946,
+      "type": "transfer",
+      "msg": "AnotherSava melds [2] Monotheism from hand."
+    },
+    {
+      "move": 16,
+      "time": 1771694946,
+      "type": "transfer",
+      "msg": "AnotherSava draws [2] Carthage."
+    },
+    {
+      "move": 17,
+      "time": 1771694956,
+      "type": "transfer",
+      "msg": "AnotherSava melds [2] Carthage from hand."
+    },
+    {
+      "move": 17,
+      "time": 1771694956,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Medicine."
+    },
+    {
+      "move": 18,
+      "time": 1771695956,
+      "type": "transfer",
+      "msg": "jamdalla melds [1] Oars from hand."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Oars with [castle] as the featured icon."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "log",
+      "msg": "AnotherSava has 8 [castle]."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "log",
+      "msg": "jamdalla has 10 [castle]."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "log",
+      "msg": "AnotherSava has to execute the I demand effect."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [2] Currency from hand to jamdalla's score pile."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "transfer",
+      "msg": "AnotherSava draws [2] Philosophy."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [3] Medicine from hand to jamdalla's score pile."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "transfer",
+      "msg": "AnotherSava draws [2] Fermenting."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava reveals his hand: 2 Construction, 2 Philosophy, 2 Fermenting."
+    },
+    {
+      "move": 19,
+      "time": 1771695965,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 20,
+      "time": 1771696706,
+      "type": "transfer",
+      "msg": "AnotherSava melds [2] Fermenting from hand."
+    },
+    {
+      "move": 20,
+      "time": 1771696706,
+      "type": "transfer",
+      "msg": "AnotherSava draws [2] Rome."
+    },
+    {
+      "move": 21,
+      "time": 1771696730,
+      "type": "transfer",
+      "msg": "AnotherSava melds [2] Philosophy from hand."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla endorses the dogma of 1 The wheel with [castle] as the featured icon."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] Sailing from hand."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "log",
+      "msg": "AnotherSava has 6 [castle]."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "log",
+      "msg": "jamdalla has 10 [castle]."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "transfer",
+      "msg": "jamdalla draws a [2] from base."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "transfer",
+      "msg": "jamdalla draws a [2] from base."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "transfer",
+      "msg": "jamdalla draws a [2] from base."
+    },
+    {
+      "move": 22,
+      "time": 1771696853,
+      "type": "transfer",
+      "msg": "jamdalla draws a [3] from base."
+    },
+    {
+      "move": 23,
+      "time": 1771696875,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Code of laws with [crown] as the featured icon."
+    },
+    {
+      "move": 23,
+      "time": 1771696875,
+      "type": "log",
+      "msg": "AnotherSava has 3 [crown]."
+    },
+    {
+      "move": 23,
+      "time": 1771696875,
+      "type": "log",
+      "msg": "jamdalla has 6 [crown]."
+    },
+    {
+      "move": 23,
+      "time": 1771696875,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 24,
+      "time": 1771696886,
+      "type": "transfer",
+      "msg": "jamdalla tucks [2] Calendar from hand."
+    },
+    {
+      "move": 25,
+      "time": 1771696890,
+      "type": "transfer",
+      "msg": "jamdalla draws a [3] from cities."
+    },
+    {
+      "move": 26,
+      "time": 1771697854,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 2 Philosophy with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 26,
+      "time": 1771697854,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [2] Rome from hand."
+    },
+    {
+      "move": 26,
+      "time": 1771697854,
+      "type": "log",
+      "msg": "AnotherSava has 7 [lightbulb]."
+    },
+    {
+      "move": 26,
+      "time": 1771697854,
+      "type": "log",
+      "msg": "jamdalla has 1 [lightbulb]."
+    },
+    {
+      "move": 26,
+      "time": 1771697854,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 27,
+      "time": 1771697862,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Delhi."
+    },
+    {
+      "move": 27,
+      "time": 1771697862,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 28,
+      "time": 1771697878,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 28,
+      "time": 1771697878,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 29,
+      "time": 1771697887,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 29,
+      "time": 1771697887,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 30,
+      "time": 1771697891,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 31,
+      "time": 1771697893,
+      "type": "transfer",
+      "msg": "AnotherSava melds [3] Delhi from hand."
+    },
+    {
+      "move": 31,
+      "time": 1771697893,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Hangzhou."
+    },
+    {
+      "move": 32,
+      "time": 1771697961,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla endorses the dogma of 1 Code of laws with [crown] as the featured icon."
+    },
+    {
+      "move": 32,
+      "time": 1771697961,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] Agriculture from hand."
+    },
+    {
+      "move": 32,
+      "time": 1771697961,
+      "type": "log",
+      "msg": "AnotherSava has 3 [crown]."
+    },
+    {
+      "move": 32,
+      "time": 1771697961,
+      "type": "log",
+      "msg": "jamdalla has 6 [crown]."
+    },
+    {
+      "move": 32,
+      "time": 1771697961,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 33,
+      "time": 1771697964,
+      "type": "transfer",
+      "msg": "jamdalla tucks [3] Mecca from hand."
+    },
+    {
+      "move": 34,
+      "time": 1771697967,
+      "type": "transfer",
+      "msg": "jamdalla draws a [3] from cities."
+    },
+    {
+      "move": 34,
+      "time": 1771697967,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 35,
+      "time": 1771697977,
+      "type": "transfer",
+      "msg": "jamdalla tucks [3] Baghdad from hand."
+    },
+    {
+      "move": 36,
+      "time": 1771697980,
+      "type": "transfer",
+      "msg": "jamdalla draws a [3] from cities."
+    },
+    {
+      "move": 37,
+      "time": 1771697985,
+      "type": "transfer",
+      "msg": "jamdalla achieves a [1] from base."
+    },
+    {
+      "move": 38,
+      "time": 1771698039,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 2 Philosophy with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 38,
+      "time": 1771698039,
+      "type": "log",
+      "msg": "AnotherSava has 9 [lightbulb]."
+    },
+    {
+      "move": 38,
+      "time": 1771698039,
+      "type": "log",
+      "msg": "jamdalla has 1 [lightbulb]."
+    },
+    {
+      "move": 38,
+      "time": 1771698039,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 39,
+      "time": 1771698040,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 40,
+      "time": 1771698061,
+      "type": "transfer",
+      "msg": "AnotherSava scores [3] Hangzhou from hand."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 2 Fermenting with [leaf] as the featured icon."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [2] Construction from hand."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "log",
+      "msg": "AnotherSava has 4 [leaf]."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "log",
+      "msg": "jamdalla has 3 [leaf]."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "log",
+      "msg": "AnotherSava has three colors with one or more [leaf]."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Feudalism."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Education."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Machinery."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "log",
+      "msg": "AnotherSava has three colors with one or more [leaf]."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Optics."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Paper."
+    },
+    {
+      "move": 41,
+      "time": 1771698066,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Engineering."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Oars with [castle] as the featured icon."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "log",
+      "msg": "AnotherSava has 9 [castle]."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "log",
+      "msg": "jamdalla has 11 [castle]."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "log",
+      "msg": "AnotherSava has to execute the I demand effect."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [3] Optics from hand to jamdalla's score pile."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava draws [3] Compass."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [3] Paper from hand to jamdalla's score pile."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Enterprise."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [4] Enterprise from hand to jamdalla's score pile."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Colonialism."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [3] Compass from hand to jamdalla's score pile."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Navigation."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [4] Navigation from hand to jamdalla's score pile."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Reformation."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava reveals his hand: 3 Feudalism, 4 Colonialism, 3 Education, 4 Reformation, 3 Machinery, 3 Engineering."
+    },
+    {
+      "move": 42,
+      "time": 1771700051,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 43,
+      "time": 1771700199,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Code of laws with [crown] as the featured icon."
+    },
+    {
+      "move": 43,
+      "time": 1771700199,
+      "type": "log",
+      "msg": "AnotherSava has 4 [crown]."
+    },
+    {
+      "move": 43,
+      "time": 1771700199,
+      "type": "log",
+      "msg": "jamdalla has 6 [crown]."
+    },
+    {
+      "move": 43,
+      "time": 1771700199,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 44,
+      "time": 1771700202,
+      "type": "transfer",
+      "msg": "jamdalla tucks [2] Canal building from hand."
+    },
+    {
+      "move": 46,
+      "time": 1771701431,
+      "type": "transfer",
+      "msg": "AnotherSava melds [4] Reformation from hand."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 2 Fermenting with [leaf] as the featured icon."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Feudalism from hand."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "log",
+      "msg": "AnotherSava has 7 [leaf]."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "log",
+      "msg": "jamdalla has 4 [leaf]."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "log",
+      "msg": "AnotherSava has four colors with one or more [leaf]."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Gunpowder."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Invention."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Experimentation."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Anatomy."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "log",
+      "msg": "AnotherSava has four colors with one or more [leaf]."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [4] Perspective."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Societies."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Measurement."
+    },
+    {
+      "move": 47,
+      "time": 1771701439,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Steam engine."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Oars with [castle] as the featured icon."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "log",
+      "msg": "AnotherSava has 10 [castle]."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "log",
+      "msg": "jamdalla has 11 [castle]."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "log",
+      "msg": "AnotherSava has to execute the I demand effect."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [5] Societies from hand to jamdalla's score pile."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Coal."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [4] Gunpowder from hand to jamdalla's score pile."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Statistics."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [5] Steam engine from hand to jamdalla's score pile."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Astronomy."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [5] Astronomy from hand to jamdalla's score pile."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Physics."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava reveals his hand: 3 Education, 4 Colonialism, 5 Measurement, 3 Machinery, 4 Invention, 5 Coal, 3 Engineering, 4 Experimentation, 5 Statistics, 4 Anatomy, 5 Physics, 4 Perspective."
+    },
+    {
+      "move": 48,
+      "time": 1771705504,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 49,
+      "time": 1771705524,
+      "type": "transfer",
+      "msg": "jamdalla melds [3] Cordoba from hand."
+    },
+    {
+      "move": 49,
+      "time": 1771705524,
+      "type": "transfer",
+      "msg": "jamdalla achieves [null] Legend."
+    },
+    {
+      "move": 50,
+      "time": 1771705702,
+      "type": "transfer",
+      "msg": "AnotherSava melds [5] Statistics from hand."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 5 Statistics with [leaf] as the featured icon."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Education from hand."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "log",
+      "msg": "AnotherSava has 7 [leaf]."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "log",
+      "msg": "jamdalla has 4 [leaf]."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [5] from his score pile to his hand from base."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [5] from his score pile to his hand from base."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [5] from his score pile to his hand from base."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect again because it was endorsed."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [4] from his score pile to his hand from base."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [4] from his score pile to his hand from base."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [4] from his score pile to his hand from base."
+    },
+    {
+      "move": 51,
+      "time": 1771705707,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 52,
+      "time": 1771705720,
+      "type": "transfer",
+      "msg": "AnotherSava draws [5] Stockholm."
+    },
+    {
+      "move": 52,
+      "time": 1771705720,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 52,
+      "time": 1771705720,
+      "type": "log",
+      "msg": "No stack matches the criteria of the effect for splaying."
+    },
+    {
+      "move": 53,
+      "time": 1771710154,
+      "type": "transfer",
+      "msg": "jamdalla achieves a [3] from base."
+    },
+    {
+      "move": 54,
+      "time": 1771710159,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Masonry with [castle] as the featured icon."
+    },
+    {
+      "move": 54,
+      "time": 1771710159,
+      "type": "log",
+      "msg": "AnotherSava has 9 [castle]."
+    },
+    {
+      "move": 54,
+      "time": 1771710159,
+      "type": "log",
+      "msg": "jamdalla has 10 [castle]."
+    },
+    {
+      "move": 54,
+      "time": 1771710159,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 55,
+      "time": 1771710162,
+      "type": "transfer",
+      "msg": "jamdalla tucks [2] Mapmaking from hand."
+    },
+    {
+      "move": 56,
+      "time": 1771710165,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] Domestication from hand."
+    },
+    {
+      "move": 57,
+      "time": 1771710176,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] City states from hand."
+    },
+    {
+      "move": 58,
+      "time": 1771710179,
+      "type": "transfer",
+      "msg": "jamdalla tucks [1] Mysticism from hand."
+    },
+    {
+      "move": 59,
+      "time": 1771710182,
+      "type": "log",
+      "msg": "At least four cards have been melded."
+    },
+    {
+      "move": 59,
+      "time": 1771710182,
+      "type": "transfer",
+      "msg": "jamdalla achieves [null] Monument."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 5 Statistics with [leaf] as the featured icon."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Engineering from hand."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "AnotherSava has 9 [leaf]."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "jamdalla has 4 [leaf]."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect again because it was endorsed."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "transfer",
+      "msg": "jamdalla transfers a [2] from his score pile to his hand from base."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "No stack matches the criteria of the effect for splaying."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 60,
+      "time": 1771711175,
+      "type": "log",
+      "msg": "No stack matches the criteria of the effect for splaying."
+    },
+    {
+      "move": 61,
+      "time": 1771711185,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 4 Reformation with [leaf] as the featured icon."
+    },
+    {
+      "move": 61,
+      "time": 1771711185,
+      "type": "log",
+      "msg": "AnotherSava has 9 [leaf]."
+    },
+    {
+      "move": 61,
+      "time": 1771711185,
+      "type": "log",
+      "msg": "jamdalla has 4 [leaf]."
+    },
+    {
+      "move": 61,
+      "time": 1771711185,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 61,
+      "time": 1771711185,
+      "type": "log",
+      "msg": "AnotherSava has 9 [leaf]."
+    },
+    {
+      "move": 62,
+      "time": 1771711187,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [5] Stockholm from hand."
+    },
+    {
+      "move": 62,
+      "time": 1771711187,
+      "type": "transfer",
+      "msg": "AnotherSava achieves [null] Glory."
+    },
+    {
+      "move": 63,
+      "time": 1771711206,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [5] Coal from hand."
+    },
+    {
+      "move": 64,
+      "time": 1771711211,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [5] Measurement from hand."
+    },
+    {
+      "move": 65,
+      "time": 1771711216,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [4] Anatomy from hand."
+    },
+    {
+      "move": 65,
+      "time": 1771711216,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 66,
+      "time": 1771711238,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Mysticism with [castle] as the featured icon."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "log",
+      "msg": "AnotherSava has 10 [castle]."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "log",
+      "msg": "jamdalla has 13 [castle]."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [5] Chemistry."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "log",
+      "msg": "This card is blue; jamdalla has this color on his board."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "transfer",
+      "msg": "jamdalla melds [5] Chemistry."
+    },
+    {
+      "move": 67,
+      "time": 1771712675,
+      "type": "transfer",
+      "msg": "jamdalla draws a [5] from base."
+    },
+    {
+      "move": 68,
+      "time": 1771712730,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 5 Chemistry with [factory] as the featured icon."
+    },
+    {
+      "move": 68,
+      "time": 1771712730,
+      "type": "log",
+      "msg": "AnotherSava has 0 [factory]."
+    },
+    {
+      "move": 68,
+      "time": 1771712730,
+      "type": "log",
+      "msg": "jamdalla has 2 [factory]."
+    },
+    {
+      "move": 68,
+      "time": 1771712730,
+      "type": "log",
+      "msg": "jamdalla has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 69,
+      "time": 1771712732,
+      "type": "transfer",
+      "msg": "jamdalla draws a [6] from cities."
+    },
+    {
+      "move": 69,
+      "time": 1771712732,
+      "type": "log",
+      "msg": "jamdalla has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 69,
+      "time": 1771712732,
+      "type": "transfer",
+      "msg": "jamdalla draws and scores a [6] from base."
+    },
+    {
+      "move": 69,
+      "time": 1771712732,
+      "type": "transfer",
+      "msg": "jamdalla returns a [6] from his score pile from base."
+    },
+    {
+      "move": 70,
+      "time": 1771712916,
+      "type": "transfer",
+      "msg": "AnotherSava melds [3] Machinery from hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 3 Machinery with [leaf] as the featured icon."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "log",
+      "msg": "AnotherSava has 12 [leaf]."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "log",
+      "msg": "jamdalla has 5 [leaf]."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [2] Mathematics from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [3] Translation from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [4] Enterprise from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [5] Societies from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [6] Edinburgh from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [2] Currency from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [3] Medicine from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [4] Navigation from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [5] Steam engine from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [3] Optics from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [4] Gunpowder from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [5] Astronomy from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [3] Paper from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [5] The pirate code from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "jamdalla transfers [3] Compass from hand to AnotherSava's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [5] Physics from hand to jamdalla's hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava reveals his hand: 2 Mathematics, 3 Translation, 6 Edinburgh, 5 Societies, 4 Colonialism, 2 Currency, 5 Steam engine, 4 Invention, 3 Medicine, 4 Experimentation, 5 Astronomy, 3 Optics, 4 Perspective, 5 The pirate code, 3 Paper, 4 Enterprise, 3 Compass, 4 Navigation, 4 Gunpowder."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "log",
+      "msg": "AnotherSava has no cards with a [castle] in his hand."
+    },
+    {
+      "move": 71,
+      "time": 1771712919,
+      "type": "log",
+      "msg": "No stack matches the criteria of the effect for splaying."
+    },
+    {
+      "move": 72,
+      "time": 1771731617,
+      "type": "transfer",
+      "msg": "jamdalla melds [5] Physics from hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 5 Physics with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "AnotherSava has 8 [lightbulb]."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "jamdalla has 4 [lightbulb]."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Encyclopedia."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Machine tools."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Canning."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "All the cards AnotherSava drew have different colors."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Encyclopedia in hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Machine tools in hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "AnotherSava places [6] Canning in hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [6] Classification."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [6] Vaccination."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [6] Industrialization."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "All the cards jamdalla drew have different colors."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla places [6] Classification in hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla places [6] Vaccination in hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla places [6] Industrialization in hand."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "log",
+      "msg": "Sharing bonus."
+    },
+    {
+      "move": 73,
+      "time": 1771731621,
+      "type": "transfer",
+      "msg": "jamdalla draws a [6] from base."
+    },
+    {
+      "move": 74,
+      "time": 1771731822,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 4 Reformation with [leaf] as the featured icon."
+    },
+    {
+      "move": 74,
+      "time": 1771731822,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Medicine from hand."
+    },
+    {
+      "move": 74,
+      "time": 1771731822,
+      "type": "log",
+      "msg": "AnotherSava has 13 [leaf]."
+    },
+    {
+      "move": 74,
+      "time": 1771731822,
+      "type": "log",
+      "msg": "jamdalla has 5 [leaf]."
+    },
+    {
+      "move": 74,
+      "time": 1771731822,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 74,
+      "time": 1771731822,
+      "type": "log",
+      "msg": "AnotherSava has 13 [leaf]."
+    },
+    {
+      "move": 75,
+      "time": 1771731836,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [6] Edinburgh from hand."
+    },
+    {
+      "move": 76,
+      "time": 1771731839,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [6] Canning from hand."
+    },
+    {
+      "move": 77,
+      "time": 1771731841,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [6] Machine tools from hand."
+    },
+    {
+      "move": 78,
+      "time": 1771731847,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Compass from hand."
+    },
+    {
+      "move": 79,
+      "time": 1771731861,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [5] The pirate code from hand."
+    },
+    {
+      "move": 80,
+      "time": 1771731865,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [4] Navigation from hand."
+    },
+    {
+      "move": 80,
+      "time": 1771731865,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 80,
+      "time": 1771731865,
+      "type": "log",
+      "msg": "AnotherSava has 14 [leaf]."
+    },
+    {
+      "move": 81,
+      "time": 1771731873,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [4] Gunpowder from hand."
+    },
+    {
+      "move": 82,
+      "time": 1771731877,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [5] Steam engine from hand."
+    },
+    {
+      "move": 83,
+      "time": 1771731889,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [4] Colonialism from hand."
+    },
+    {
+      "move": 84,
+      "time": 1771731924,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [5] Astronomy from hand."
+    },
+    {
+      "move": 85,
+      "time": 1771731936,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [2] Currency from hand."
+    },
+    {
+      "move": 86,
+      "time": 1771731945,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Paper from hand."
+    },
+    {
+      "move": 87,
+      "time": 1771731959,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [4] Perspective from hand."
+    },
+    {
+      "move": 87,
+      "time": 1771731959,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 88,
+      "time": 1771731969,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 88,
+      "time": 1771731969,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 89,
+      "time": 1771731971,
+      "type": "log",
+      "msg": "AnotherSava passes."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 3 Machinery with [leaf] as the featured icon."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "log",
+      "msg": "AnotherSava has 14 [leaf]."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "log",
+      "msg": "jamdalla has 5 [leaf]."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "log",
+      "msg": "jamdalla has to execute the I demand effect."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "transfer",
+      "msg": "jamdalla transfers [6] Classification from hand to AnotherSava's hand."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "transfer",
+      "msg": "jamdalla transfers [6] Vaccination from hand to AnotherSava's hand."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "transfer",
+      "msg": "jamdalla transfers [6] Industrialization from hand to AnotherSava's hand."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "transfer",
+      "msg": "jamdalla transfers [6] Emancipation from hand to AnotherSava's hand."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [6] Encyclopedia from hand to jamdalla's hand."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava reveals his hand: 2 Mathematics, 3 Translation, 4 Invention, 5 Societies, 6 Classification, 3 Optics, 4 Experimentation, 6 Vaccination, 4 Enterprise, 6 Industrialization, 6 Emancipation."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "log",
+      "msg": "AnotherSava has no cards with a [castle] in his hand."
+    },
+    {
+      "move": 90,
+      "time": 1771731975,
+      "type": "log",
+      "msg": "No stack matches the criteria of the effect for splaying."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Mysticism with [castle] as the featured icon."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "AnotherSava has 11 [castle]."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "jamdalla has 11 [castle]."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "AnotherSava draws and reveals [6] Democracy."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "This card is purple; AnotherSava has this color on his board."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "AnotherSava melds [6] Democracy."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "AnotherSava draws [6] Atomic theory."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [7] Electricity."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "This card is green; jamdalla has this color on his board."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "jamdalla melds [7] Electricity."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "jamdalla draws a [7] from base."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "log",
+      "msg": "Sharing bonus."
+    },
+    {
+      "move": 91,
+      "time": 1771732022,
+      "type": "transfer",
+      "msg": "jamdalla draws a [7] from base."
+    },
+    {
+      "move": 92,
+      "time": 1771732062,
+      "type": "transfer",
+      "msg": "jamdalla melds [7] Publications from hand."
+    },
+    {
+      "move": 93,
+      "time": 1771732177,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava endorses the dogma of 6 Democracy with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 93,
+      "time": 1771732177,
+      "type": "transfer",
+      "msg": "AnotherSava tucks [3] Optics from hand."
+    },
+    {
+      "move": 93,
+      "time": 1771732177,
+      "type": "log",
+      "msg": "AnotherSava has 11 [lightbulb]."
+    },
+    {
+      "move": 93,
+      "time": 1771732177,
+      "type": "log",
+      "msg": "jamdalla has 6 [lightbulb]."
+    },
+    {
+      "move": 93,
+      "time": 1771732177,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 94,
+      "time": 1771732222,
+      "type": "transfer",
+      "msg": "AnotherSava returns [6] Vaccination from hand."
+    },
+    {
+      "move": 95,
+      "time": 1771732224,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [8] Socialism."
+    },
+    {
+      "move": 95,
+      "time": 1771732224,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect again because it was endorsed."
+    },
+    {
+      "move": 96,
+      "time": 1771732232,
+      "type": "transfer",
+      "msg": "AnotherSava returns [6] Industrialization from hand."
+    },
+    {
+      "move": 97,
+      "time": 1771732235,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [8] Empiricism."
+    },
+    {
+      "move": 98,
+      "time": 1771732237,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [2] from base."
+    },
+    {
+      "move": 99,
+      "time": 1771809579,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 7 Publications with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 99,
+      "time": 1771809579,
+      "type": "log",
+      "msg": "AnotherSava has 11 [lightbulb]."
+    },
+    {
+      "move": 99,
+      "time": 1771809579,
+      "type": "log",
+      "msg": "jamdalla has 6 [lightbulb]."
+    },
+    {
+      "move": 99,
+      "time": 1771809579,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 100,
+      "time": 1771812203,
+      "type": "log",
+      "msg": "jamdalla has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 101,
+      "time": 1771814649,
+      "type": "log",
+      "msg": "jamdalla passes."
+    },
+    {
+      "move": 101,
+      "time": 1771814649,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 102,
+      "time": 1771815940,
+      "type": "transfer",
+      "msg": "AnotherSava draws [6] Paris."
+    },
+    {
+      "move": 102,
+      "time": 1771815940,
+      "type": "log",
+      "msg": "jamdalla has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 103,
+      "time": 1771816131,
+      "type": "transfer",
+      "msg": "jamdalla draws a [7] from cities."
+    },
+    {
+      "move": 103,
+      "time": 1771816131,
+      "type": "log",
+      "msg": "Sharing bonus."
+    },
+    {
+      "move": 103,
+      "time": 1771816131,
+      "type": "transfer",
+      "msg": "jamdalla draws a [7] from base."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Oars with [castle] as the featured icon."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "log",
+      "msg": "AnotherSava has 11 [castle]."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "log",
+      "msg": "jamdalla has 12 [castle]."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "log",
+      "msg": "AnotherSava has to execute the I demand effect."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [2] Mathematics from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [6] Vaccination."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [3] Translation from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [6] Industrialization."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [5] Societies from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Railroad."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [4] Enterprise from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Combustion."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [7] Combustion from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Refrigeration."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [7] Refrigeration from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Lighting."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava transfers [6] Industrialization from hand to jamdalla's score pile."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "transfer",
+      "msg": "AnotherSava draws [7] Explosives."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava reveals his hand: 4 Invention, 6 Classification, 7 Railroad, 6 Paris, 4 Experimentation, 6 Emancipation, 7 Lighting, 6 Atomic theory, 7 Explosives, 6 Vaccination."
+    },
+    {
+      "move": 104,
+      "time": 1771816153,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 105,
+      "time": 1771816450,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 5 Coal with [factory] as the featured icon."
+    },
+    {
+      "move": 105,
+      "time": 1771816450,
+      "type": "log",
+      "msg": "AnotherSava has 9 [factory]."
+    },
+    {
+      "move": 105,
+      "time": 1771816450,
+      "type": "log",
+      "msg": "jamdalla has 6 [factory]."
+    },
+    {
+      "move": 105,
+      "time": 1771816450,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 1st non-demand effect."
+    },
+    {
+      "move": 105,
+      "time": 1771816450,
+      "type": "transfer",
+      "msg": "AnotherSava draws and melds [8] Flight."
+    },
+    {
+      "move": 105,
+      "time": 1771816450,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 2nd non-demand effect."
+    },
+    {
+      "move": 106,
+      "time": 1771816453,
+      "type": "log",
+      "msg": "AnotherSava has to execute the 3rd non-demand effect."
+    },
+    {
+      "move": 107,
+      "time": 1771816457,
+      "type": "transfer",
+      "msg": "AnotherSava scores [5] Coal from board."
+    },
+    {
+      "move": 107,
+      "time": 1771816457,
+      "type": "transfer",
+      "msg": "AnotherSava scores [3] Engineering from board."
+    },
+    {
+      "move": 108,
+      "time": 1771816495,
+      "type": "transfer",
+      "msg": "AnotherSava achieves a [4] from base."
+    },
+    {
+      "move": 109,
+      "time": 1771816621,
+      "type": "transfer",
+      "msg": "jamdalla achieves a [5] from base."
+    },
+    {
+      "move": 110,
+      "time": 1771816623,
+      "type": "transfer",
+      "msg": "jamdalla achieves a [6] from base."
+    },
+    {
+      "move": 111,
+      "time": 1771816685,
+      "type": "logWithCardTooltips",
+      "msg": "AnotherSava activates the dogma of 6 Democracy with [lightbulb] as the featured icon."
+    },
+    {
+      "move": 111,
+      "time": 1771816685,
+      "type": "log",
+      "msg": "AnotherSava has 15 [lightbulb]."
+    },
+    {
+      "move": 111,
+      "time": 1771816685,
+      "type": "log",
+      "msg": "jamdalla has 6 [lightbulb]."
+    },
+    {
+      "move": 111,
+      "time": 1771816685,
+      "type": "log",
+      "msg": "AnotherSava has to execute the non-demand effect."
+    },
+    {
+      "move": 112,
+      "time": 1771816689,
+      "type": "transfer",
+      "msg": "AnotherSava returns [6] Paris from hand."
+    },
+    {
+      "move": 113,
+      "time": 1771816691,
+      "type": "transfer",
+      "msg": "AnotherSava draws and scores [8] Antibiotics."
+    },
+    {
+      "move": 114,
+      "time": 1771816778,
+      "type": "transfer",
+      "msg": "AnotherSava melds [4] Invention from hand."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "logWithCardTooltips",
+      "msg": "jamdalla activates the dogma of 1 Mysticism with [castle] as the featured icon."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "log",
+      "msg": "AnotherSava has 9 [castle]."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "log",
+      "msg": "jamdalla has 12 [castle]."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "log",
+      "msg": "jamdalla has to execute the non-demand effect."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "transfer",
+      "msg": "jamdalla draws and reveals [8] Rocketry."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "log",
+      "msg": "This card is blue; jamdalla has this color on his board."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "transfer",
+      "msg": "jamdalla melds [8] Rocketry."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "transfer",
+      "msg": "jamdalla achieves [null] Empire."
+    },
+    {
+      "move": 115,
+      "time": 1771816828,
+      "type": "transfer",
+      "msg": "jamdalla draws a [8] from base."
+    },
+    {
+      "move": 116,
+      "time": 1771816835,
+      "type": "transfer",
+      "msg": "jamdalla achieves a [7] from base."
+    },
+    {
+      "move": 116,
+      "time": 1771816835,
+      "type": "log",
+      "msg": "END OF GAME BY ACHIEVEMENTS: jamdalla has got 8 achievements. He wins!"
+    }
+  ]
+}

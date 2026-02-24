@@ -1,0 +1,455 @@
+{
+  "actual_deck": {
+    "1": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "2": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "3": {
+      "base": [
+        null
+      ],
+      "cities": [
+        null
+      ]
+    },
+    "4": {
+      "base": [],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "5": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        {
+          "name": "Amsterdam",
+          "revealed": false
+        }
+      ]
+    },
+    "6": {
+      "base": [
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "7": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "8": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "9": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "10": {
+      "base": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "cities": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "board": {
+    "AnotherSava": [
+      {
+        "name": "Writing"
+      },
+      {
+        "name": "Archery"
+      },
+      {
+        "name": "Metalworking"
+      },
+      {
+        "name": "Oars"
+      },
+      {
+        "name": "Thebes"
+      },
+      {
+        "name": "Clothing"
+      },
+      {
+        "name": "Memphis"
+      },
+      {
+        "name": "Sailing"
+      },
+      {
+        "name": "The Wheel"
+      },
+      {
+        "name": "Domestication"
+      },
+      {
+        "name": "Masonry"
+      },
+      {
+        "name": "Uruk"
+      },
+      {
+        "name": "Code of Laws"
+      },
+      {
+        "name": "Mysticism"
+      },
+      {
+        "name": "Delhi"
+      },
+      {
+        "name": "Experimentation"
+      },
+      {
+        "name": "Gunpowder"
+      },
+      {
+        "name": "Physics"
+      },
+      {
+        "name": "Atomic Theory"
+      },
+      {
+        "name": "Encyclopedia"
+      },
+      {
+        "name": "New York City"
+      },
+      {
+        "name": "Munich"
+      },
+      {
+        "name": "Lighting"
+      },
+      {
+        "name": "Railroad"
+      }
+    ],
+    "TrinaCat": [
+      {
+        "name": "Tools"
+      },
+      {
+        "name": "Agriculture"
+      },
+      {
+        "name": "Calendar"
+      },
+      {
+        "name": "Alchemy"
+      },
+      {
+        "name": "Cordoba"
+      },
+      {
+        "name": "Translation"
+      },
+      {
+        "name": "Barcelona"
+      },
+      {
+        "name": "Engineering"
+      },
+      {
+        "name": "Optics"
+      },
+      {
+        "name": "Baghdad"
+      },
+      {
+        "name": "Compass"
+      },
+      {
+        "name": "Paper"
+      },
+      {
+        "name": "Jakarta"
+      },
+      {
+        "name": "Kaifeng"
+      },
+      {
+        "name": "Medicine"
+      },
+      {
+        "name": "Constantinople"
+      },
+      {
+        "name": "Feudalism"
+      },
+      {
+        "name": "Mecca"
+      },
+      {
+        "name": "Printing Press"
+      }
+    ]
+  },
+  "hand": {
+    "AnotherSava": [
+      {
+        "name": "City States",
+        "revealed": true
+      },
+      {
+        "name": "Reformation",
+        "revealed": false
+      },
+      {
+        "name": "Classification",
+        "revealed": true
+      },
+      {
+        "name": "Metric System",
+        "revealed": true
+      },
+      {
+        "name": "Canning",
+        "revealed": true
+      },
+      {
+        "name": "Democracy",
+        "revealed": true
+      },
+      {
+        "name": "Sanitation",
+        "revealed": false
+      },
+      {
+        "name": "Antibiotics",
+        "revealed": false
+      }
+    ],
+    "TrinaCat": [
+      {
+        "age": 3,
+        "set": 3
+      },
+      {
+        "age": 4,
+        "set": 0
+      },
+      {
+        "age": 4,
+        "set": 0
+      },
+      {
+        "age": 4,
+        "set": 0
+      },
+      {
+        "age": 5,
+        "set": 0
+      }
+    ]
+  },
+  "score": {
+    "AnotherSava": [
+      {
+        "name": "Mathematics",
+        "revealed": false
+      },
+      {
+        "name": "Construction",
+        "revealed": false
+      },
+      {
+        "name": "Road Building",
+        "revealed": false
+      },
+      {
+        "name": "Currency",
+        "revealed": false
+      },
+      {
+        "name": "Mapmaking",
+        "revealed": false
+      },
+      {
+        "name": "Canal Building",
+        "revealed": false
+      },
+      {
+        "name": "Monotheism",
+        "revealed": false
+      },
+      {
+        "name": "Philosophy",
+        "revealed": false
+      },
+      {
+        "name": "Invention",
+        "revealed": true
+      },
+      {
+        "name": "Navigation",
+        "revealed": false
+      },
+      {
+        "name": "Industrialization",
+        "revealed": false
+      }
+    ],
+    "TrinaCat": []
+  },
+  "achievements": [
+    {
+      "name": "Pottery"
+    },
+    {
+      "name": "Fermenting"
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ]
+}

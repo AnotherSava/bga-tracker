@@ -58,7 +58,7 @@ Only `PLAYER_NAME` is required. All other settings are optional with sensible de
 
 Icon and card image assets are committed to the repo in `assets/`. To regenerate them from the upstream BGA sprite sheets (requires Pillow):
 ```
-venv/Scripts/python scripts/download_assets.py
+venv/Scripts/python scripts/innovation/download_assets.py
 ```
 
 ## Usage
@@ -106,8 +106,8 @@ On first run, renames the data folder to include the opponent name (e.g. `809765
 scripts/
   browse.py                     — Playwright-based browser helper
   fetch_full_history.js         — BGA notification history fetch (generic, any game)
-  download_assets.py            — download BGA sprites + extract icons & card images
   innovation/
+    download_assets.py          — download BGA sprites + extract icons & card images
     extract_log.js              — notification parser (browser)
     track_state.py              — card state tracker
     format_state.py             — HTML summary formatter
@@ -120,8 +120,21 @@ data/
     game_log.json                — extracted game log (input)
     game_state.json              — structured game state (output)
     summary.html                 — colored HTML summary (output)
+tests/
+  test_regression.py            — regression tests for track_state + format_state
+  data/                         — committed fixture data (game logs + reference output)
 .env                            — player name + display config (not committed)
 ```
+
+## Testing
+
+Regression tests replay the full pipeline on committed fixture data and compare output to reference files.
+
+```
+venv/Scripts/python -m pytest tests/ -v
+```
+
+Fixtures live in `tests/data/` — each subfolder contains a `game_log.json` (input) and the expected `game_state.json` + `summary.html` (reference output).
 
 ## Output format
 

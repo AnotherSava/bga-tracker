@@ -10,5 +10,8 @@ data/*
 
 assets/sprites/
 
+.pytest_cache/
+__pycache__/
+
 # ralphex progress logs
 .ralphex/progress/
