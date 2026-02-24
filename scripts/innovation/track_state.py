@@ -568,6 +568,37 @@ def build_output(card_db, state, known, deck_stacks, players):
     return result
 
 
+def deduce_achievements(card_db, state, deck_stacks):
+    """Deduce age achievements from remaining hidden base cards.
+
+    For each age 1-9, one base card was removed as an achievement.
+    If all base cards of that age except one are accounted for
+    (non-deck state or named in deck stacks), the remaining one
+    is the achievement.
+
+    Returns dict: age (int) -> list of candidate card names.
+    """
+    # Collect named cards in deck stacks
+    named_in_deck = set()
+    for stack in deck_stacks.values():
+        for entry in stack:
+            if entry is not None:
+                named_in_deck.add(entry)
+
+    achievements = {}
+    for age in range(1, 10):
+        # Base cards of this age with unknown location
+        hidden = [
+            name for name, loc in state.items()
+            if loc == "deck"
+            and card_db[name]["age"] == age
+            and card_db[name]["set"] == 0
+            and name not in named_in_deck
+        ]
+        achievements[age] = hidden
+    return achievements
+
+
 def card_to_short(card, include_known=False):
     """Format card as short string like '[3R] Optics' or '[3R] Optics *'."""
     ci = COLOR_INITIAL.get(card["color"], "?")
@@ -591,7 +622,7 @@ def stack_entry_to_player(entry, card_db, known=None):
     return entry
 
 
-def build_player_output(full_state, card_db, players, unknown_hand=None, unknown_score=None, known=None):
+def build_player_output(full_state, card_db, players, unknown_hand=None, unknown_score=None, known=None, achievements=None):
     """Build human-readable player perspective output."""
     result = {
         "actual_deck": {},
@@ -599,6 +630,7 @@ def build_player_output(full_state, card_db, players, unknown_hand=None, unknown
         "board": {p: [] for p in players},
         "hand": {p: [] for p in players},
         "score": {p: [] for p in players},
+        "achievements": [],
     }
 
     # Deck: base only (backward compat)
@@ -630,6 +662,15 @@ def build_player_output(full_state, card_db, players, unknown_hand=None, unknown
             "base": [stack_entry_to_player(e, card_db, known) for e in base],
             "cities": [stack_entry_to_player(e, card_db, known) for e in cities],
         }
+
+    # Achievements (ages 1-9)
+    if achievements:
+        for age in range(1, 10):
+            candidates = achievements.get(age, [])
+            if len(candidates) == 1 and candidates[0] in card_db:
+                result["achievements"].append(card_to_short(card_db[candidates[0]]))
+            else:
+                result["achievements"].append(f"?{age}")
 
     return result
 
@@ -694,6 +735,10 @@ def main():
     players, state, known, deck_stacks, unknown_hand, unknown_score = parse_log(card_db, name_lookup, game_log_path)
     print(f"Known cards (to opponent): {len(known)}")
 
+    achievements = deduce_achievements(card_db, state, deck_stacks)
+    deduced = sum(1 for v in achievements.values() if len(v) == 1)
+    print(f"Achievements deduced: {deduced}/9")
+
     full_state = build_output(card_db, state, known, deck_stacks, players)
     print_summary(full_state, deck_stacks, players, unknown_hand)
 
@@ -701,7 +746,7 @@ def main():
         json.dump(full_state, f, indent=2)
     print(f"Written: {state_out}")
 
-    player_state = build_player_output(full_state, card_db, players, unknown_hand, unknown_score, known)
+    player_state = build_player_output(full_state, card_db, players, unknown_hand, unknown_score, known, achievements)
     with open(player_out, "w") as f:
         json.dump(player_state, f, indent=2)
     print(f"Written: {player_out}")

@@ -46,11 +46,13 @@ DEFAULT_BASE_LIST = os.environ.get("DEFAULT_BASE_LIST", "none").lower()
 DEFAULT_CITIES_LIST = os.environ.get("DEFAULT_CITIES_LIST", "none").lower()
 DEFAULT_BASE_LAYOUT = os.environ.get("DEFAULT_BASE_LAYOUT", "wide").lower()
 DEFAULT_CITIES_LAYOUT = os.environ.get("DEFAULT_CITIES_LAYOUT", "wide").lower()
+DEFAULT_ACHIEVEMENTS = os.environ.get("DEFAULT_ACHIEVEMENTS", "show").lower()
+DEFAULT_ACH_LAYOUT = os.environ.get("DEFAULT_ACH_LAYOUT", "wide").lower()
 
 # Section placement: column.position
 _SECTION_KEYS = [
     "HAND_OPPONENT", "HAND_ME", "SCORE_OPPONENT", "SCORE_ME",
-    "BASE_DECK", "CITIES_DECK", "BASE_LIST", "CITIES_LIST",
+    "ACHIEVEMENTS", "BASE_DECK", "CITIES_DECK", "BASE_LIST", "CITIES_LIST",
 ]
 _SECTION_DEFAULTS = {k: f"1.{i+1}" for i, k in enumerate(_SECTION_KEYS)}
 SECTION_POS = {}
@@ -287,15 +289,23 @@ def _render_card_with_known(card, known_names):
     return html
 
 
+def _all_known(cards, known_names):
+    """Check if all cards in a list are in known_names."""
+    return known_names is not None and all(c["name"] in known_names for c in cards)
+
+
 def _format_all_wide(cards_by_age, known_names):
     """Wide layout: one row per age, all cards in a line."""
     rows = []
     for age in range(1, 11):
         cards = sorted(cards_by_age.get(age, []),
                        key=lambda c: (COLOR_ORDER.get(c["color"], 99), c["name"]))
+        if not cards:
+            continue
         cards_html = [_render_card_with_known(c, known_names) for c in cards]
+        ak = " all-known" if _all_known(cards, known_names) else ""
         rows.append(
-            f'<div class="deck-age">'
+            f'<div class="deck-age{ak}">'
             f'<span class="deck-age-label">{age}</span>'
             f'<div class="card-row">{"".join(cards_html)}</div>'
             f'</div>'
@@ -321,6 +331,9 @@ def _format_all_tall(cards_by_age, known_names):
         if max_per_color == 0:
             continue
 
+        all_age_cards = [c for color in _COLOR_NAMES_ORDERED for c in grid.get((age, color), [])]
+        ak = ' class="all-known"' if _all_known(all_age_cards, known_names) else ""
+
         age_rows = []
         for row_idx in range(max_per_color):
             cells = []
@@ -330,12 +343,12 @@ def _format_all_tall(cards_by_age, known_names):
                     cells.append(f'<td>{_render_card_with_known(color_cards[row_idx], known_names)}</td>')
                 else:
                     cells.append('<td></td>')
-            age_rows.append(f'<tr>{"".join(cells)}</tr>')
+            age_rows.append(f'<tr{ak}>{"".join(cells)}</tr>')
 
         # First row gets the age label with rowspan
         age_rows[0] = age_rows[0].replace(
-            '<tr>',
-            f'<tr><td class="deck-age-label" rowspan="{max_per_color}">{age}</td>',
+            f'<tr{ak}>',
+            f'<tr{ak}><td class="deck-age-label" rowspan="{max_per_color}">{age}</td>',
             1)
 
         rows.extend(age_rows)
@@ -645,7 +658,7 @@ body {{
 /* Tall grid layout */
 .tall-grid {{ border-collapse: collapse; }}
 .tall-grid td {{ padding: 0; vertical-align: top; }}
-.tall-grid .deck-age-label {{ vertical-align: middle; }}
+.tall-grid .deck-age-label {{ vertical-align: middle; padding-right: 6px; }}
 .hand-row {{
   display: flex;
   align-items: flex-start;
@@ -677,6 +690,7 @@ body {{
 .mode-unknown [data-known] .card-age,
 .mode-unknown [data-known] .card-tip,
 .mode-unknown [data-known] .card-tip-text {{ visibility: hidden; }}
+.mode-unknown .all-known {{ display: none; }}
 </style>
 </head>
 <body>
@@ -776,6 +790,11 @@ def format_summary(state, table_id):
                 dm = _DECK_RE.match(entry) if entry != "?" else None
                 if dm:
                     _add_known(dm.group(3))
+    # Achievements — deduced cards
+    for entry in state.get("achievements", []):
+        m = _CARD_RE.match(entry)
+        if m:
+            _add_known(m.group(3))
 
     # --- Build named sections ---
     named = {}
@@ -809,6 +828,57 @@ def format_summary(state, table_id):
         f'{format_my_zone(my_score)}'
         f'</div>'
     ) if my_score else ""
+
+    # Achievements (ages 1-9)
+    ach_toggle, ach_attrs = _tri_toggle("achievements",
+        [("none", "Hide"), ("all", "Show")], DEFAULT_ACHIEVEMENTS)
+    achl_toggle, _ = _tri_toggle("achievements",
+        [("wide", "Wide"), ("tall", "Tall")], DEFAULT_ACH_LAYOUT)
+    ach_entries = state.get("achievements", [])
+    ach_cards = []
+    for i, entry in enumerate(ach_entries):
+        age = i + 1
+        um = _UNKNOWN_RE.match(entry)
+        if um:
+            ach_cards.append(render_unknown(age))
+        else:
+            m = _CARD_RE.match(entry)
+            if m:
+                ach_cards.append(render_card(m.group(3), int(m.group(1)), m.group(2)))
+            else:
+                ach_cards.append(render_unknown(age))
+    # Pad to 9 if fewer entries
+    for age in range(len(ach_entries) + 1, 10):
+        ach_cards.append(render_unknown(age))
+    # Wide: single row with spacer
+    ach_wide = (
+        f'<div class="hand-row">'
+        f'<span class="row-label"> </span>'
+        f'<div class="card-row">{"".join(ach_cards)}</div>'
+        f'</div>'
+    )
+    # Tall: two rows of 5+4 with spacer
+    ach_tall = (
+        f'<div class="hand-row">'
+        f'<span class="row-label"> </span>'
+        f'<div class="card-row">{"".join(ach_cards[:5])}</div>'
+        f'</div>'
+        f'<div class="hand-row">'
+        f'<span class="row-label"> </span>'
+        f'<div class="card-row">{"".join(ach_cards[5:])}</div>'
+        f'</div>'
+    )
+    ach_wide_hide = ' style="display:none"' if DEFAULT_ACH_LAYOUT == "tall" else ""
+    ach_tall_hide = ' style="display:none"' if DEFAULT_ACH_LAYOUT != "tall" else ""
+    named["ACHIEVEMENTS"] = (
+        f'<div class="section">'
+        f'<div class="section-title">Achievements {ach_toggle} {achl_toggle}</div>'
+        f'<div id="achievements"{ach_attrs}>'
+        f'<div class="layout-wide" data-list="achievements"{ach_wide_hide}>{ach_wide}</div>'
+        f'<div class="layout-tall" data-list="achievements"{ach_tall_hide}>{ach_tall}</div>'
+        f'</div>'
+        f'</div>'
+    )
 
     bd_toggle, bd_attrs = _tri_toggle("base-deck",
         [("none", "Hide"), ("all", "Show")], DEFAULT_BASE_DECK)
