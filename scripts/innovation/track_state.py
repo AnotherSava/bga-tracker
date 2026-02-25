@@ -18,6 +18,9 @@ from pathlib import Path
 from collections import defaultdict
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 DATA_DIR = PROJECT_ROOT / "data"
 CARDINFO_PATH = DATA_DIR / "cardinfo.json"
 
@@ -36,11 +39,10 @@ if not PERSPECTIVE:
     print("ERROR: PLAYER_NAME not set in .env or environment")
     sys.exit(1)
 
-COLOR_ORDER = {"blue": 0, "red": 1, "green": 2, "yellow": 3, "purple": 4}
-SET_BASE = 0
-SET_CITIES = 3
-SET_LABEL = {SET_BASE: "base", SET_CITIES: "cities"}
-LABEL_TO_SET = {"base": SET_BASE, "cities": SET_CITIES}
+from scripts.innovation.card import (
+    CardDB, SET_BASE, SET_CITIES, SET_LABEL, LABEL_TO_SET, COLOR_ORDER,
+)
+from scripts.innovation.state_tracker import StateTracker
 
 
 def load_card_database():
@@ -138,12 +140,6 @@ def parse_log(card_db, players, game_log_path):
     unknown_score = {p: defaultdict(int) for p in players}
 
     # --- Transfer patterns (with named cards) ---
-    # Each entry: (compiled regex, extractor function)
-    # The extractor returns (from_loc, to_loc, card_name) where locations are
-    # "deck", "hand:Player", "board:Player", "score:Player", "achieved",
-    # or None (skip / infer from current state).
-    # Order matters: more specific patterns must come before general ones
-    # (e.g. "melds from hand" before "melds", "achieves [A] CARD" before "achieves CARD").
     patterns = [
         # P melds [A] CARD from hand.
         (re.compile(rf"^({PP}) melds \[(\d+)\] (.+?) from hand\.$"),
@@ -233,7 +229,7 @@ def parse_log(card_db, players, game_log_path):
         (re.compile(rf"^({PP}) transfers \[(\d+)\] (.+?) from ({PP})'s board to board\.$"),
          lambda m: ("board:" + m.group(4), "board:" + m.group(1), m.group(3))),
 
-        # P moves [A] CARD (board -> board). — Compass-style demand: P's board to other player's board
+        # P moves [A] CARD (board -> board). — Compass-style demand
         (re.compile(rf"^({PP}) moves \[(\d+)\] (.+?) \(board -> board\)\.$"),
          lambda m: ("board:" + m.group(1),
                      "board:" + [p for p in players if p != m.group(1)][0],
@@ -241,14 +237,6 @@ def parse_log(card_db, players, game_log_path):
     ]
 
     # --- Hidden patterns (opponent's hidden transfers, no card name visible) ---
-    # These match messages where the card identity is hidden (opponent's private actions).
-    # The "from base"/"from cities" suffix is appended by extract_log.js.
-    # Each entry: (compiled regex, action tuple)
-    # Action tuple: (deck_effect, state_from, state_to)
-    #   deck_effect: "pop" = remove top of deck stack, "push" = add to deck stack, None
-    #   state_from/state_to: location prefix ("hand"/"board"/"score"/"deck") or None
-    #   When state_from and state_to are both set, we try to find and move a matching
-    #   card by (age, set); otherwise we adjust unknown_hand/unknown_score counts.
     hidden_patterns = [
         # P draws a [N] from base/cities.
         (re.compile(rf"^({PP}) draws a \[(\d+)\] from (base|cities)\.$"),
@@ -305,10 +293,7 @@ def parse_log(card_db, players, game_log_path):
         if entry["type"] != "transfer":
             continue
 
-        # Normalize message for named pattern matching:
-        # 1. Strip " from base"/" from cities" suffix added by extract_log.js
-        # 2. Normalize "his hand" → "hand", "his board" → "board", etc.
-        # (Keep original msg for hidden patterns which expect the suffix)
+        # Normalize message for named pattern matching
         clean_msg = re.sub(r" from (base|cities)\.$", ".", msg)
         clean_msg = re.sub(r"\bhis (hand|board|score pile)\b", r"\1", clean_msg)
 
@@ -608,13 +593,14 @@ def main():
     game_log_path = table_dir / "game_log.json"
     out_path = table_dir / "game_state.json"
 
-    card_db = load_card_database()
+    card_db = CardDB(CARDINFO_PATH)
     print(f"Loaded {len(card_db)} cards from database (sets 0+3)")
 
-    state, known, deck_stacks, unknown_hand, unknown_score = parse_log(card_db, players, game_log_path)
-    achievements = deduce_achievements(card_db, state, deck_stacks)
+    tracker = StateTracker(card_db, players, PERSPECTIVE)
+    tracker.initialize()
+    tracker.process_log(game_log_path)
+    game_state = tracker.get_result()
 
-    game_state = build_player_output(card_db, state, known, deck_stacks, players, unknown_hand, unknown_score, achievements)
     with open(out_path, "w") as f:
         json.dump(game_state, f, indent=2)
     print(f"Written: {out_path}")

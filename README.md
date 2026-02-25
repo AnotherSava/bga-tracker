@@ -107,10 +107,13 @@ scripts/
   browse.py                     — Playwright-based browser helper
   fetch_full_history.js         — BGA notification history fetch (generic, any game)
   innovation/
+    card.py                     — Card class (candidate sets) + CardDB loader
+    game_state.py               — GameState: locations, mutations, constraint propagation
+    state_tracker.py            — StateTracker: log parsing, regex patterns → Actions
+    track_state.py              — CLI entry point (delegates to StateTracker)
+    format_state.py             — HTML summary formatter
     download_assets.py          — download BGA sprites + extract icons & card images
     extract_log.js              — notification parser (browser)
-    track_state.py              — card state tracker
-    format_state.py             — HTML summary formatter
 assets/                         — icon and card image assets
   icons/                        — extracted icon PNGs (resource, hex, bonus, cities special)
   cards/                        — full card face images (750x550, used for hover tooltips)
@@ -146,21 +149,21 @@ Structured game state with card objects. Card metadata (age, color, icons) is lo
 {
   "actual_deck": {
     "1": {
-      "base": [null, {"name": "Sailing", "revealed": true}],
+      "base": [null, {"name": "Sailing", "revealed": false}],
       "cities": [null, null]
     }
   },
   "board": { "Player1": [{"name": "Clothing"}] },
-  "hand":  { "Player1": [{"name": "Optics", "revealed": true}, {"age": 5, "set": 0}] },
+  "hand":  { "Player1": [{"name": "Optics", "revealed": false}, {"age": 5, "set": 0}] },
   "score": { "Player1": [{"name": "The Wheel", "revealed": false}, {"age": 3, "set": 0}] },
   "achievements": [{"name": "Oars"}, null, null, null, null, null, null, null, null]
 }
 ```
 
-- **Known card** (hand/score): `{"name": "...", "revealed": bool}` — `revealed` = known to opponent
-- **Unknown card** (hand/score): `{"age": int, "set": int}` — `0` = base, `3` = cities
+- **Resolved card** (hand/score): `{"name": "...", "revealed": false}` — `revealed` placeholder (always false for now)
+- **Unresolved card** (hand/score): `{"age": int, "set": int}` — `0` = base, `3` = cities
 - **Board card**: `{"name": "..."}` — always public
-- **Deck entry**: `null` (unknown) or `{"name": "...", "revealed": bool}`
+- **Deck entry**: `null` (unresolved) or `{"name": "...", "revealed": false}`
 - **Achievement**: `{"name": "..."}` or `null` — age implied by index + 1
 - `actual_deck`: ordered draw piles per (age, set). Index 0 = top. Only ages with cards remaining.
 
@@ -226,25 +229,28 @@ Initialization from `cardinfo.json`:
 
 Hidden transfers include "from base" or "from cities" suffix in the extracted log.
 
-### Unknown hand and score tracking
+### Card tracking architecture
 
-Hidden draws and scores (where the card name isn't visible) are tracked as counts per `(age, card_set)` using a count matrix (`defaultdict(int)`). When a named action later reveals the card, the corresponding count is decremented.
+The tracker uses a candidate-set model (`card.py`, `game_state.py`, `state_tracker.py`):
 
-Unknown count adjustments happen in two places:
-- **Hidden pattern handler**: when no named candidate is found for a transfer (e.g., unknown card moved from hand to score), counts are adjusted directly
-- **Named pattern handler**: when a named card's tracked state doesn't match its declared source (e.g., card is "from hand" but tracked as "deck"), the card entered that zone via a hidden draw, so the unknown count is decremented
+- Each card slot is a `Card` object with a mutable set of candidate names that shrinks as information is revealed (draws, melds, reveals, transfers). A card is "resolved" when candidates narrow to a single name.
+- All card movements are represented as uniform `Action` dataclasses (source, dest, card_index, group_key, players)
+- `StateTracker` parses log entries into Actions; `GameState.move()` handles all movements through a single method
+- Constraint propagation runs per (age, set) group: singleton elimination, hidden singles, naked subsets, and suspect propagation
+- Achievements are deduced from remaining hidden base cards
+- A transient "revealed" zone handles draw-and-reveal sequences (deck → revealed → hand/board/deck)
 
-Output format: `"?6b"` = unknown base card of age 6, `"?6c"` = unknown cities card of age 6.
+### Opponent knowledge model
 
-### Known flag
+Each card tracks what the opponent knows about it:
 
-A card is marked `known` (visible to opponent) when:
-1. Drawn and revealed publicly
-2. Transferred between players
-3. Was ever on a board (board cards are public)
-4. Part of a "reveals his hand" event
+- `opponent_knows_exact` — opponent definitely knows this card's identity (saw it drawn, revealed, transferred, or deduced via suspect propagation)
+- `opponent_might_suspect` — set of names the opponent could associate with this card (empty = no info)
+- `suspect_list_explicit` — whether the suspect list is closed/complete
 
-The flag is sticky — once set, it stays true regardless of further movements.
+When our card moves between private zones (hand/score → deck/hand/score), the opponent can't tell which card moved. All same-group cards at the source lose certainty: suspect lists are merged into a union, and `opponent_knows_exact` is cleared.
+
+Suspect propagation: when a card is publicly revealed, its name is removed from other cards' suspect lists in the same group. If an explicit suspect list narrows to one name, the opponent is deduced to know that card too.
 
 ### Name resolution
 
