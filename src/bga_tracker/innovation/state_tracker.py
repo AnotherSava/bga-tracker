@@ -2,15 +2,9 @@
 
 import json
 import re
-import sys
-from pathlib import Path
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
-
-from scripts.innovation.card import CardDB, LABEL_TO_SET
-from scripts.innovation.game_state import GameState, Action
+from bga_tracker.innovation.card import CardDB, LABEL_TO_SET
+from bga_tracker.innovation.game_state import GameState, Action
 
 
 class StateTracker:

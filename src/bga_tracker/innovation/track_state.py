@@ -4,7 +4,7 @@ Innovation Card State Tracker
 Reads game_log.json (extracted from BGA), processes all card movements,
 and outputs the current location of every card.
 
-Usage: python track_state.py TABLE_ID
+Usage: python -m bga_tracker.innovation.track_state TABLE_ID
 
 Input:  data/cardinfo.json, data/<TABLE_ID>/game_log.json
 Output: data/<TABLE_ID>/game_state.json
@@ -14,12 +14,9 @@ import json
 import os
 import re
 import sys
-from pathlib import Path
 from collections import defaultdict
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+from bga_tracker import PROJECT_ROOT
 
 DATA_DIR = PROJECT_ROOT / "data"
 CARDINFO_PATH = DATA_DIR / "cardinfo.json"
@@ -39,10 +36,10 @@ if not PERSPECTIVE:
     print("ERROR: PLAYER_NAME not set in .env or environment")
     sys.exit(1)
 
-from scripts.innovation.card import (
+from bga_tracker.innovation.card import (
     CardDB, SET_BASE, SET_CITIES, SET_LABEL, LABEL_TO_SET, COLOR_ORDER,
 )
-from scripts.innovation.state_tracker import StateTracker
+from bga_tracker.innovation.state_tracker import StateTracker
 
 
 def load_card_database():
@@ -582,7 +579,7 @@ def find_table(table_id):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python track_state.py TABLE_ID")
+        print("Usage: python -m bga_tracker.innovation.track_state TABLE_ID")
         sys.exit(1)
 
     table_id = sys.argv[1]

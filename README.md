@@ -23,7 +23,8 @@ Player names are detected automatically from the game log. The `PLAYER_NAME` in 
 
 ```
 python -m venv venv
-venv/Scripts/pip install -r requirements.txt
+venv/Scripts/pip install -e .
+venv/Scripts/pip install Pillow  # optional, for download_assets
 venv/Scripts/playwright install chromium
 ```
 
@@ -58,7 +59,7 @@ Only `PLAYER_NAME` is required. All other settings are optional with sensible de
 
 Icon and card image assets are committed to the repo in `assets/`. To regenerate them from the upstream BGA sprite sheets (requires Pillow):
 ```
-venv/Scripts/python scripts/innovation/download_assets.py
+venv/Scripts/python -m bga_tracker.innovation.download_assets
 ```
 
 ## Usage
@@ -66,7 +67,7 @@ venv/Scripts/python scripts/innovation/download_assets.py
 ### 1. Start the browser helper
 
 ```
-venv/Scripts/python scripts/browse.py
+venv/Scripts/python -m browser.browse
 ```
 
 This opens a persistent Chrome session. Commands are sent by writing to `scripts/cmd.txt`; results appear in `output/result.txt`.
@@ -85,7 +86,7 @@ Save the final output to `data/<TABLE_ID>/game_log.json`.
 ### 3. Track card state
 
 ```
-venv/Scripts/python scripts/innovation/track_state.py TABLE_ID
+venv/Scripts/python -m bga_tracker.innovation.track_state TABLE_ID
 ```
 
 Produces `game_state.json` — structured game state with card objects.
@@ -93,7 +94,7 @@ Produces `game_state.json` — structured game state with card objects.
 ### 4. Format summary
 
 ```
-venv/Scripts/python scripts/innovation/format_state.py TABLE_ID
+venv/Scripts/python -m bga_tracker.innovation.format_state TABLE_ID
 ```
 
 Produces `summary.html` — a colored HTML page showing deck contents, hands, and scores from both perspectives. Open it in a browser.
@@ -103,16 +104,21 @@ On first run, renames the data folder to include the opponent name (e.g. `809765
 ## File structure
 
 ```
+src/
+  bga_tracker/
+    __init__.py                 — exports PROJECT_ROOT
+    innovation/
+      card.py                   — Card class (candidate sets) + CardDB loader
+      game_state.py             — GameState: locations, mutations, constraint propagation
+      state_tracker.py          — StateTracker: log parsing, regex patterns → Actions
+      track_state.py            — CLI entry point (delegates to StateTracker)
+      format_state.py           — HTML summary formatter
+      download_assets.py        — download BGA sprites + extract icons & card images
+  browser/
+    browse.py                   — Playwright-based browser helper
 scripts/
-  browse.py                     — Playwright-based browser helper
   fetch_full_history.js         — BGA notification history fetch (generic, any game)
   innovation/
-    card.py                     — Card class (candidate sets) + CardDB loader
-    game_state.py               — GameState: locations, mutations, constraint propagation
-    state_tracker.py            — StateTracker: log parsing, regex patterns → Actions
-    track_state.py              — CLI entry point (delegates to StateTracker)
-    format_state.py             — HTML summary formatter
-    download_assets.py          — download BGA sprites + extract icons & card images
     extract_log.js              — notification parser (browser)
 assets/                         — icon and card image assets
   icons/                        — extracted icon PNGs (resource, hex, bonus, cities special)
@@ -124,8 +130,11 @@ data/
     game_state.json              — structured game state (output)
     summary.html                 — colored HTML summary (output)
 tests/
-  test_regression.py            — regression tests for track_state + format_state
-  data/                         — committed fixture data (game logs + reference output)
+  innovation/
+    test_regression.py          — regression tests for track_state + format_state
+    test_opponent_knowledge.py  — unit tests for opponent knowledge model
+    data/                       — committed fixture data (game logs + reference output)
+pyproject.toml                  — package config (editable install)
 .env                            — player name + display config (not committed)
 ```
 
@@ -137,7 +146,7 @@ Regression tests replay the full pipeline on committed fixture data and compare 
 venv/Scripts/python -m pytest tests/ -v
 ```
 
-Fixtures live in `tests/data/` — each subfolder contains a `game_log.json` (input) and the expected `game_state.json` + `summary.html` (reference output).
+Fixtures live in `tests/innovation/data/` — each subfolder contains a `game_log.json` (input) and the expected `game_state.json` + `summary.html` (reference output).
 
 ## Output format
 

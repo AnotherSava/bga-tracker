@@ -1,16 +1,10 @@
 """GameState class: locations, mutations, constraint propagation."""
 
-import sys
-from pathlib import Path
 from dataclasses import dataclass
 from collections import defaultdict
 from itertools import combinations
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
-
-from scripts.innovation.card import Card, CardDB, SET_BASE, SET_LABEL
+from bga_tracker.innovation.card import Card, CardDB, SET_BASE, SET_LABEL
 
 
 @dataclass

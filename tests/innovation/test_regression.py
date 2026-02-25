@@ -2,7 +2,7 @@
 
 Reruns track_state and format_state on committed fixture data and asserts
 that the output matches the reference files (game_state.json, summary.html).
-Fixtures live in tests/data/ and are always present.
+Fixtures live in tests/innovation/data/ and are always present.
 """
 
 import json
@@ -10,16 +10,11 @@ from pathlib import Path
 
 import pytest
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+from bga_tracker.innovation import track_state, format_state
 
 # Discover table directories: "TABLE_ID opponent" folders under tests/data/
 DATA_DIR = Path(__file__).resolve().parent / "data"
 TABLE_DIRS = sorted(DATA_DIR.glob("* *"))
-
-# Import pipeline modules
-import sys
-sys.path.insert(0, str(PROJECT_ROOT))
-from scripts.innovation import track_state, format_state
 
 
 def table_ids():

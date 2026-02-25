@@ -5,17 +5,11 @@ flags and suspect propagation in GameState._propagate().
 """
 
 import json
-import sys
-from pathlib import Path
 
 import pytest
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-from scripts.innovation.card import Card, CardDB, SET_BASE
-from scripts.innovation.game_state import GameState, Action
+from bga_tracker.innovation.card import Card, CardDB, SET_BASE
+from bga_tracker.innovation.game_state import GameState, Action
 
 ME = "Me"
 OPP = "Opponent"

@@ -23,7 +23,7 @@ browse.py must be running. Check by writing a `url` command to `scripts/cmd.txt`
 
 If it's not running (no response after a few seconds), start it in the background:
 ```
-venv/Scripts/python scripts/browse.py &
+venv/Scripts/python -m browser.browse &
 ```
 
 Wait a few seconds for the browser to initialize before proceeding.
@@ -91,7 +91,7 @@ Save the extracted JSON result to `data/<TABLE_ID>/game_log.json`.
 
 Run:
 ```
-python scripts/innovation/track_state.py <TABLE_ID>
+python -m bga_tracker.innovation.track_state <TABLE_ID>
 ```
 
 This produces `data/<TABLE_ID>/game_state.json` — structured game state with card objects.
@@ -107,7 +107,7 @@ Read `data/<TABLE_ID>/game_state.json` and present a summary to the user showing
 
 Run:
 ```
-python scripts/innovation/format_state.py <TABLE_ID>
+python -m bga_tracker.innovation.format_state <TABLE_ID>
 ```
 
 This produces `data/<TABLE_ID>/summary.html` — a colored HTML summary of hidden information from both perspectives.

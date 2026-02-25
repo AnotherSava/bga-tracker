@@ -12,6 +12,7 @@ assets/sprites/
 
 .pytest_cache/
 __pycache__/
+*.egg-info/
 
 # ralphex progress logs
 .ralphex/progress/

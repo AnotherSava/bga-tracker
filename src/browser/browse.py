@@ -12,11 +12,11 @@ import traceback
 from playwright.sync_api import sync_playwright
 from playwright._impl._errors import TargetClosedError
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+_MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(_MODULE_DIR)))
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-CMD_FILE = os.path.join(SCRIPT_DIR, "cmd.txt")
+CMD_FILE = os.path.join(PROJECT_ROOT, "scripts", "cmd.txt")
 RESULT_FILE = os.path.join(OUTPUT_DIR, "result.txt")
 LOG_FILE = os.path.join(OUTPUT_DIR, "browse.log")
 
@@ -46,7 +46,7 @@ def main():
     with sync_playwright() as p:
         # Use real Chrome with persistent profile (like makerworld.py)
         # This keeps the browser alive and preserves login sessions
-        chrome_profile = os.path.join(os.path.dirname(SCRIPT_DIR), ".chrome_bga_profile")
+        chrome_profile = os.path.join(PROJECT_ROOT, ".chrome_bga_profile")
         context = p.chromium.launch_persistent_context(
             chrome_profile,
             channel="chrome",

@@ -4,7 +4,7 @@ Innovation Game State Summary Formatter
 Reads game_state.json and produces summary.html showing
 hidden information from both perspectives, with card images.
 
-Usage: python scripts/innovation/format_state.py TABLE_ID
+Usage: python -m bga_tracker.innovation.format_state TABLE_ID
 
 Input:  data/<TABLE_ID>/game_state.json + .env for PLAYER_NAME
 Output: data/<TABLE_ID>/summary.html
@@ -17,7 +17,8 @@ import sys
 from html import escape as esc
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+from bga_tracker import PROJECT_ROOT
+
 DATA_DIR = PROJECT_ROOT / "data"
 
 # Relative paths from summary.html (data/<TABLE_ID>/) to assets/
@@ -972,7 +973,7 @@ def find_table_dir(table_id):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python scripts/innovation/format_state.py TABLE_ID")
+        print("Usage: python -m bga_tracker.innovation.format_state TABLE_ID")
         sys.exit(1)
 
     table_id = sys.argv[1]
