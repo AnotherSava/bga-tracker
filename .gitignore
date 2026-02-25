@@ -5,8 +5,7 @@
 .idea/
 output/
 venv/
-data/*
-!data/cardinfo.json
+data/
 
 assets/sprites/
 

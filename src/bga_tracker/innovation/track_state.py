@@ -6,7 +6,7 @@ and outputs the current location of every card.
 
 Usage: python -m bga_tracker.innovation.track_state TABLE_ID
 
-Input:  data/cardinfo.json, data/<TABLE_ID>/game_log.json
+Input:  assets/cardinfo.json, data/<TABLE_ID>/game_log.json
 Output: data/<TABLE_ID>/game_state.json
 """
 
@@ -19,7 +19,7 @@ from collections import defaultdict
 from bga_tracker import PROJECT_ROOT
 
 DATA_DIR = PROJECT_ROOT / "data"
-CARDINFO_PATH = DATA_DIR / "cardinfo.json"
+CARDINFO_PATH = PROJECT_ROOT / "assets" / "cardinfo.json"
 
 # Load .env manually (no external deps)
 _env_path = PROJECT_ROOT / ".env"

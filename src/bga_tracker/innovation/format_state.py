@@ -87,7 +87,7 @@ def _load_cardinfo():
     global _cardinfo, _card_by_name
     if _cardinfo is not None:
         return
-    with open(DATA_DIR / "cardinfo.json") as f:
+    with open(PROJECT_ROOT / "assets" / "cardinfo.json") as f:
         _cardinfo = json.load(f)
     _card_by_name = {}
     for idx, card in enumerate(_cardinfo):

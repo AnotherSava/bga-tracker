@@ -120,12 +120,12 @@ scripts/
   fetch_full_history.js         — BGA notification history fetch (generic, any game)
   innovation/
     extract_log.js              — notification parser (browser)
-assets/                         — icon and card image assets
+assets/                         — static game data and images
+  cardinfo.json                 — shared card database (sets 0 + 3, 210 cards)
   icons/                        — extracted icon PNGs (resource, hex, bonus, cities special)
   cards/                        — full card face images (750x550, used for hover tooltips)
-data/
-  cardinfo.json                 — shared card database (sets 0 + 3, 210 cards)
-  <TABLE_ID> <opponent>/        — per-game data
+data/                           — per-game data (gitignored)
+  <TABLE_ID> <opponent>/
     game_log.json                — extracted game log (input)
     game_state.json              — structured game state (output)
     summary.html                 — colored HTML summary (output)
@@ -133,7 +133,7 @@ tests/
   innovation/
     test_regression.py          — regression tests for track_state + format_state
     test_opponent_knowledge.py  — unit tests for opponent knowledge model
-    data/                       — committed fixture data (game logs + reference output)
+    fixtures/                   — committed fixture data (game logs + reference output)
 pyproject.toml                  — package config (editable install)
 .env                            — player name + display config (not committed)
 ```
@@ -146,7 +146,7 @@ Regression tests replay the full pipeline on committed fixture data and compare 
 venv/Scripts/python -m pytest tests/ -v
 ```
 
-Fixtures live in `tests/innovation/data/` — each subfolder contains a `game_log.json` (input) and the expected `game_state.json` + `summary.html` (reference output).
+Fixtures live in `tests/innovation/fixtures/` — each subfolder contains a `game_log.json` (input) and the expected `game_state.json` + `summary.html` (reference output).
 
 ## Output format
 

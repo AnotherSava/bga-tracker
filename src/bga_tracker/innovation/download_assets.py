@@ -18,7 +18,7 @@ from bga_tracker import PROJECT_ROOT
 ASSETS_DIR = PROJECT_ROOT / "assets"
 SPRITES_DIR = ASSETS_DIR / "sprites"
 ICONS_DIR = ASSETS_DIR / "icons"
-DATA_DIR = PROJECT_ROOT / "data"
+CARDINFO_PATH = ASSETS_DIR / "cardinfo.json"
 
 BASE_URL = "https://raw.githubusercontent.com/micahstairs/bga-innovation/main-dev/img/"
 
@@ -76,7 +76,7 @@ def extract_resource_icons():
 
 
 def load_cardinfo():
-    with open(DATA_DIR / "cardinfo.json") as f:
+    with open(CARDINFO_PATH) as f:
         return json.load(f)
 
 
