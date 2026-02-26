@@ -10,11 +10,15 @@ from pathlib import Path
 
 import pytest
 
+from bga_tracker.innovation.card import CardDB
+from bga_tracker.innovation.state_tracker import StateTracker
 from bga_tracker.innovation import track_state, format_state
 
 # Discover table directories: "TABLE_ID opponent" folders under tests/innovation/fixtures/
 DATA_DIR = Path(__file__).resolve().parent / "fixtures"
 TABLE_DIRS = sorted(DATA_DIR.glob("* *"))
+
+CARDINFO_PATH = Path(__file__).resolve().parent.parent.parent / "assets" / "cardinfo.json"
 
 
 def table_ids():
@@ -41,16 +45,12 @@ def test_track_state(table_id, opponent, table_dir):
     reference = table_dir / "game_state.json"
     expected = reference.read_text(encoding="utf-8")
 
-    card_db = track_state.load_card_database()
+    card_db = CardDB(CARDINFO_PATH)
     players = [track_state.PERSPECTIVE, opponent]
     game_log_path = table_dir / "game_log.json"
 
-    state, known, deck_stacks, unknown_hand, unknown_score = \
-        track_state.parse_log(card_db, players, game_log_path)
-    achievements = track_state.deduce_achievements(card_db, state, deck_stacks)
-    game_state = track_state.build_player_output(
-        card_db, state, known, deck_stacks, players,
-        unknown_hand, unknown_score, achievements)
+    tracker = StateTracker(card_db, players, track_state.PERSPECTIVE)
+    game_state = tracker.process_log(game_log_path).to_json()
 
     actual = json.dumps(game_state, indent=2)
     assert actual == expected.rstrip("\n")

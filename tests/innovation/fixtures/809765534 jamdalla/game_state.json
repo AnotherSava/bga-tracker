@@ -80,7 +80,7 @@
         null,
         {
           "name": "Paris",
-          "revealed": true
+          "revealed": false
         }
       ]
     },
@@ -368,41 +368,41 @@
     "AnotherSava": [
       {
         "name": "Experimentation",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Atomic Theory",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Classification",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Vaccination",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Emancipation",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Explosives",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Lighting",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Railroad",
-        "revealed": true
+        "revealed": false
       }
     ],
     "jamdalla": [
       {
         "name": "Encyclopedia",
-        "revealed": true
+        "revealed": false
       },
       {
         "age": 7,
@@ -430,11 +430,11 @@
       },
       {
         "name": "Engineering",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Coal",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Antibiotics",
@@ -452,31 +452,31 @@
     "jamdalla": [
       {
         "name": "Mathematics",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Translation",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Enterprise",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Societies",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Industrialization",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Combustion",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Refrigeration",
-        "revealed": true
+        "revealed": false
       }
     ]
   },

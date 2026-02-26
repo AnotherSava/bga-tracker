@@ -34,7 +34,10 @@
     },
     "3": {
       "base": [
-        null
+        {
+          "name": "Education",
+          "revealed": false
+        }
       ],
       "cities": [
         null
@@ -240,7 +243,13 @@
         "name": "Mysticism"
       },
       {
+        "name": "Barcelona"
+      },
+      {
         "name": "Delhi"
+      },
+      {
+        "name": "Engineering"
       },
       {
         "name": "Experimentation"
@@ -290,12 +299,6 @@
         "name": "Translation"
       },
       {
-        "name": "Barcelona"
-      },
-      {
-        "name": "Engineering"
-      },
-      {
         "name": "Optics"
       },
       {
@@ -334,7 +337,7 @@
     "AnotherSava": [
       {
         "name": "City States",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Reformation",
@@ -342,19 +345,19 @@
       },
       {
         "name": "Classification",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Metric System",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Canning",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Democracy",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Sanitation",
@@ -424,7 +427,7 @@
       },
       {
         "name": "Invention",
-        "revealed": true
+        "revealed": false
       },
       {
         "name": "Navigation",
@@ -444,7 +447,9 @@
     {
       "name": "Fermenting"
     },
-    null,
+    {
+      "name": "Machinery"
+    },
     null,
     null,
     null,
