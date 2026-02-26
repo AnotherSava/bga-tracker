@@ -30,6 +30,8 @@
         });
     }
 
+    function normalizeHyphens(s) { return s.replace(/\u2011/g, '-'); }
+
     function cleanHtml(msg) {
         msg = msg.replace(/<span[^>]*icon_(\d)[^>]*><\/span>/g, function(m, num) {
             return '[' + (iconMap[num] || 'icon' + num) + ']';
@@ -89,7 +91,7 @@
                 if (playerArgs && playerArgs.name) {
                     // Build rich message from player data
                     var player = playerNames[playerArgs.player_id] || playerNames[playerArgs.owner_from] || playerArgs.player_id;
-                    var card = '[' + playerArgs.age + '] ' + playerArgs.name;
+                    var card = '[' + playerArgs.age + '] ' + normalizeHyphens(playerArgs.name);
                     var from = playerArgs.location_from;
                     var to = playerArgs.location_to;
                     var ownerFrom = playerArgs.owner_from;
