@@ -13,7 +13,7 @@ from playwright.sync_api import sync_playwright
 from playwright._impl._errors import TargetClosedError
 
 _MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(_MODULE_DIR)))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(_MODULE_DIR))
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 CMD_FILE = os.path.join(PROJECT_ROOT, "scripts", "cmd.txt")
