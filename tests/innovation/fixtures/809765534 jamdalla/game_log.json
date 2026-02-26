@@ -1,5 +1,8 @@
 {
-  "total_entries": 441,
+  "players": {
+    "1": "AnotherSava",
+    "2": "jamdalla"
+  },
   "log": [
     {
       "move": 2,
@@ -17,13 +20,27 @@
       "move": 3,
       "time": 1771635403,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Clothing from hand."
+      "card_name": "Clothing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 3,
       "time": 1771635403,
       "type": "transfer",
-      "msg": "jamdalla melds [1] The wheel from hand."
+      "card_name": "The wheel",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 3,
@@ -35,61 +52,131 @@
       "move": 4,
       "time": 1771635438,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Archery from hand."
+      "card_name": "Archery",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 4,
       "time": 1771635438,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Jerusalem."
+      "card_name": "Jerusalem",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 5,
       "time": 1771635626,
       "type": "transfer",
-      "msg": "jamdalla melds [1] Code of laws from hand."
+      "card_name": "Code of laws",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 5,
       "time": 1771635626,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from cities."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 6,
       "time": 1771635631,
       "type": "transfer",
-      "msg": "jamdalla melds [1] Athens from hand."
+      "card_name": "Athens",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 6,
       "time": 1771635631,
       "type": "transfer",
-      "msg": "jamdalla draws a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 6,
       "time": 1771635631,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from cities."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 7,
       "time": 1771635986,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Jerusalem from hand."
+      "card_name": "Jerusalem",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 7,
       "time": 1771635986,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] Metalworking."
+      "card_name": "Metalworking",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 7,
       "time": 1771635986,
       "type": "transfer",
-      "msg": "AnotherSava places [1] Metalworking in hand."
+      "card_name": "Metalworking",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 7,
@@ -107,7 +194,14 @@
       "move": 8,
       "time": 1771635995,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Metalworking from hand."
+      "card_name": "Metalworking",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 8,
@@ -131,13 +225,27 @@
       "move": 8,
       "time": 1771635995,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 8,
       "time": 1771635995,
       "type": "transfer",
-      "msg": "jamdalla transfers [2] Currency from hand to AnotherSava's hand."
+      "card_name": "Currency",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
@@ -149,31 +257,66 @@
       "move": 8,
       "time": 1771635995,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 9,
       "time": 1771636288,
       "type": "transfer",
-      "msg": "jamdalla transfers [1] Writing from hand to AnotherSava's hand."
+      "card_name": "Writing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 10,
       "time": 1771636294,
       "type": "transfer",
-      "msg": "jamdalla melds [1] Damascus from hand."
+      "card_name": "Damascus",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 10,
       "time": 1771636294,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [1] Sailing."
+      "card_name": "Sailing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 10,
       "time": 1771636294,
       "type": "transfer",
-      "msg": "jamdalla places [1] Sailing in hand."
+      "card_name": "Sailing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 10,
@@ -185,13 +328,27 @@
       "move": 10,
       "time": 1771636294,
       "type": "transfer",
-      "msg": "jamdalla returns a [1] from his hand from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "jamdalla",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 10,
       "time": 1771636294,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from cities."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 11,
@@ -203,7 +360,14 @@
       "move": 11,
       "time": 1771636303,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] Troy from hand."
+      "card_name": "Troy",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 11,
@@ -227,13 +391,27 @@
       "move": 11,
       "time": 1771636303,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 11,
       "time": 1771636303,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 11,
@@ -245,25 +423,53 @@
       "move": 11,
       "time": 1771636303,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 11,
       "time": 1771636303,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 12,
       "time": 1771636367,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Writing from hand."
+      "card_name": "Writing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 12,
       "time": 1771636367,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Babylon."
+      "card_name": "Babylon",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 13,
@@ -275,7 +481,14 @@
       "move": 13,
       "time": 1771636376,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Babylon from hand."
+      "card_name": "Babylon",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 13,
@@ -299,7 +512,14 @@
       "move": 13,
       "time": 1771636376,
       "type": "transfer",
-      "msg": "AnotherSava draws [2] Construction."
+      "card_name": "Construction",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 13,
@@ -311,7 +531,14 @@
       "move": 13,
       "time": 1771636376,
       "type": "transfer",
-      "msg": "AnotherSava draws [2] Monotheism."
+      "card_name": "Monotheism",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 14,
@@ -323,7 +550,14 @@
       "move": 14,
       "time": 1771674997,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] Tools from hand."
+      "card_name": "Tools",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 14,
@@ -347,13 +581,27 @@
       "move": 14,
       "time": 1771674997,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 14,
       "time": 1771674997,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 14,
@@ -365,49 +613,105 @@
       "move": 14,
       "time": 1771674997,
       "type": "transfer",
-      "msg": "jamdalla draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 14,
       "time": 1771674997,
       "type": "transfer",
-      "msg": "jamdalla draws a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 15,
       "time": 1771675019,
       "type": "transfer",
-      "msg": "jamdalla melds [1] Masonry from hand."
+      "card_name": "Masonry",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 16,
       "time": 1771694946,
       "type": "transfer",
-      "msg": "AnotherSava melds [2] Monotheism from hand."
+      "card_name": "Monotheism",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 16,
       "time": 1771694946,
       "type": "transfer",
-      "msg": "AnotherSava draws [2] Carthage."
+      "card_name": "Carthage",
+      "card_age": 2,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 17,
       "time": 1771694956,
       "type": "transfer",
-      "msg": "AnotherSava melds [2] Carthage from hand."
+      "card_name": "Carthage",
+      "card_age": 2,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 17,
       "time": 1771694956,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Medicine."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 18,
       "time": 1771695956,
       "type": "transfer",
-      "msg": "jamdalla melds [1] Oars from hand."
+      "card_name": "Oars",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 19,
@@ -437,25 +741,53 @@
       "move": 19,
       "time": 1771695965,
       "type": "transfer",
-      "msg": "AnotherSava transfers [2] Currency from hand to jamdalla's score pile."
+      "card_name": "Currency",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 19,
       "time": 1771695965,
       "type": "transfer",
-      "msg": "AnotherSava draws [2] Philosophy."
+      "card_name": "Philosophy",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 19,
       "time": 1771695965,
       "type": "transfer",
-      "msg": "AnotherSava transfers [3] Medicine from hand to jamdalla's score pile."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 19,
       "time": 1771695965,
       "type": "transfer",
-      "msg": "AnotherSava draws [2] Fermenting."
+      "card_name": "Fermenting",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 19,
@@ -473,19 +805,40 @@
       "move": 20,
       "time": 1771696706,
       "type": "transfer",
-      "msg": "AnotherSava melds [2] Fermenting from hand."
+      "card_name": "Fermenting",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 20,
       "time": 1771696706,
       "type": "transfer",
-      "msg": "AnotherSava draws [2] Rome."
+      "card_name": "Rome",
+      "card_age": 2,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 21,
       "time": 1771696730,
       "type": "transfer",
-      "msg": "AnotherSava melds [2] Philosophy from hand."
+      "card_name": "Philosophy",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 22,
@@ -497,7 +850,14 @@
       "move": 22,
       "time": 1771696853,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] Sailing from hand."
+      "card_name": "Sailing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 22,
@@ -521,13 +881,27 @@
       "move": 22,
       "time": 1771696853,
       "type": "transfer",
-      "msg": "jamdalla draws a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 22,
       "time": 1771696853,
       "type": "transfer",
-      "msg": "jamdalla draws a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 22,
@@ -539,13 +913,27 @@
       "move": 22,
       "time": 1771696853,
       "type": "transfer",
-      "msg": "jamdalla draws a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 22,
       "time": 1771696853,
       "type": "transfer",
-      "msg": "jamdalla draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 23,
@@ -575,13 +963,27 @@
       "move": 24,
       "time": 1771696886,
       "type": "transfer",
-      "msg": "jamdalla tucks [2] Calendar from hand."
+      "card_name": "Calendar",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 25,
       "time": 1771696890,
       "type": "transfer",
-      "msg": "jamdalla draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 26,
@@ -593,7 +995,14 @@
       "move": 26,
       "time": 1771697854,
       "type": "transfer",
-      "msg": "AnotherSava tucks [2] Rome from hand."
+      "card_name": "Rome",
+      "card_age": 2,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 26,
@@ -617,7 +1026,14 @@
       "move": 27,
       "time": 1771697862,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Delhi."
+      "card_name": "Delhi",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 27,
@@ -659,13 +1075,27 @@
       "move": 31,
       "time": 1771697893,
       "type": "transfer",
-      "msg": "AnotherSava melds [3] Delhi from hand."
+      "card_name": "Delhi",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 31,
       "time": 1771697893,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Hangzhou."
+      "card_name": "Hangzhou",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 32,
@@ -677,7 +1107,14 @@
       "move": 32,
       "time": 1771697961,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] Agriculture from hand."
+      "card_name": "Agriculture",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 32,
@@ -701,13 +1138,27 @@
       "move": 33,
       "time": 1771697964,
       "type": "transfer",
-      "msg": "jamdalla tucks [3] Mecca from hand."
+      "card_name": "Mecca",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 34,
       "time": 1771697967,
       "type": "transfer",
-      "msg": "jamdalla draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 34,
@@ -719,19 +1170,40 @@
       "move": 35,
       "time": 1771697977,
       "type": "transfer",
-      "msg": "jamdalla tucks [3] Baghdad from hand."
+      "card_name": "Baghdad",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 36,
       "time": 1771697980,
       "type": "transfer",
-      "msg": "jamdalla draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 37,
       "time": 1771697985,
       "type": "transfer",
-      "msg": "jamdalla achieves a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 38,
@@ -767,7 +1239,14 @@
       "move": 40,
       "time": 1771698061,
       "type": "transfer",
-      "msg": "AnotherSava scores [3] Hangzhou from hand."
+      "card_name": "Hangzhou",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
@@ -779,7 +1258,14 @@
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava tucks [2] Construction from hand."
+      "card_name": "Construction",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 41,
@@ -809,19 +1295,40 @@
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Feudalism."
+      "card_name": "Feudalism",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Education."
+      "card_name": "Education",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Machinery."
+      "card_name": "Machinery",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
@@ -839,19 +1346,40 @@
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Optics."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Paper."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771698066,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Engineering."
+      "card_name": "Engineering",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
@@ -881,61 +1409,131 @@
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava transfers [3] Optics from hand to jamdalla's score pile."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Compass."
+      "card_name": "Compass",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava transfers [3] Paper from hand to jamdalla's score pile."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Enterprise."
+      "card_name": "Enterprise",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava transfers [4] Enterprise from hand to jamdalla's score pile."
+      "card_name": "Enterprise",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Colonialism."
+      "card_name": "Colonialism",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava transfers [3] Compass from hand to jamdalla's score pile."
+      "card_name": "Compass",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Navigation."
+      "card_name": "Navigation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava transfers [4] Navigation from hand to jamdalla's score pile."
+      "card_name": "Navigation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771700051,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Reformation."
+      "card_name": "Reformation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
@@ -977,13 +1575,27 @@
       "move": 44,
       "time": 1771700202,
       "type": "transfer",
-      "msg": "jamdalla tucks [2] Canal building from hand."
+      "card_name": "Canal building",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 46,
       "time": 1771701431,
       "type": "transfer",
-      "msg": "AnotherSava melds [4] Reformation from hand."
+      "card_name": "Reformation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
@@ -995,7 +1607,14 @@
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Feudalism from hand."
+      "card_name": "Feudalism",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 47,
@@ -1025,25 +1644,53 @@
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Gunpowder."
+      "card_name": "Gunpowder",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Invention."
+      "card_name": "Invention",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Experimentation."
+      "card_name": "Experimentation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Anatomy."
+      "card_name": "Anatomy",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
@@ -1061,25 +1708,53 @@
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Perspective."
+      "card_name": "Perspective",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Societies."
+      "card_name": "Societies",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Measurement."
+      "card_name": "Measurement",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
       "time": 1771701439,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Steam engine."
+      "card_name": "Steam engine",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 48,
@@ -1109,49 +1784,105 @@
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava transfers [5] Societies from hand to jamdalla's score pile."
+      "card_name": "Societies",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Coal."
+      "card_name": "Coal",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava transfers [4] Gunpowder from hand to jamdalla's score pile."
+      "card_name": "Gunpowder",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Statistics."
+      "card_name": "Statistics",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava transfers [5] Steam engine from hand to jamdalla's score pile."
+      "card_name": "Steam engine",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Astronomy."
+      "card_name": "Astronomy",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava transfers [5] Astronomy from hand to jamdalla's score pile."
+      "card_name": "Astronomy",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771705504,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Physics."
+      "card_name": "Physics",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 48,
@@ -1169,19 +1900,40 @@
       "move": 49,
       "time": 1771705524,
       "type": "transfer",
-      "msg": "jamdalla melds [3] Cordoba from hand."
+      "card_name": "Cordoba",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 49,
       "time": 1771705524,
       "type": "transfer",
-      "msg": "jamdalla achieves [null] Legend."
+      "card_name": "Legend",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 50,
       "time": 1771705702,
       "type": "transfer",
-      "msg": "AnotherSava melds [5] Statistics from hand."
+      "card_name": "Statistics",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 51,
@@ -1193,7 +1945,14 @@
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Education from hand."
+      "card_name": "Education",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 51,
@@ -1217,19 +1976,40 @@
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "jamdalla transfers a [5] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "jamdalla transfers a [5] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "jamdalla transfers a [5] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 51,
@@ -1241,19 +2021,40 @@
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "jamdalla transfers a [4] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "jamdalla transfers a [4] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 51,
       "time": 1771705707,
       "type": "transfer",
-      "msg": "jamdalla transfers a [4] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 51,
@@ -1265,7 +2066,14 @@
       "move": 52,
       "time": 1771705720,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Stockholm."
+      "card_name": "Stockholm",
+      "card_age": 5,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 52,
@@ -1283,7 +2091,14 @@
       "move": 53,
       "time": 1771710154,
       "type": "transfer",
-      "msg": "jamdalla achieves a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 54,
@@ -1313,25 +2128,53 @@
       "move": 55,
       "time": 1771710162,
       "type": "transfer",
-      "msg": "jamdalla tucks [2] Mapmaking from hand."
+      "card_name": "Mapmaking",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 56,
       "time": 1771710165,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] Domestication from hand."
+      "card_name": "Domestication",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 57,
       "time": 1771710176,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] City states from hand."
+      "card_name": "City states",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 58,
       "time": 1771710179,
       "type": "transfer",
-      "msg": "jamdalla tucks [1] Mysticism from hand."
+      "card_name": "Mysticism",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": true
     },
     {
       "move": 59,
@@ -1343,7 +2186,14 @@
       "move": 59,
       "time": 1771710182,
       "type": "transfer",
-      "msg": "jamdalla achieves [null] Monument."
+      "card_name": "Monument",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 60,
@@ -1355,7 +2205,14 @@
       "move": 60,
       "time": 1771711175,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Engineering from hand."
+      "card_name": "Engineering",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 60,
@@ -1379,25 +2236,53 @@
       "move": 60,
       "time": 1771711175,
       "type": "transfer",
-      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 60,
       "time": 1771711175,
       "type": "transfer",
-      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 60,
       "time": 1771711175,
       "type": "transfer",
-      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 60,
       "time": 1771711175,
       "type": "transfer",
-      "msg": "jamdalla transfers a [3] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 60,
@@ -1409,7 +2294,14 @@
       "move": 60,
       "time": 1771711175,
       "type": "transfer",
-      "msg": "jamdalla transfers a [2] from his score pile to his hand from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "score",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 60,
@@ -1469,31 +2361,66 @@
       "move": 62,
       "time": 1771711187,
       "type": "transfer",
-      "msg": "AnotherSava tucks [5] Stockholm from hand."
+      "card_name": "Stockholm",
+      "card_age": 5,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 62,
       "time": 1771711187,
       "type": "transfer",
-      "msg": "AnotherSava achieves [null] Glory."
+      "card_name": "Glory",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 63,
       "time": 1771711206,
       "type": "transfer",
-      "msg": "AnotherSava tucks [5] Coal from hand."
+      "card_name": "Coal",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 64,
       "time": 1771711211,
       "type": "transfer",
-      "msg": "AnotherSava tucks [5] Measurement from hand."
+      "card_name": "Measurement",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 65,
       "time": 1771711216,
       "type": "transfer",
-      "msg": "AnotherSava tucks [4] Anatomy from hand."
+      "card_name": "Anatomy",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 65,
@@ -1535,7 +2462,14 @@
       "move": 67,
       "time": 1771712675,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [5] Chemistry."
+      "card_name": "Chemistry",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 67,
@@ -1547,13 +2481,27 @@
       "move": 67,
       "time": 1771712675,
       "type": "transfer",
-      "msg": "jamdalla melds [5] Chemistry."
+      "card_name": "Chemistry",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 67,
       "time": 1771712675,
       "type": "transfer",
-      "msg": "jamdalla draws a [5] from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 68,
@@ -1583,7 +2531,14 @@
       "move": 69,
       "time": 1771712732,
       "type": "transfer",
-      "msg": "jamdalla draws a [6] from cities."
+      "card_name": null,
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 69,
@@ -1595,19 +2550,40 @@
       "move": 69,
       "time": 1771712732,
       "type": "transfer",
-      "msg": "jamdalla draws and scores a [6] from base."
+      "card_name": null,
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 69,
       "time": 1771712732,
       "type": "transfer",
-      "msg": "jamdalla returns a [6] from his score pile from base."
+      "card_name": null,
+      "card_age": 6,
+      "card_set": "base",
+      "from": "score",
+      "to": "deck",
+      "from_owner": "jamdalla",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 70,
       "time": 1771712916,
       "type": "transfer",
-      "msg": "AnotherSava melds [3] Machinery from hand."
+      "card_name": "Machinery",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
@@ -1637,97 +2613,209 @@
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [2] Mathematics from hand to AnotherSava's hand."
+      "card_name": "Mathematics",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [3] Translation from hand to AnotherSava's hand."
+      "card_name": "Translation",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [4] Enterprise from hand to AnotherSava's hand."
+      "card_name": "Enterprise",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [5] Societies from hand to AnotherSava's hand."
+      "card_name": "Societies",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [6] Edinburgh from hand to AnotherSava's hand."
+      "card_name": "Edinburgh",
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [2] Currency from hand to AnotherSava's hand."
+      "card_name": "Currency",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [3] Medicine from hand to AnotherSava's hand."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [4] Navigation from hand to AnotherSava's hand."
+      "card_name": "Navigation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [5] Steam engine from hand to AnotherSava's hand."
+      "card_name": "Steam engine",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [3] Optics from hand to AnotherSava's hand."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [4] Gunpowder from hand to AnotherSava's hand."
+      "card_name": "Gunpowder",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [5] Astronomy from hand to AnotherSava's hand."
+      "card_name": "Astronomy",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [3] Paper from hand to AnotherSava's hand."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [5] The pirate code from hand to AnotherSava's hand."
+      "card_name": "The pirate code",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "jamdalla transfers [3] Compass from hand to AnotherSava's hand."
+      "card_name": "Compass",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771712919,
       "type": "transfer",
-      "msg": "AnotherSava transfers [5] Physics from hand to jamdalla's hand."
+      "card_name": "Physics",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 71,
@@ -1757,7 +2845,14 @@
       "move": 72,
       "time": 1771731617,
       "type": "transfer",
-      "msg": "jamdalla melds [5] Physics from hand."
+      "card_name": "Physics",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
@@ -1787,19 +2882,40 @@
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Encyclopedia."
+      "card_name": "Encyclopedia",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Machine tools."
+      "card_name": "Machine tools",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Canning."
+      "card_name": "Canning",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 73,
@@ -1811,19 +2927,40 @@
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Encyclopedia in hand."
+      "card_name": "Encyclopedia",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Machine tools in hand."
+      "card_name": "Machine tools",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Canning in hand."
+      "card_name": "Canning",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 73,
@@ -1835,19 +2972,40 @@
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [6] Classification."
+      "card_name": "Classification",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [6] Vaccination."
+      "card_name": "Vaccination",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [6] Industrialization."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
@@ -1859,19 +3017,40 @@
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla places [6] Classification in hand."
+      "card_name": "Classification",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla places [6] Vaccination in hand."
+      "card_name": "Vaccination",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla places [6] Industrialization in hand."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 73,
@@ -1883,7 +3062,14 @@
       "move": 73,
       "time": 1771731621,
       "type": "transfer",
-      "msg": "jamdalla draws a [6] from base."
+      "card_name": null,
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 74,
@@ -1895,7 +3081,14 @@
       "move": 74,
       "time": 1771731822,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Medicine from hand."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 74,
@@ -1925,37 +3118,79 @@
       "move": 75,
       "time": 1771731836,
       "type": "transfer",
-      "msg": "AnotherSava tucks [6] Edinburgh from hand."
+      "card_name": "Edinburgh",
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 76,
       "time": 1771731839,
       "type": "transfer",
-      "msg": "AnotherSava tucks [6] Canning from hand."
+      "card_name": "Canning",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 77,
       "time": 1771731841,
       "type": "transfer",
-      "msg": "AnotherSava tucks [6] Machine tools from hand."
+      "card_name": "Machine tools",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 78,
       "time": 1771731847,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Compass from hand."
+      "card_name": "Compass",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 79,
       "time": 1771731861,
       "type": "transfer",
-      "msg": "AnotherSava tucks [5] The pirate code from hand."
+      "card_name": "The pirate code",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 80,
       "time": 1771731865,
       "type": "transfer",
-      "msg": "AnotherSava tucks [4] Navigation from hand."
+      "card_name": "Navigation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 80,
@@ -1973,43 +3208,92 @@
       "move": 81,
       "time": 1771731873,
       "type": "transfer",
-      "msg": "AnotherSava tucks [4] Gunpowder from hand."
+      "card_name": "Gunpowder",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 82,
       "time": 1771731877,
       "type": "transfer",
-      "msg": "AnotherSava tucks [5] Steam engine from hand."
+      "card_name": "Steam engine",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 83,
       "time": 1771731889,
       "type": "transfer",
-      "msg": "AnotherSava tucks [4] Colonialism from hand."
+      "card_name": "Colonialism",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 84,
       "time": 1771731924,
       "type": "transfer",
-      "msg": "AnotherSava tucks [5] Astronomy from hand."
+      "card_name": "Astronomy",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 85,
       "time": 1771731936,
       "type": "transfer",
-      "msg": "AnotherSava tucks [2] Currency from hand."
+      "card_name": "Currency",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 86,
       "time": 1771731945,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Paper from hand."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 87,
       "time": 1771731959,
       "type": "transfer",
-      "msg": "AnotherSava tucks [4] Perspective from hand."
+      "card_name": "Perspective",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 87,
@@ -2063,31 +3347,66 @@
       "move": 90,
       "time": 1771731975,
       "type": "transfer",
-      "msg": "jamdalla transfers [6] Classification from hand to AnotherSava's hand."
+      "card_name": "Classification",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 90,
       "time": 1771731975,
       "type": "transfer",
-      "msg": "jamdalla transfers [6] Vaccination from hand to AnotherSava's hand."
+      "card_name": "Vaccination",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 90,
       "time": 1771731975,
       "type": "transfer",
-      "msg": "jamdalla transfers [6] Industrialization from hand to AnotherSava's hand."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 90,
       "time": 1771731975,
       "type": "transfer",
-      "msg": "jamdalla transfers [6] Emancipation from hand to AnotherSava's hand."
+      "card_name": "Emancipation",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "jamdalla",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 90,
       "time": 1771731975,
       "type": "transfer",
-      "msg": "AnotherSava transfers [6] Encyclopedia from hand to jamdalla's hand."
+      "card_name": "Encyclopedia",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 90,
@@ -2141,7 +3460,14 @@
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Democracy."
+      "card_name": "Democracy",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 91,
@@ -2153,13 +3479,27 @@
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "AnotherSava melds [6] Democracy."
+      "card_name": "Democracy",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "AnotherSava draws [6] Atomic theory."
+      "card_name": "Atomic theory",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 91,
@@ -2171,7 +3511,14 @@
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [7] Electricity."
+      "card_name": "Electricity",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 91,
@@ -2183,13 +3530,27 @@
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "jamdalla melds [7] Electricity."
+      "card_name": "Electricity",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "jamdalla draws a [7] from base."
+      "card_name": null,
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 91,
@@ -2201,13 +3562,27 @@
       "move": 91,
       "time": 1771732022,
       "type": "transfer",
-      "msg": "jamdalla draws a [7] from base."
+      "card_name": null,
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 92,
       "time": 1771732062,
       "type": "transfer",
-      "msg": "jamdalla melds [7] Publications from hand."
+      "card_name": "Publications",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 93,
@@ -2219,7 +3594,14 @@
       "move": 93,
       "time": 1771732177,
       "type": "transfer",
-      "msg": "AnotherSava tucks [3] Optics from hand."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 93,
@@ -2243,13 +3625,27 @@
       "move": 94,
       "time": 1771732222,
       "type": "transfer",
-      "msg": "AnotherSava returns [6] Vaccination from hand."
+      "card_name": "Vaccination",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "AnotherSava",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 95,
       "time": 1771732224,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [8] Socialism."
+      "card_name": "Socialism",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 95,
@@ -2261,19 +3657,40 @@
       "move": 96,
       "time": 1771732232,
       "type": "transfer",
-      "msg": "AnotherSava returns [6] Industrialization from hand."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "AnotherSava",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 97,
       "time": 1771732235,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [8] Empiricism."
+      "card_name": "Empiricism",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 98,
       "time": 1771732237,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 99,
@@ -2321,7 +3738,14 @@
       "move": 102,
       "time": 1771815940,
       "type": "transfer",
-      "msg": "AnotherSava draws [6] Paris."
+      "card_name": "Paris",
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 102,
@@ -2333,7 +3757,14 @@
       "move": 103,
       "time": 1771816131,
       "type": "transfer",
-      "msg": "jamdalla draws a [7] from cities."
+      "card_name": null,
+      "card_age": 7,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 103,
@@ -2345,7 +3776,14 @@
       "move": 103,
       "time": 1771816131,
       "type": "transfer",
-      "msg": "jamdalla draws a [7] from base."
+      "card_name": null,
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
@@ -2375,85 +3813,183 @@
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [2] Mathematics from hand to jamdalla's score pile."
+      "card_name": "Mathematics",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [6] Vaccination."
+      "card_name": "Vaccination",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [3] Translation from hand to jamdalla's score pile."
+      "card_name": "Translation",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [6] Industrialization."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [5] Societies from hand to jamdalla's score pile."
+      "card_name": "Societies",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Railroad."
+      "card_name": "Railroad",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [4] Enterprise from hand to jamdalla's score pile."
+      "card_name": "Enterprise",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Combustion."
+      "card_name": "Combustion",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [7] Combustion from hand to jamdalla's score pile."
+      "card_name": "Combustion",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Refrigeration."
+      "card_name": "Refrigeration",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [7] Refrigeration from hand to jamdalla's score pile."
+      "card_name": "Refrigeration",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Lighting."
+      "card_name": "Lighting",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava transfers [6] Industrialization from hand to jamdalla's score pile."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 104,
       "time": 1771816153,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Explosives."
+      "card_name": "Explosives",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 104,
@@ -2495,7 +4031,14 @@
       "move": 105,
       "time": 1771816450,
       "type": "transfer",
-      "msg": "AnotherSava draws and melds [8] Flight."
+      "card_name": "Flight",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "board",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 105,
@@ -2513,31 +4056,66 @@
       "move": 107,
       "time": 1771816457,
       "type": "transfer",
-      "msg": "AnotherSava scores [5] Coal from board."
+      "card_name": "Coal",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "board",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 107,
       "time": 1771816457,
       "type": "transfer",
-      "msg": "AnotherSava scores [3] Engineering from board."
+      "card_name": "Engineering",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "board",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 108,
       "time": 1771816495,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [4] from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 109,
       "time": 1771816621,
       "type": "transfer",
-      "msg": "jamdalla achieves a [5] from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 110,
       "time": 1771816623,
       "type": "transfer",
-      "msg": "jamdalla achieves a [6] from base."
+      "card_name": null,
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 111,
@@ -2567,19 +4145,40 @@
       "move": 112,
       "time": 1771816689,
       "type": "transfer",
-      "msg": "AnotherSava returns [6] Paris from hand."
+      "card_name": "Paris",
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "AnotherSava",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 113,
       "time": 1771816691,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [8] Antibiotics."
+      "card_name": "Antibiotics",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 114,
       "time": 1771816778,
       "type": "transfer",
-      "msg": "AnotherSava melds [4] Invention from hand."
+      "card_name": "Invention",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 115,
@@ -2609,7 +4208,14 @@
       "move": 115,
       "time": 1771816828,
       "type": "transfer",
-      "msg": "jamdalla draws and reveals [8] Rocketry."
+      "card_name": "Rocketry",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 115,
@@ -2621,25 +4227,53 @@
       "move": 115,
       "time": 1771816828,
       "type": "transfer",
-      "msg": "jamdalla melds [8] Rocketry."
+      "card_name": "Rocketry",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "jamdalla",
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 115,
       "time": 1771816828,
       "type": "transfer",
-      "msg": "jamdalla achieves [null] Empire."
+      "card_name": "Empire",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 115,
       "time": 1771816828,
       "type": "transfer",
-      "msg": "jamdalla draws a [8] from base."
+      "card_name": null,
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 116,
       "time": 1771816835,
       "type": "transfer",
-      "msg": "jamdalla achieves a [7] from base."
+      "card_name": null,
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "jamdalla",
+      "bottom_to": false
     },
     {
       "move": 116,

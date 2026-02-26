@@ -1,5 +1,8 @@
 {
-  "total_entries": 277,
+  "players": {
+    "1": "AnotherSava",
+    "2": "TrinaCat"
+  },
   "log": [
     {
       "move": 2,
@@ -17,13 +20,27 @@
       "move": 3,
       "time": 1771650718,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Mysticism from hand."
+      "card_name": "Mysticism",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 3,
       "time": 1771650718,
       "type": "transfer",
-      "msg": "TrinaCat melds [1] Tools from hand."
+      "card_name": "Tools",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 3,
@@ -35,43 +52,92 @@
       "move": 4,
       "time": 1771650730,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Writing from hand."
+      "card_name": "Writing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 4,
       "time": 1771650730,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Uruk."
+      "card_name": "Uruk",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 5,
       "time": 1771650755,
       "type": "transfer",
-      "msg": "TrinaCat draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 6,
       "time": 1771650757,
       "type": "transfer",
-      "msg": "TrinaCat draws a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 7,
       "time": 1771650797,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Uruk from hand."
+      "card_name": "Uruk",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 7,
       "time": 1771650797,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] Oars."
+      "card_name": "Oars",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 7,
       "time": 1771650797,
       "type": "transfer",
-      "msg": "AnotherSava places [1] Oars in hand."
+      "card_name": "Oars",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 7,
@@ -83,7 +149,14 @@
       "move": 7,
       "time": 1771650797,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Memphis."
+      "card_name": "Memphis",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
@@ -95,7 +168,14 @@
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Oars from hand."
+      "card_name": "Oars",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 8,
@@ -119,7 +199,14 @@
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] Masonry."
+      "card_name": "Masonry",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
@@ -131,13 +218,27 @@
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Masonry."
+      "card_name": "Masonry",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Clothing."
+      "card_name": "Clothing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
@@ -149,7 +250,14 @@
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] Domestication."
+      "card_name": "Domestication",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
@@ -161,13 +269,27 @@
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Domestication."
+      "card_name": "Domestication",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 8,
       "time": 1771650815,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Metalworking."
+      "card_name": "Metalworking",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 9,
@@ -209,25 +331,53 @@
       "move": 11,
       "time": 1771654100,
       "type": "transfer",
-      "msg": "TrinaCat returns a [1] from his hand from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 12,
       "time": 1771654102,
       "type": "transfer",
-      "msg": "TrinaCat returns a [1] from his hand from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 12,
       "time": 1771654102,
       "type": "transfer",
-      "msg": "TrinaCat returns a [1] from his hand from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 12,
       "time": 1771654102,
       "type": "transfer",
-      "msg": "TrinaCat draws and melds [3] Translation."
+      "card_name": "Translation",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "board",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 12,
@@ -317,25 +467,53 @@
       "move": 13,
       "time": 1771654114,
       "type": "transfer",
-      "msg": "TrinaCat achieves [null] World."
+      "card_name": "World",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 14,
       "time": 1771654161,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Memphis from hand."
+      "card_name": "Memphis",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 14,
       "time": 1771654161,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] City states."
+      "card_name": "City states",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 14,
       "time": 1771654161,
       "type": "transfer",
-      "msg": "AnotherSava places [1] City states in hand."
+      "card_name": "City states",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 14,
@@ -347,7 +525,14 @@
       "move": 14,
       "time": 1771654161,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Thebes."
+      "card_name": "Thebes",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 15,
@@ -359,7 +544,14 @@
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Thebes from hand."
+      "card_name": "Thebes",
+      "card_age": 1,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 15,
@@ -383,7 +575,14 @@
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] Archery."
+      "card_name": "Archery",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 15,
@@ -395,13 +594,27 @@
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] Archery."
+      "card_name": "Archery",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Code of laws."
+      "card_name": "Code of laws",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 15,
@@ -413,7 +626,14 @@
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [1] The wheel."
+      "card_name": "The wheel",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 15,
@@ -425,25 +645,53 @@
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava melds [1] The wheel."
+      "card_name": "The wheel",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 15,
       "time": 1771654179,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Agriculture."
+      "card_name": "Agriculture",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 16,
       "time": 1771654187,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 17,
       "time": 1771654190,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Alchemy from hand."
+      "card_name": "Alchemy",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 18,
@@ -473,13 +721,27 @@
       "move": 19,
       "time": 1771654221,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Clothing from hand."
+      "card_name": "Clothing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 19,
       "time": 1771654221,
       "type": "transfer",
-      "msg": "AnotherSava draws [1] Sailing."
+      "card_name": "Sailing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 20,
@@ -527,25 +789,53 @@
       "move": 20,
       "time": 1771654225,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Canal building."
+      "card_name": "Canal building",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 20,
       "time": 1771654225,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Mapmaking."
+      "card_name": "Mapmaking",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 20,
       "time": 1771654225,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Construction."
+      "card_name": "Construction",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 20,
       "time": 1771654225,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Philosophy."
+      "card_name": "Philosophy",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 21,
@@ -581,13 +871,27 @@
       "move": 21,
       "time": 1771654233,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [4] Invention."
+      "card_name": "Invention",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 21,
       "time": 1771654233,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [4] Experimentation."
+      "card_name": "Experimentation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 21,
@@ -599,13 +903,27 @@
       "move": 21,
       "time": 1771654233,
       "type": "transfer",
-      "msg": "AnotherSava places [4] Invention in hand."
+      "card_name": "Invention",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 21,
       "time": 1771654233,
       "type": "transfer",
-      "msg": "AnotherSava places [4] Experimentation in hand."
+      "card_name": "Experimentation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 21,
@@ -635,13 +953,27 @@
       "move": 22,
       "time": 1771654240,
       "type": "transfer",
-      "msg": "AnotherSava tucks [4] Experimentation from hand."
+      "card_name": "Experimentation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 23,
       "time": 1771654242,
       "type": "transfer",
-      "msg": "AnotherSava scores [4] Invention from hand."
+      "card_name": "Invention",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "score",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 23,
@@ -671,19 +1003,40 @@
       "move": 23,
       "time": 1771654242,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 24,
       "time": 1771654261,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Compass from hand."
+      "card_name": "Compass",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 24,
       "time": 1771654261,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 25,
@@ -713,7 +1066,14 @@
       "move": 25,
       "time": 1771654287,
       "type": "transfer",
-      "msg": "AnotherSava draws and melds [5] Physics."
+      "card_name": "Physics",
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "board",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 26,
@@ -743,43 +1103,92 @@
       "move": 26,
       "time": 1771654306,
       "type": "transfer",
-      "msg": "TrinaCat draws a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 26,
       "time": 1771654306,
       "type": "transfer",
-      "msg": "TrinaCat transfers [3] Delhi from hand to AnotherSava's hand."
+      "card_name": "Delhi",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 27,
       "time": 1771654318,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 28,
       "time": 1771654320,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Engineering from hand."
+      "card_name": "Engineering",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 28,
       "time": 1771654320,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 29,
       "time": 1771654333,
       "type": "transfer",
-      "msg": "AnotherSava melds [3] Delhi from hand."
+      "card_name": "Delhi",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 29,
       "time": 1771654333,
       "type": "transfer",
-      "msg": "AnotherSava draws [5] Amsterdam."
+      "card_name": "Amsterdam",
+      "card_age": 5,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 30,
@@ -791,7 +1200,14 @@
       "move": 30,
       "time": 1771654350,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Metalworking from hand."
+      "card_name": "Metalworking",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 30,
@@ -845,13 +1261,27 @@
       "move": 30,
       "time": 1771654350,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Mathematics."
+      "card_name": "Mathematics",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 30,
       "time": 1771654350,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Currency."
+      "card_name": "Currency",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 30,
@@ -869,67 +1299,144 @@
       "move": 30,
       "time": 1771654350,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Road building."
+      "card_name": "Road building",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 30,
       "time": 1771654350,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [2] Monotheism."
+      "card_name": "Monotheism",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 31,
       "time": 1771654358,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Cordoba from hand."
+      "card_name": "Cordoba",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 31,
       "time": 1771654358,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Jakarta from hand."
+      "card_name": "Jakarta",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat draws and reveals [3] Medicine."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat places [3] Medicine in hand."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat draws and reveals [3] Paper."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat places [3] Paper in hand."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat draws and reveals [3] Education."
+      "card_name": "Education",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
       "time": 1771654362,
       "type": "transfer",
-      "msg": "TrinaCat places [3] Education in hand."
+      "card_name": "Education",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 32,
@@ -941,19 +1448,40 @@
       "move": 33,
       "time": 1771654443,
       "type": "transfer",
-      "msg": "TrinaCat returns a [3] from his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 33,
       "time": 1771654443,
       "type": "transfer",
-      "msg": "TrinaCat returns a [3] from his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 33,
       "time": 1771654443,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 34,
@@ -983,13 +1511,27 @@
       "move": 35,
       "time": 1771654512,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Agriculture from hand."
+      "card_name": "Agriculture",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 35,
       "time": 1771654512,
       "type": "transfer",
-      "msg": "AnotherSava draws [3] Optics."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 36,
@@ -1001,7 +1543,14 @@
       "move": 36,
       "time": 1771654526,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Sailing from hand."
+      "card_name": "Sailing",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 36,
@@ -1025,13 +1574,27 @@
       "move": 37,
       "time": 1771654529,
       "type": "transfer",
-      "msg": "AnotherSava returns [5] Amsterdam from hand."
+      "card_name": "Amsterdam",
+      "card_age": 5,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "AnotherSava",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 37,
       "time": 1771654529,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [6] Industrialization."
+      "card_name": "Industrialization",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 37,
@@ -1043,31 +1606,66 @@
       "move": 38,
       "time": 1771654532,
       "type": "transfer",
-      "msg": "AnotherSava returns [3] Optics from hand."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "AnotherSava",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 38,
       "time": 1771654532,
       "type": "transfer",
-      "msg": "AnotherSava draws and scores [4] Navigation."
+      "card_name": "Navigation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "score",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 39,
       "time": 1771654559,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Barcelona from hand."
+      "card_name": "Barcelona",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 39,
       "time": 1771654559,
       "type": "transfer",
-      "msg": "TrinaCat draws a [4] from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 40,
       "time": 1771654562,
       "type": "transfer",
-      "msg": "TrinaCat melds [4] Printing press from hand."
+      "card_name": "Printing press",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 41,
@@ -1079,7 +1677,14 @@
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava tucks [1] Code of laws from hand."
+      "card_name": "Code of laws",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": true
     },
     {
       "move": 41,
@@ -1103,19 +1708,40 @@
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Encyclopedia."
+      "card_name": "Encyclopedia",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Metric system."
+      "card_name": "Metric system",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Canning."
+      "card_name": "Canning",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
@@ -1127,19 +1753,40 @@
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Encyclopedia in hand."
+      "card_name": "Encyclopedia",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Metric system in hand."
+      "card_name": "Metric system",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Canning in hand."
+      "card_name": "Canning",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
@@ -1151,19 +1798,40 @@
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Atomic theory."
+      "card_name": "Atomic theory",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Classification."
+      "card_name": "Classification",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava draws and reveals [6] Democracy."
+      "card_name": "Democracy",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
@@ -1175,31 +1843,66 @@
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Atomic theory in hand."
+      "card_name": "Atomic theory",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Classification in hand."
+      "card_name": "Classification",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 41,
       "time": 1771654641,
       "type": "transfer",
-      "msg": "AnotherSava places [6] Democracy in hand."
+      "card_name": "Democracy",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 42,
       "time": 1771654669,
       "type": "transfer",
-      "msg": "AnotherSava melds [6] Atomic theory from hand."
+      "card_name": "Atomic theory",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 43,
       "time": 1771654934,
       "type": "transfer",
-      "msg": "TrinaCat melds [2] Calendar from hand."
+      "card_name": "Calendar",
+      "card_age": 2,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 44,
@@ -1211,7 +1914,14 @@
       "move": 44,
       "time": 1771654937,
       "type": "transfer",
-      "msg": "TrinaCat tucks [3] Medicine from hand."
+      "card_name": "Medicine",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": true
     },
     {
       "move": 44,
@@ -1235,13 +1945,27 @@
       "move": 45,
       "time": 1771655390,
       "type": "transfer",
-      "msg": "AnotherSava moves [1] Agriculture (board -> board)."
+      "card_name": "Agriculture",
+      "card_age": 1,
+      "card_set": "base",
+      "from": "board",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 45,
       "time": 1771655390,
       "type": "transfer",
-      "msg": "AnotherSava moves [3] Barcelona (board -> board)."
+      "card_name": "Barcelona",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "board",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 45,
@@ -1259,7 +1983,14 @@
       "move": 45,
       "time": 1771655390,
       "type": "transfer",
-      "msg": "AnotherSava moves [3] Engineering (board -> board)."
+      "card_name": "Engineering",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "board",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 46,
@@ -1289,7 +2020,14 @@
       "move": 47,
       "time": 1771655429,
       "type": "transfer",
-      "msg": "AnotherSava draws [6] New York City."
+      "card_name": "New York City",
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 47,
@@ -1301,133 +2039,287 @@
       "move": 47,
       "time": 1771655429,
       "type": "transfer",
-      "msg": "AnotherSava draws and melds [7] Lighting."
+      "card_name": "Lighting",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "board",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 48,
       "time": 1771655477,
       "type": "transfer",
-      "msg": "AnotherSava melds [6] Encyclopedia from hand."
+      "card_name": "Encyclopedia",
+      "card_age": 6,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 49,
       "time": 1771667211,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 50,
       "time": 1771667213,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Feudalism from hand."
+      "card_name": "Feudalism",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 50,
       "time": 1771667213,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 51,
       "time": 1771695009,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [1] from base."
+      "card_name": null,
+      "card_age": 1,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 52,
       "time": 1771695013,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [2] from base."
+      "card_name": null,
+      "card_age": 2,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 53,
       "time": 1771751154,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Baghdad from hand."
+      "card_name": "Baghdad",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 53,
       "time": 1771751154,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 54,
       "time": 1771751187,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Constantinople from hand."
+      "card_name": "Constantinople",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 54,
       "time": 1771751187,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 55,
       "time": 1771782000,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 56,
       "time": 1771782002,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [4] from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 57,
       "time": 1771826416,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Kaifeng from hand."
+      "card_name": "Kaifeng",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 57,
       "time": 1771826416,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Mecca from hand."
+      "card_name": "Mecca",
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat draws and reveals [3] Education."
+      "card_name": "Education",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat places [3] Education in hand."
+      "card_name": "Education",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat draws and reveals [3] Paper."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat places [3] Paper in hand."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat draws and reveals [3] Optics."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "revealed",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
       "time": 1771826424,
       "type": "transfer",
-      "msg": "TrinaCat places [3] Optics in hand."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "revealed",
+      "to": "hand",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 58,
@@ -1439,67 +2331,144 @@
       "move": 59,
       "time": 1771826459,
       "type": "transfer",
-      "msg": "TrinaCat returns a [3] from his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 60,
       "time": 1771826461,
       "type": "transfer",
-      "msg": "TrinaCat returns a [3] from his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 60,
       "time": 1771826461,
       "type": "transfer",
-      "msg": "TrinaCat returns a [3] from his hand from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "deck",
+      "from_owner": "TrinaCat",
+      "to_owner": null,
+      "bottom_to": false
     },
     {
       "move": 61,
       "time": 1771826581,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [5] from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 62,
       "time": 1771826583,
       "type": "transfer",
-      "msg": "AnotherSava achieves a [6] from base."
+      "card_name": null,
+      "card_age": 6,
+      "card_set": "base",
+      "from": "deck",
+      "to": "achievements",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 63,
       "time": 1771826597,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 64,
       "time": 1771826599,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Paper from hand."
+      "card_name": "Paper",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 65,
       "time": 1771826623,
       "type": "transfer",
-      "msg": "AnotherSava melds [6] New York City from hand."
+      "card_name": "New York City",
+      "card_age": 6,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 65,
       "time": 1771826623,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Sanitation."
+      "card_name": "Sanitation",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 65,
       "time": 1771826623,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Railroad."
+      "card_name": "Railroad",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 66,
       "time": 1771826636,
       "type": "transfer",
-      "msg": "AnotherSava melds [7] Railroad from hand."
+      "card_name": "Railroad",
+      "card_age": 7,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 67,
@@ -1529,7 +2498,14 @@
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "AnotherSava draws [7] Munich."
+      "card_name": "Munich",
+      "card_age": 7,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 68,
@@ -1559,13 +2535,27 @@
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Gunpowder."
+      "card_name": "Gunpowder",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "AnotherSava draws [4] Reformation."
+      "card_name": "Reformation",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 68,
@@ -1583,25 +2573,53 @@
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "TrinaCat draws a [4] from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "TrinaCat draws a [4] from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "TrinaCat draws a [4] from base."
+      "card_name": null,
+      "card_age": 4,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "TrinaCat draws a [5] from base."
+      "card_name": null,
+      "card_age": 5,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 68,
@@ -1613,49 +2631,105 @@
       "move": 68,
       "time": 1771826867,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from base."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 69,
       "time": 1771826901,
       "type": "transfer",
-      "msg": "TrinaCat melds [3] Optics from hand."
+      "card_name": "Optics",
+      "card_age": 3,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "TrinaCat",
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 69,
       "time": 1771826901,
       "type": "transfer",
-      "msg": "TrinaCat draws a [3] from cities."
+      "card_name": null,
+      "card_age": 3,
+      "card_set": "cities",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "TrinaCat",
+      "bottom_to": false
     },
     {
       "move": 70,
       "time": 1771826909,
       "type": "transfer",
-      "msg": "AnotherSava melds [7] Munich from hand."
+      "card_name": "Munich",
+      "card_age": 7,
+      "card_set": "cities",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 70,
       "time": 1771826909,
       "type": "transfer",
-      "msg": "AnotherSava achieves [null] Repute."
+      "card_name": "Repute",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 70,
       "time": 1771826909,
       "type": "transfer",
-      "msg": "AnotherSava draws [8] Antibiotics."
+      "card_name": "Antibiotics",
+      "card_age": 8,
+      "card_set": "base",
+      "from": "deck",
+      "to": "hand",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771826951,
       "type": "transfer",
-      "msg": "AnotherSava melds [4] Gunpowder from hand."
+      "card_name": "Gunpowder",
+      "card_age": 4,
+      "card_set": "base",
+      "from": "hand",
+      "to": "board",
+      "from_owner": "AnotherSava",
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,
       "time": 1771826951,
       "type": "transfer",
-      "msg": "AnotherSava achieves [null] Empire."
+      "card_name": "Empire",
+      "card_age": null,
+      "card_set": null,
+      "from": null,
+      "to": "claimed",
+      "from_owner": null,
+      "to_owner": "AnotherSava",
+      "bottom_to": false
     },
     {
       "move": 71,

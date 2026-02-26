@@ -1,29 +1,25 @@
-// Fetch and save the COMPLETE notification history (no truncation)
-// Table ID is read from the current URL automatically
+// Fetch complete BGA notification history and return raw data for Python processing.
+// Game-agnostic — reads table ID and game name from the current URL.
+// Returns JSON: {players: {pid: name, ...}, packets: [...]}
 (function() {
     var tableMatch = window.location.search.match(/table=(\d+)/);
     if (!tableMatch) return JSON.stringify({error: 'No table= param in URL'});
     var tableId = parseInt(tableMatch[1]);
-    var pathParts = window.location.pathname.split('/');
-    // URL can be /<N>/innovation or /<N>/innovation/innovation — handle both
-    var gameName = pathParts[3] || pathParts[2];
-    var endpoint = '/' + pathParts[1] + '/' + pathParts[2] + '/' + gameName + '/notificationHistory.html';
+    // BGA URLs: /<N>/<game> or /<N>/<game>/<game> — endpoint always uses /<N>/<game>/<game>/
+    var parts = window.location.pathname.split('/');
+    var endpoint = '/' + parts[1] + '/' + parts[2] + '/' + parts[2] + '/notificationHistory.html';
     return new Promise(function(resolve) {
         gameui.ajaxcall(
             endpoint,
             {table: tableId, from: 0, privateinc: 1, history: 1},
             gameui,
             function(result) {
-                // Store full result in a global so we can access it
-                window.__full_history = result;
-                var json = JSON.stringify(result);
-                // Return size info + first chunk
-                resolve(JSON.stringify({
-                    total_chars: json.length,
-                    data_entries: Array.isArray(result) ? result.length : 'not array',
-                    type: typeof result,
-                    keys: result && typeof result === 'object' && !Array.isArray(result) ? Object.keys(result) : 'N/A'
-                }));
+                var playerNames = {};
+                if (typeof gameui !== 'undefined' && gameui.gamedatas && gameui.gamedatas.players) {
+                    var players = gameui.gamedatas.players;
+                    for (var pid in players) { playerNames[pid] = players[pid].name; }
+                }
+                resolve(JSON.stringify({players: playerNames, packets: result.data}));
             },
             function(is_error, error_msg) {
                 resolve(JSON.stringify({error: true, msg: error_msg}));

@@ -70,22 +70,22 @@ Write to `scripts/cmd.txt`:
 eval scripts/fetch_full_history.js
 ```
 
-Read the result — it should contain JSON with `total_chars` and `data_entries`. If it shows an error, report it and stop.
+Read the result — it should be JSON with `players` and `packets`. If it shows an error, report it and stop.
 
-### Step 4: Extract game log
-
-Write to `scripts/cmd.txt`:
-```
-eval scripts/innovation/extract_log.js
-```
-
-Read the result — it should be JSON with `total_entries` and a `log` array. This is the game log data.
-
-### Step 5: Save game log
+### Step 4: Save raw log
 
 Create the directory `data/<TABLE_ID>/` if it doesn't exist.
 
-Save the extracted JSON result to `data/<TABLE_ID>/game_log.json`.
+Save the JSON result to `data/<TABLE_ID>/raw_log.json`.
+
+### Step 5: Process game log
+
+Run:
+```
+python -m bga_tracker.innovation.process_log data/<TABLE_ID>/raw_log.json data/<TABLE_ID>/game_log.json
+```
+
+This transforms raw BGA packets into the structured game log format consumed by state_tracker.py.
 
 ### Step 6: Track card state
 
