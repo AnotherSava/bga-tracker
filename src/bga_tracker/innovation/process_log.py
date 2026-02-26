@@ -9,31 +9,35 @@ CLI: python -m bga_tracker.innovation.process_log <input_path> <output_path>
 import json
 import re
 import sys
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 ICON_MAP = {"1": "crown", "2": "leaf", "3": "lightbulb", "4": "castle", "5": "factory", "6": "clock"}
+SET_MAP = {"0": "base", "2": "cities"}
+
+
+@dataclass
+class TransferEntry:
+    move: int
+    card_set: str
+    source: str
+    dest: str
+    card_name: str | None = None
+    card_age: int | None = None
+    source_owner: str | None = None
+    dest_owner: str | None = None
 
 
 def expand_template(template: str, args: dict) -> str:
     """Resolve ``${key}`` placeholders in a BGA log template.
 
-    Handles recursive sub-templates (objects with ``log`` + ``args`` keys) and
-    named objects (with a ``name`` key).
+    Dict values are recursive sub-templates (with ``log`` + ``args`` keys),
+    expanded and stripped of HTML.
     """
-    if not template:
-        return ""
-
     def replacer(match: re.Match) -> str:
-        key = match.group(1)
-        val = args.get(key)
-        if val is None:
-            return ""
+        val = args.get(match.group(1), "")
         if isinstance(val, dict):
-            if "log" in val and "args" in val:
-                return re.sub(r"<[^>]+>", "", expand_template(val["log"], val["args"])).strip()
-            if "name" in val:
-                return val["name"]
-            return ""
+            return re.sub(r"<[^>]+>", "", expand_template(val["log"], val["args"])).strip()
         return str(val)
 
     return re.sub(r"\$\{([^}]+)\}", replacer, template)
@@ -72,79 +76,56 @@ def process_raw_log(raw_data: dict) -> dict:
         either a transfer (structured fields) or a log message (plain text).
     """
     player_names: dict[str, str] = raw_data.get("players", {})
-    packets: list[dict] = raw_data.get("packets", [])
+    packets: list[dict] = [p for p in raw_data.get("packets", []) if p["move_id"] is not None]
     log: list[dict] = []
 
     # Pass 1: collect player-view transferedCard args, grouped by move_id.
-    player_transfers_by_move: dict[str, list[dict]] = {}
+    # move_ids are sequential integers — use a list indexed by move_id.
+    # Each move can span multiple packets (player-view + spectator-view).
+    max_move = max((int(p["move_id"]) for p in packets), default=0)
+    player_transfer_iters: list[iter] = [iter(())] * (max_move + 1)
     for packet in packets:
-        notifications = packet.get("data") or []
-        move_id = str(packet.get("move_id", ""))
-        for notif in notifications:
-            if notif.get("type") == "transferedCard" and notif.get("args"):
-                player_transfers_by_move.setdefault(move_id, []).append(notif["args"])
+        transfers = [notif["args"] for notif in packet["data"] if notif["type"] == "transferedCard"]
+        if transfers:
+            player_transfer_iters[int(packet["move_id"])] = iter(transfers)
 
     # Pass 2: iterate spectator notifications (the canonical ordering).
-    transfer_count_by_move: dict[str, int] = {}
 
     for packet in packets:
-        move_id = str(packet.get("move_id", ""))
-        time = packet.get("time", 0)
-        notifications = packet.get("data") or []
+        move_id = int(packet["move_id"])
 
-        for notif in notifications:
-            notif_type = notif.get("type", "")
-            args = notif.get("args") or {}
+        for notif in packet["data"]:
+            notif_type = notif["type"]
 
             if notif_type == "transferedCard_spectator":
-                idx = transfer_count_by_move.get(move_id, 0)
-                transfer_count_by_move[move_id] = idx + 1
-                move_transfers = player_transfers_by_move.get(move_id, [])
-                player_args = move_transfers[idx] if idx < len(move_transfers) else None
+                player_args = next(player_transfer_iters[move_id], None)
+                if not player_args:
+                    continue
 
-                entry: dict = {
-                    "move": int(move_id) if move_id else 0,
-                    "time": int(time),
-                    "type": "transfer",
-                    "card_name": None,
-                    "card_age": None,
-                    "card_set": "cities" if args.get("type") == "2" else "base",
-                    "from": None,
-                    "to": None,
-                    "from_owner": None,
-                    "to_owner": None,
-                    "bottom_to": False,
-                }
-
-                if player_args:
-                    entry["card_age"] = int(player_args["age"]) if player_args.get("age") is not None else None
-                    entry["from"] = player_args.get("location_from")
-                    entry["to"] = player_args.get("location_to")
-                    entry["from_owner"] = player_names.get(str(player_args.get("owner_from", ""))) or None
-                    entry["to_owner"] = player_names.get(str(player_args.get("owner_to", ""))) or None
-                    entry["bottom_to"] = bool(player_args.get("bottom_to"))
-                    if player_args.get("name"):
-                        entry["card_name"] = normalize_hyphens(player_args["name"])
-                else:
-                    if args.get("age"):
-                        entry["card_age"] = int(args["age"])
-
-                if entry["from"] is not None or entry["to"] is not None:
-                    log.append(entry)
+                entry = TransferEntry(
+                    move=move_id,
+                    card_set=SET_MAP[notif["args"]["type"]],
+                    source=player_args["location_from"],
+                    dest=player_args["location_to"],
+                    card_name=normalize_hyphens(player_args["name"]) if player_args.get("name") else None,
+                    card_age=int(player_args["age"]) if player_args["age"] is not None else None,
+                    source_owner=player_names.get(player_args["owner_from"]),
+                    dest_owner=player_names.get(player_args["owner_to"]),
+                )
+                log.append({"type": "transfer", **asdict(entry)})
                 continue
 
             if notif_type in ("log_spectator", "logWithCardTooltips_spectator"):
-                log_template = args.get("log") or notif.get("log") or ""
-                if not log_template or log_template == "<!--empty-->":
+                args = notif["args"]
+                log_template = args["log"]
+                if log_template == "<!--empty-->":
                     continue
                 log_msg = clean_html(expand_template(log_template, args))
-                if log_msg:
-                    log.append({
-                        "move": int(move_id) if move_id else 0,
-                        "time": int(time),
-                        "type": notif_type.replace("_spectator", ""),
-                        "msg": log_msg,
-                    })
+                log.append({
+                    "move": move_id,
+                    "type": notif_type.replace("_spectator", ""),
+                    "msg": log_msg,
+                })
 
     return {"players": player_names, "log": log}
 

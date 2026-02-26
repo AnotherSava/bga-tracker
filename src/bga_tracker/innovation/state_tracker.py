@@ -41,17 +41,17 @@ class StateTracker:
         if entry["type"] != "transfer":
             return
 
-        if entry.get("to") in ("achievements", "claimed"):
+        if entry.get("dest") in ("achievements", "claimed"):
             return
 
         card_name = entry.get("card_name")
         card_index = card_name.lower() if card_name else None
         group_key = (entry["card_age"], LABEL_TO_SET[entry["card_set"]]) if not card_index else None
 
-        source = entry["from"]
-        dest = entry["to"]
-        source_player = entry.get("from_owner") if source != "deck" else None
-        dest_player = entry.get("to_owner") if dest != "deck" else None
+        source = entry["source"]
+        dest = entry["dest"]
+        source_player = entry.get("source_owner") if source != "deck" else None
+        dest_player = entry.get("dest_owner") if dest != "deck" else None
 
         self.game_state.move(Action(
             source=source, dest=dest,
