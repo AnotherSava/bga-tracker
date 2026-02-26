@@ -251,8 +251,8 @@ def _format_deck(actual_deck, key):
                 name = entry["name"]
                 card = get_card(name)
                 if card:
-                    cl = _COLOR_TO_LETTER.get(card["color"], "B")
-                    cards_html.append(render_card(name, age, cl, star=entry.get("revealed", False), is_deck=True))
+                    color_letter = _COLOR_TO_LETTER.get(card["color"], "B")
+                    cards_html.append(render_card(name, age, color_letter, star=entry.get("revealed", False), is_deck=True))
                 else:
                     cards_html.append(render_unknown())
 
@@ -280,8 +280,8 @@ _COLOR_NAMES_ORDERED = ["blue", "red", "green", "yellow", "purple"]  # BRGYP
 
 def _render_card_with_known(card, known_names):
     """Render a card and mark it with data-known if in known_names."""
-    cl = _COLOR_TO_LETTER.get(card["color"], "B")
-    html = render_card(card["name"], card["age"], cl)
+    color_letter = _COLOR_TO_LETTER.get(card["color"], "B")
+    html = render_card(card["name"], card["age"], color_letter)
     if known_names is not None and card["name"] in known_names:
         html = html.replace('<div class="card ', '<div data-known class="card ', 1)
     return html
@@ -301,9 +301,9 @@ def _format_all_wide(cards_by_age, known_names):
         if not cards:
             continue
         cards_html = [_render_card_with_known(c, known_names) for c in cards]
-        ak = " all-known" if _all_known(cards, known_names) else ""
+        all_known_cls = " all-known" if _all_known(cards, known_names) else ""
         rows.append(
-            f'<div class="deck-age{ak}">'
+            f'<div class="deck-age{all_known_cls}">'
             f'<span class="deck-age-label">{age}</span>'
             f'<div class="card-row">{"".join(cards_html)}</div>'
             f'</div>'
@@ -330,7 +330,7 @@ def _format_all_tall(cards_by_age, known_names):
             continue
 
         all_age_cards = [c for color in _COLOR_NAMES_ORDERED for c in grid.get((age, color), [])]
-        ak = ' class="all-known"' if _all_known(all_age_cards, known_names) else ""
+        all_known_cls = ' class="all-known"' if _all_known(all_age_cards, known_names) else ""
 
         age_rows = []
         for row_idx in range(max_per_color):
@@ -341,12 +341,12 @@ def _format_all_tall(cards_by_age, known_names):
                     cells.append(f'<td>{_render_card_with_known(color_cards[row_idx], known_names)}</td>')
                 else:
                     cells.append('<td></td>')
-            age_rows.append(f'<tr{ak}>{"".join(cells)}</tr>')
+            age_rows.append(f'<tr{all_known_cls}>{"".join(cells)}</tr>')
 
         # First row gets the age label with rowspan
         age_rows[0] = age_rows[0].replace(
-            f'<tr{ak}>',
-            f'<tr{ak}><td class="deck-age-label" rowspan="{max_per_color}">{age}</td>',
+            f'<tr{all_known_cls}>',
+            f'<tr{all_known_cls}><td class="deck-age-label" rowspan="{max_per_color}">{age}</td>',
             1)
 
         rows.extend(age_rows)
@@ -380,8 +380,8 @@ def format_opponent_zone(entries):
             card = get_card(name)
             if card:
                 age = card["age"]
-                cl = _COLOR_TO_LETTER.get(card["color"], "B")
-                parsed.append((age, 0, render_card(name, age, cl)))
+                color_letter = _COLOR_TO_LETTER.get(card["color"], "B")
+                parsed.append((age, 0, render_card(name, age, color_letter)))
             else:
                 parsed.append((0, 1, render_unknown()))
         else:
@@ -411,11 +411,11 @@ def format_my_zone(entries):
         if not card:
             hidden.append(render_unknown())
             continue
-        cl = _COLOR_TO_LETTER.get(card["color"], "B")
+        color_letter = _COLOR_TO_LETTER.get(card["color"], "B")
         if entry.get("revealed"):
-            revealed.append(render_card(name, card["age"], cl, star=True))
+            revealed.append(render_card(name, card["age"], color_letter, star=True))
         else:
-            hidden.append(render_card(name, card["age"], cl))
+            hidden.append(render_card(name, card["age"], color_letter))
 
     if not revealed and not hidden:
         return '<div class="card-row"><div class="empty-card">empty</div></div>'
@@ -455,9 +455,9 @@ def format_my_hand(entries):
         card = get_card(name)
         if not card:
             continue
-        cl = _COLOR_TO_LETTER.get(card["color"], "B")
+        color_letter = _COLOR_TO_LETTER.get(card["color"], "B")
         is_revealed = entry.get("revealed", False)
-        card_html = render_card(name, card["age"], cl, star=is_revealed)
+        card_html = render_card(name, card["age"], color_letter, star=is_revealed)
         if is_revealed:
             revealed.append(card_html)
         else:
@@ -834,8 +834,8 @@ def format_summary(state, table_id):
         else:
             card = get_card(entry["name"])
             if card:
-                cl = _COLOR_TO_LETTER.get(card["color"], "B")
-                ach_cards.append(render_card(entry["name"], card["age"], cl))
+                color_letter = _COLOR_TO_LETTER.get(card["color"], "B")
+                ach_cards.append(render_card(entry["name"], card["age"], color_letter))
             else:
                 ach_cards.append(render_unknown(age))
     # Pad to 9 if fewer entries
