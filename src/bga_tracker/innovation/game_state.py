@@ -301,7 +301,7 @@ class GameState:
             for c in hand_named:
                 hand_entries.append({
                     "name": self.card_db.display_name(c.card_index),
-                    "revealed": False,
+                    "revealed": c.opponent_knows_exact,
                 })
             for c in hand_unknown:
                 hand_entries.append({"age": c.age, "set": c.card_set})
@@ -319,7 +319,7 @@ class GameState:
             for c in score_named:
                 score_entries.append({
                     "name": self.card_db.display_name(c.card_index),
-                    "revealed": False,
+                    "revealed": c.opponent_knows_exact,
                 })
             for c in score_unknown:
                 score_entries.append({"age": c.age, "set": c.card_set})

@@ -368,41 +368,41 @@
     "AnotherSava": [
       {
         "name": "Experimentation",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Atomic Theory",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Classification",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Vaccination",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Emancipation",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Explosives",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Lighting",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Railroad",
-        "revealed": false
+        "revealed": true
       }
     ],
     "jamdalla": [
       {
         "name": "Encyclopedia",
-        "revealed": false
+        "revealed": true
       },
       {
         "age": 7,
@@ -430,11 +430,11 @@
       },
       {
         "name": "Engineering",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Coal",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Antibiotics",
@@ -452,31 +452,31 @@
     "jamdalla": [
       {
         "name": "Mathematics",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Translation",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Enterprise",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Societies",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Industrialization",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Combustion",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Refrigeration",
-        "revealed": false
+        "revealed": true
       }
     ]
   },

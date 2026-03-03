@@ -337,7 +337,7 @@
     "AnotherSava": [
       {
         "name": "City States",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Reformation",
@@ -345,19 +345,19 @@
       },
       {
         "name": "Classification",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Metric System",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Canning",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Democracy",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Sanitation",
@@ -427,7 +427,7 @@
       },
       {
         "name": "Invention",
-        "revealed": false
+        "revealed": true
       },
       {
         "name": "Navigation",

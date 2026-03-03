@@ -767,10 +767,10 @@ def format_summary(state, table_id):
         for entry in state.get(zone, {}).get(me, []):
             if "name" in entry:
                 _add_known(entry["name"])
-    # Opponent hand/score — only revealed cards
+    # Opponent hand/score — all named cards (deduced or revealed)
     for zone in ("hand", "score"):
         for entry in state.get(zone, {}).get(opponent, []):
-            if entry.get("revealed") and "name" in entry:
+            if "name" in entry:
                 _add_known(entry["name"])
     # Board — all cards visible
     for player_entries in state.get("board", {}).values():
