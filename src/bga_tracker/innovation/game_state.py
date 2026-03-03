@@ -255,6 +255,44 @@ class GameState:
                                 changed = True
 
     # ------------------------------------------------------------------
+    # Queries
+    # ------------------------------------------------------------------
+
+    def resolved_card_indices(self) -> set[str]:
+        """Return all resolved card_index values across all zones."""
+        result = set()
+        for p in self.players:
+            for c in self.hands[p] + self.boards[p] + self.scores[p]:
+                if c.is_resolved:
+                    result.add(c.card_index)
+        for stack in self.decks.values():
+            for c in stack:
+                if c.is_resolved:
+                    result.add(c.card_index)
+        return result
+
+    def deduce_achievements(self) -> list[str | None]:
+        """Deduce achievement card identities from remaining hidden base cards.
+
+        Returns 9 entries (ages 1-9): card_index or None.
+        """
+        accounted = self.resolved_card_indices()
+
+        result = []
+        for age in range(1, 10):
+            group_names = self.names_for_group(age, SET_BASE)
+            hidden = [n for n in group_names if n not in accounted]
+            if len(hidden) == 1:
+                result.append(hidden[0])
+            else:
+                result.append(None)
+        return result
+
+    def group_hidden_count(self) -> dict[tuple[int, int], int]:
+        """Count per-group cards that the opponent doesn't know exactly."""
+        return {group_key: sum(1 for card in group_cards if not card.opponent_knows_exact) for group_key, group_cards in self._groups.items()}
+
+    # ------------------------------------------------------------------
     # Serialization
     # ------------------------------------------------------------------
 
@@ -344,31 +382,10 @@ class GameState:
                     entries.append(None)
             result["actual_deck"][age_str][label] = entries
 
-        # Achievements (ages 1-9): deduce from remaining hidden base cards.
-        # For each age, if exactly one base card is unaccounted for,
-        # that card must be the achievement.
-        accounted = set()  # card indices with resolved identity somewhere
-        for p in self.players:
-            for c in self.hands[p]:
-                if c.is_resolved:
-                    accounted.add(c.card_index)
-            for c in self.boards[p]:
-                if c.is_resolved:
-                    accounted.add(c.card_index)
-            for c in self.scores[p]:
-                if c.is_resolved:
-                    accounted.add(c.card_index)
-        for stack in self.decks.values():
-            for c in stack:
-                if c.is_resolved:
-                    accounted.add(c.card_index)
-
-        for age in range(1, 10):
-            group_names = self.names_for_group(age, SET_BASE)
-            hidden = [n for n in group_names if n not in accounted]
-            if len(hidden) == 1:
-                result["achievements"].append(
-                    {"name": self.card_db.display_name(hidden[0])})
+        # Achievements (ages 1-9)
+        for card_index in self.deduce_achievements():
+            if card_index is not None:
+                result["achievements"].append({"name": self.card_db.display_name(card_index)})
             else:
                 result["achievements"].append(None)
 
