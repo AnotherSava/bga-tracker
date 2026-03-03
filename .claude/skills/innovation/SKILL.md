@@ -103,18 +103,13 @@ python -m bga_tracker.innovation.track_state <TABLE_ID>
 
 This produces `data/<TABLE_ID> <opponent>/game_state.json` — structured game state with card objects.
 
-### Step 6: Report results
-
-Read `data/<TABLE_ID> <opponent>/game_state.json` and present a summary to the user showing:
-- Player names and their board/hand/score card counts
-- Total cards in deck
-- Any warnings from track_state.py output
-
-### Step 7: Format summary
+### Step 6: Format summary
 
 Run:
 ```
 python -m bga_tracker.innovation.format_state <TABLE_ID>
 ```
 
-This produces `data/<TABLE_ID> <opponent>/summary.html` — a colored HTML summary of hidden information from both perspectives.
+This runs the tracker internally (no dependency on game_state.json) and produces `data/<TABLE_ID> <opponent>/summary.html` — a colored HTML summary of hidden information from both perspectives.
+
+Report the output path to the user. Do NOT generate ad-hoc summaries, read game_state.json, or write scripts to inspect the data — the HTML file is the final output.
