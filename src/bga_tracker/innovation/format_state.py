@@ -10,328 +10,206 @@ Input:  data/<TABLE_ID>/game_log.json + .env for PLAYER_NAME
 Output: data/<TABLE_ID>/summary.html
 """
 
-import re
 import sys
-from pathlib import Path
-
+from itertools import groupby
+from dataclasses import dataclass, field
 from jinja2 import Environment, FileSystemLoader
 
-from bga_tracker import PROJECT_ROOT
-from bga_tracker.innovation.card import Card, CardDB, CardInfo, COLOR_ORDER, SET_BASE, SET_CITIES
+from bga_tracker.innovation.paths import CARD_INFO_PATH, TEMPLATE_DIR, find_table
+from bga_tracker.innovation.card import Card, CardDatabase, CardInfo, CardSet, Color
 from bga_tracker.innovation.config import Config
 from bga_tracker.innovation.game_state import GameState
-from bga_tracker.innovation.state_tracker import StateTracker
-
-DATA_DIR = PROJECT_ROOT / "data"
-CARDINFO_PATH = PROJECT_ROOT / "assets" / "cardinfo.json"
+from bga_tracker.innovation.game_log_processor import GameLogProcessor
 
 # Relative paths from summary.html (data/<TABLE_ID>/) to assets/
 ICONS_REL = "../../assets/icons"
 CARDS_REL = "../../assets/cards"
+TALL_COLUMNS = len(Color)  # number of columns in tall layout (one per color)
 
 # Jinja2 environment
-_TEMPLATE_DIR = PROJECT_ROOT / "templates" / "innovation"
-_jinja_env = Environment(loader=FileSystemLoader(_TEMPLATE_DIR), autoescape=False)
+_jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR), autoescape=False)
 
-_DOGMA_IMG_RE = re.compile(r'<img\s+src="/static/icons/inline-(\w+)\.png"\s*/?>')
-_COLOR_NAMES_ORDERED = ["blue", "red", "green", "yellow", "purple"]  # BRGYP
+
+
+@dataclass(frozen=True, slots=True)
+class TemplateCard:
+    """A card prepared for template rendering. Known cards have name/color/icons; unknown cards only have age/layout."""
+    known: bool                            # True = named card with full info, False = unknown placeholder
+    age: int | None                        # card age 1-10, None for blank deck slots
+    card_set: CardSet                      # BASE or CITIES — selects card grid layout
+    name: str | None = None                # display name (known only)
+    color: Color | None = None             # CSS color class (known only)
+    sprite_index: int | None = None         # index into BGA sprite sheet (known only)
+    icons: tuple[str, ...] | None = None   # resource icon names for grid cells (known only)
+    resolved: bool = False                 # identity known to the tracker (masked in "Unknown" view)
+
+
+@dataclass(frozen=True, slots=True)
+class Row:
+    """A card row within a section, optionally labelled."""
+    cards: list[TemplateCard | None]  # None for empty cells in table layout
+    label: str = ""                   # icon key ("eye_closed"|"eye_open"|"question"), age ("1"-"10"), or "" (blank)
+    all_known: bool = False           # CSS class for unknown-mode row hiding
+
+
+@dataclass
+class Section:
+    """Generic section — replaces all per-type section dataclasses."""
+    title: str
+    section_id: str                      # kebab-case identifier for config lookup and DOM targeting
+    toggle: dict | None = None           # visibility toggle
+    layout_toggle: dict | None = None    # wide/tall toggle
+    rows: list[Row] = field(default_factory=list)  # primary (wide) layout
+    column_count: int = 0                # >0: tall layout splits rows into table
+    arrange_by_columns: bool = True      # tall grid order: True = column-major (color columns), False = row-major
+    empty: bool = False                  # show "empty" placeholder
+    mark_resolved: bool = False          # add data-known attrs for unknown-mode masking
+
 
 
 # --- Data preparation helpers ---
 
-def clean_dogma(dogma_list: tuple[str, ...] | list[str]) -> str:
-    """Clean dogma HTML for tooltip text."""
-    if not dogma_list:
-        return ""
-    lines = []
-    for d in dogma_list:
-        text = _DOGMA_IMG_RE.sub(lambda m: m.group(1), d)
-        text = re.sub(r'<[^>]+>', '', text)
-        text = ' '.join(text.split())
-        lines.append(text)
-    return '\n'.join(lines)
+def _prepare(info: CardInfo | None = None, *, age: int | None = None, card_set: CardSet = CardSet.BASE, resolved: bool = False) -> TemplateCard:
+    """Prepare a card for template rendering. Known card if info is given, unknown otherwise."""
+    if info is not None:
+        return TemplateCard(known=True, age=info.age, card_set=info.card_set, name=info.name, color=info.color, sprite_index=info.sprite_index, icons=info.icons, resolved=resolved)
+    return TemplateCard(known=False, age=age, card_set=card_set)
 
 
-def _card_set_letter(card_set: int) -> str | None:
-    """Return 'b' for base, 'c' for cities, else None."""
-    if card_set == SET_BASE:
-        return "b"
-    if card_set == SET_CITIES:
-        return "c"
-    return None
+def _visibility_toggle(target_id: str, default: str, none_label: str, all_label: str, unknown_label: str | None = None) -> dict:
+    """Prepare visibility toggle (none/all, optionally unknown)."""
+    options = [("none", none_label), ("all", all_label)]
+    if unknown_label is not None:
+        options.append(("unknown", unknown_label))
+    default_mode = next(mode for mode, label in options if label.lower() == default)
+    return {"target_id": target_id, "default_mode": default_mode, "options": [{"mode": mode, "label": label, "active": mode == default_mode} for mode, label in options]}
 
 
-def _is_suspected(card: Card, ghc: dict[tuple[int, int], int]) -> bool:
-    """Check if opponent might suspect this card's identity."""
-    return not card.opponent_knows_exact and bool(card.opponent_might_suspect) and len(card.opponent_might_suspect) < ghc[card.group_key]
+def _layout_toggle(target_id: str, default: str) -> dict:
+    """Prepare layout toggle (wide/tall)."""
+    options = [("wide", "Wide"), ("tall", "Tall")]
+    return {"target_id": target_id, "default_mode": default, "options": [{"mode": mode, "label": label, "active": mode == default} for mode, label in options]}
 
 
-def _prepare_card(info: CardInfo, star: bool = False, is_known: bool = False) -> dict:
-    """Prepare a known card data dict for template rendering."""
-    dogma_text = clean_dogma(info.dogmas)
+class SummaryFormatter:
+    """Formats game state into an HTML summary.
 
-    if info.card_set == SET_BASE and len(info.icons) == 4:
-        layout = "base"
-    elif info.card_set == SET_CITIES:
-        layout = "cities"
-    else:
-        layout = "fallback"
-
-    return {"type": "known", "name": info.name, "age": info.age, "color": info.color, "layout": layout, "cardnum": info.cardnum, "icons": info.icons, "dogma_text": dogma_text, "star": star, "is_known": is_known}
-
-
-def _prepare_unknown(age: int | None = None, set_letter: str | None = None) -> dict:
-    """Prepare an unknown card data dict for template rendering."""
-    return {"type": "unknown", "age": age, "set_letter": set_letter}
-
-
-def _prepare_toggle(target_id: str, options: list[tuple[str, str]], default: str) -> tuple[dict, str]:
-    """Prepare toggle data and compute div attributes string.
-
-    Returns (toggle_dict, div_attrs_string).
+    Stores game_state, table_id, and config as instance state, eliminating
+    repeated parameter threading through helper methods.
     """
-    mode_aliases = {"show": "all", "hide": "none"}
-    default_mode = mode_aliases.get(default, default)
-    valid_modes = {m for m, _ in options}
-    if default_mode not in valid_modes:
-        default_mode = options[0][0]
 
-    toggle = {"target_id": target_id, "options": [{"mode": mode, "label": label, "active": mode == default_mode} for mode, label in options]}
+    def __init__(self, game_state: GameState, table_id: str, config: Config, card_db: CardDatabase, players: list[str], perspective: str) -> None:
+        self.game_state = game_state
+        self.table_id = table_id
+        self.config = config
+        self.card_db = card_db
+        self.me = perspective
+        self.opponent = [player for player in players if player != self.me][0]
 
-    attrs = ""
-    if default_mode == "none":
-        attrs += ' style="display:none"'
-    if default_mode == "unknown":
-        attrs += ' class="mode-unknown"'
-    return toggle, attrs
-
-
-def _prepare_opponent_zone(cards: list[Card], card_db: CardDB) -> list[dict]:
-    """Prepare opponent's hand/score as a sorted list of card data dicts."""
-    parsed = []
-    for card in cards:
+    def _card_sort_key(self, card: Card) -> tuple:
+        """Sort key for a Card: (age, is_unknown, color_order, name)."""
         if card.is_resolved:
-            info = card_db[card.card_index]
-            sort_key = (info.age, 0, COLOR_ORDER.get(info.color, 99), info.index_name)
-            parsed.append((sort_key, _prepare_card(info)))
+            info = self.card_db[card.card_index]
+            return info.age, 0, info.color, info.index_name
+        return card.age, 1, card.card_set, ""
+
+    def _from_card(self, card: Card) -> TemplateCard:
+        """Prepare a TemplateCard from a Card — resolves info lookup and known/unknown dispatch."""
+        if card.is_resolved:
+            return _prepare(self.card_db[card.card_index], resolved=True)
+        return _prepare(age=card.age, card_set=card.card_set)
+
+    def _prepare_cards(self, cards: list[Card], label: str = "", *, sort: bool = True) -> Row:
+        """Prepare cards for template rendering and wrap in a Row. Sorts by default."""
+        ordered = sorted(cards, key=self._card_sort_key) if sort else cards
+        return Row([self._from_card(card) for card in ordered], label)
+
+    def _prepare_my_cards(self, zone: list[Card]) -> list[Row]:
+        """Classify cards by opponent knowledge and prepare rows.
+
+        - revealed: opponent_knows_exact
+        - suspected: opponent has a partial suspect list
+        - hidden: everything else
+        """
+        rows = []
+
+        hidden_cards = [card for card in zone if self.game_state.opponent_knows_nothing(card)]
+        if hidden_cards:
+            rows.append(self._prepare_cards(hidden_cards, "eye_closed"))
+
+        suspected_cards = [card for card in zone if self.game_state.opponent_has_partial_information(card)]
+        if suspected_cards:
+            rows.append(self._prepare_cards(suspected_cards, "question"))
+
+        revealed_cards = [card for card in zone if card.opponent_knows_exact]
+        if revealed_cards:
+            rows.append(self._prepare_cards(revealed_cards, "eye_open"))
+
+        return rows
+
+    def _prepare_deck(self, target_set: CardSet) -> list[Row]:
+        """Prepare deck age rows as Row objects."""
+        rows = []
+        empty_ages = True
+        for age in range(1, 11):
+            cards = self.game_state.decks[age, target_set]
+            if empty_ages and not cards:
+                continue
+            empty_ages = False
+            rows.append(self._prepare_cards(cards, str(age), sort=False))
+        return rows
+
+    def _prepare_all_cards(self, card_set: CardSet) -> list[Row]:
+        """Prepare all cards of a set in color-grouped order (one row per age)."""
+        game_state = self.game_state
+
+        rows: list[Row] = []
+        for age in range(1, 11):
+            cards_info = self.card_db.group_infos(age, card_set)
+            all_known = game_state.resolved_count(age, card_set) == len(cards_info)
+            items = [_prepare(info, resolved=game_state.is_resolved(info.index_name)) for info in cards_info]
+            rows.append(Row(items, str(age), all_known=all_known))
+        return rows
+
+    def _make_section(self, section_id: str, title: str, rows: list[Row], *, has_unknown: bool = False, column_count: int = 0, arrange_by_columns: bool = True, mark_resolved: bool = False) -> Section:
+        """Build a section with visibility/layout toggles derived from config by section_id."""
+        config_key = section_id.replace("-", "_")
+        default_visibility = getattr(self.config, config_key)
+        if has_unknown:
+            toggle = _visibility_toggle(section_id, default_visibility, "None", "All", "Unknown")
         else:
-            sort_key = (card.age, 1, card.card_set, "")
-            parsed.append((sort_key, _prepare_unknown(card.age, _card_set_letter(card.card_set))))
-    parsed.sort(key=lambda x: x[0])
-    return [item for _, item in parsed]
+            toggle = _visibility_toggle(section_id, default_visibility, "Hide", "Show")
+        layout_toggle = _layout_toggle(section_id, getattr(self.config, config_key + "_layout")) if column_count > 0 else None
+        empty = not any(row.cards for row in rows)
+        return Section(section_id=section_id, title=title, toggle=toggle, layout_toggle=layout_toggle, rows=rows, column_count=column_count, arrange_by_columns=arrange_by_columns, empty=empty, mark_resolved=mark_resolved)
 
+    def render(self) -> str:
+        """Assemble the full summary as HTML."""
+        game_state = self.game_state
+        config = self.config
 
-def _prepare_my_cards(cards: list[Card], card_db: CardDB, ghc: dict[tuple[int, int], int]) -> dict:
-    """Prepare my hand/score as hidden/suspected/revealed lists."""
-    if not cards:
-        return {"hidden": [], "suspected": [], "revealed": []}
-    known = sorted([c for c in cards if c.is_resolved], key=lambda c: card_db.sort_key(c.card_index))
-    unknown = sorted([c for c in cards if not c.is_resolved], key=lambda c: (c.age, c.card_set))
-    revealed = []
-    suspected = []
-    hidden = []
-    for card in known:
-        info = card_db[card.card_index]
-        is_revealed = card.opponent_knows_exact
-        item = _prepare_card(info, star=is_revealed)
-        if is_revealed:
-            revealed.append(item)
-        elif _is_suspected(card, ghc):
-            suspected.append(item)
-        else:
-            hidden.append(item)
-    for card in unknown:
-        hidden.append(_prepare_unknown(card.age, _card_set_letter(card.card_set)))
-    return {"hidden": hidden, "suspected": suspected, "revealed": revealed}
+        opponent_hand = self._prepare_cards(game_state.hands[self.opponent])
+        opponent_score = self._prepare_cards(game_state.scores[self.opponent])
+        achievements = self._prepare_cards(game_state.achievements)
 
+        sections: list[Section] = [
+            self._make_section("hand-opponent", "Hand &mdash; opponent", [opponent_hand]),
+            self._make_section("hand-me", "Hand &mdash; me", self._prepare_my_cards(game_state.hands[self.me])),
+            self._make_section("score-opponent", "Score &mdash; opponent", [opponent_score]),
+            self._make_section("score-me", "Score &mdash; me", self._prepare_my_cards(game_state.scores[self.me])),
+            self._make_section("achievements", "Achievements", [achievements], column_count=TALL_COLUMNS, arrange_by_columns=False),
+            self._make_section("base-deck", "Base deck", self._prepare_deck(CardSet.BASE)),
+            self._make_section("cities-deck", "Cities deck", self._prepare_deck(CardSet.CITIES)),
+            self._make_section("base-list", "Base list", self._prepare_all_cards(CardSet.BASE), has_unknown=True, column_count=TALL_COLUMNS, mark_resolved=True),
+            self._make_section("cities-list", "Cities list", self._prepare_all_cards(CardSet.CITIES), has_unknown=True, column_count=TALL_COLUMNS, mark_resolved=True),
+        ]
 
-def _prepare_deck(game_state: GameState, target_set: int) -> list[dict]:
-    """Prepare deck age rows as a list of dicts."""
-    card_db = game_state.card_db
-    first_age = 1
-    while first_age <= 10 and not game_state.decks.get((first_age, target_set), []):
-        first_age += 1
+        # --- Arrange sections into columns ---
+        sections.sort(key=lambda s: config.section_positions[s.section_id])
+        columns = [list(g) for _, g in groupby(sections, key=lambda s: config.section_positions[s.section_id][0])]
 
-    rows = []
-    for age in range(first_age, 11):
-        stack = game_state.decks.get((age, target_set), [])
-        items = []
-        for card in stack:
-            if card.is_resolved:
-                info = card_db[card.card_index]
-                items.append(_prepare_card(info))
-            else:
-                items.append(_prepare_unknown())
-        rows.append({"age": age, "cards": items})
-    return rows
-
-
-def _all_known_check(cards: list[CardInfo], known_names: set[str] | None) -> bool:
-    """Check if all cards in a list are in known_names."""
-    return known_names is not None and all(c.name in known_names for c in cards)
-
-
-def _prepare_all_cards(card_set: int, card_db: CardDB, known_names: set[str] | None) -> dict:
-    """Prepare all cards of a set for wide and tall layouts."""
-    cards_by_age: dict[int, list[CardInfo]] = {}
-    for card in card_db.values():
-        if card.card_set != card_set:
-            continue
-        cards_by_age.setdefault(card.age, []).append(card)
-
-    # Wide layout: one row per age
-    wide_rows = []
-    for age in range(1, 11):
-        cards = sorted(cards_by_age.get(age, []), key=lambda c: (COLOR_ORDER.get(c.color, 99), c.name))
-        if not cards:
-            continue
-        items = [_prepare_card(c, is_known=known_names is not None and c.name in known_names) for c in cards]
-        wide_rows.append({"age": age, "cards": items, "all_known": _all_known_check(cards, known_names)})
-
-    # Tall layout: 5 color columns (BRGYP), age label on the left
-    grid: dict[tuple[int, str], list[CardInfo]] = {}
-    for age in range(1, 11):
-        for card in cards_by_age.get(age, []):
-            grid.setdefault((age, card.color), []).append(card)
-    for k in grid:
-        grid[k].sort(key=lambda c: c.name)
-
-    tall_rows = []
-    for age in range(1, 11):
-        max_per_color = max((len(grid.get((age, color), [])) for color in _COLOR_NAMES_ORDERED), default=0)
-        if max_per_color == 0:
-            continue
-        all_age_cards = [c for color in _COLOR_NAMES_ORDERED for c in grid.get((age, color), [])]
-        all_known = _all_known_check(all_age_cards, known_names)
-
-        for row_idx in range(max_per_color):
-            cells = []
-            for color in _COLOR_NAMES_ORDERED:
-                color_cards = grid.get((age, color), [])
-                if row_idx < len(color_cards):
-                    c = color_cards[row_idx]
-                    cells.append(_prepare_card(c, is_known=known_names is not None and c.name in known_names))
-                else:
-                    cells.append(None)
-            tall_rows.append({"age": age, "age_rowspan": max_per_color if row_idx == 0 else None, "all_known": all_known, "cells": cells})
-
-    return {"wide_rows": wide_rows, "tall_rows": tall_rows}
-
-
-def format_summary(game_state: GameState, table_id: str, config: Config) -> str:
-    """Assemble the full summary as HTML."""
-    me = game_state.perspective
-    opponent = [p for p in game_state.players if p != me][0]
-    card_db = game_state.card_db
-    ghc = game_state.group_hidden_count()
-
-    # Build sets of card display names known to me, by set
-    resolved = game_state.resolved_card_indices()
-    known_base = {card_db[idx].name for idx in resolved if card_db[idx].card_set == SET_BASE}
-    known_cities = {card_db[idx].name for idx in resolved if card_db[idx].card_set == SET_CITIES}
-    for idx in game_state.deduce_achievements():
-        if idx:
-            (known_base if card_db[idx].card_set == SET_BASE else known_cities).add(card_db[idx].name)
-
-    # --- Build named sections ---
-    named: dict[str, dict | None] = {}
-
-    # Opponent hand
-    opp_hand_items = _prepare_opponent_zone(game_state.hands[opponent], card_db)
-    named["HAND_OPPONENT"] = {"type": "opponent_zone", "title": "Hand &mdash; opponent", "cards": opp_hand_items, "empty": not opp_hand_items}
-
-    # My hand
-    my_cards = _prepare_my_cards(game_state.hands[me], card_db, ghc)
-    named["HAND_ME"] = {"type": "my_cards", "title": "Hand &mdash; me", "empty": not my_cards["hidden"] and not my_cards["suspected"] and not my_cards["revealed"], **my_cards}
-
-    # Opponent score
-    opp_score = game_state.scores[opponent]
-    if opp_score:
-        opp_score_items = _prepare_opponent_zone(opp_score, card_db)
-        named["SCORE_OPPONENT"] = {"type": "opponent_zone", "title": "Score &mdash; opponent", "cards": opp_score_items, "empty": not opp_score_items}
-    else:
-        named["SCORE_OPPONENT"] = None
-
-    # My score
-    my_score = game_state.scores[me]
-    if my_score:
-        my_score_data = _prepare_my_cards(my_score, card_db, ghc)
-        named["SCORE_ME"] = {"type": "my_cards", "title": "Score &mdash; me", "empty": not my_score_data["hidden"] and not my_score_data["suspected"] and not my_score_data["revealed"], **my_score_data}
-    else:
-        named["SCORE_ME"] = None
-
-    # Achievements (ages 1-9)
-    ach_toggle, ach_attrs = _prepare_toggle("achievements", [("none", "Hide"), ("all", "Show")], config.achievements)
-    achl_toggle, _ = _prepare_toggle("achievements", [("wide", "Wide"), ("tall", "Tall")], config.ach_layout)
-    ach_indices = game_state.deduce_achievements()
-    ach_items = []
-    for i, card_index in enumerate(ach_indices):
-        age = i + 1
-        if card_index is None:
-            ach_items.append(_prepare_unknown(age))
-        else:
-            info = card_db[card_index]
-            ach_items.append(_prepare_card(info))
-    for age in range(len(ach_indices) + 1, 10):
-        ach_items.append(_prepare_unknown(age))
-    named["ACHIEVEMENTS"] = {"type": "achievements", "title": "Achievements", "toggle": ach_toggle, "layout_toggle": achl_toggle, "div_attrs": ach_attrs, "wide_items": ach_items, "tall_row1": ach_items[:5], "tall_row2": ach_items[5:], "wide_hide_attr": ' style="display:none"' if config.ach_layout == "tall" else "", "tall_hide_attr": ' style="display:none"' if config.ach_layout != "tall" else ""}
-
-    # Base deck
-    bd_toggle, bd_attrs = _prepare_toggle("base-deck", [("none", "Hide"), ("all", "Show")], config.base_deck)
-    named["BASE_DECK"] = {"type": "deck", "title": "Base deck", "target_id": "base-deck", "toggle": bd_toggle, "div_attrs": bd_attrs, "age_rows": _prepare_deck(game_state, SET_BASE)}
-
-    # Cities deck
-    cd_toggle, cd_attrs = _prepare_toggle("cities-deck", [("none", "Hide"), ("all", "Show")], config.cities_deck)
-    named["CITIES_DECK"] = {"type": "deck", "title": "Cities deck", "target_id": "cities-deck", "toggle": cd_toggle, "div_attrs": cd_attrs, "age_rows": _prepare_deck(game_state, SET_CITIES)}
-
-    # Base list
-    bl_toggle, bl_attrs = _prepare_toggle("base-list", [("none", "None"), ("all", "All"), ("unknown", "Unknown")], config.base_list)
-    bll_toggle, _ = _prepare_toggle("base-list", [("wide", "Wide"), ("tall", "Tall")], config.base_layout)
-    base_data = _prepare_all_cards(SET_BASE, card_db, known_base)
-    named["BASE_LIST"] = {"type": "all_cards", "title": "Base list", "target_id": "base-list", "toggle": bl_toggle, "layout_toggle": bll_toggle, "div_attrs": bl_attrs, "wide_hide_attr": ' style="display:none"' if config.base_layout == "tall" else "", "tall_hide_attr": ' style="display:none"' if config.base_layout != "tall" else "", **base_data}
-
-    # Cities list
-    cl_toggle, cl_attrs = _prepare_toggle("cities-list", [("none", "None"), ("all", "All"), ("unknown", "Unknown")], config.cities_list)
-    cll_toggle, _ = _prepare_toggle("cities-list", [("wide", "Wide"), ("tall", "Tall")], config.cities_layout)
-    cities_data = _prepare_all_cards(SET_CITIES, card_db, known_cities)
-    named["CITIES_LIST"] = {"type": "all_cards", "title": "Cities list", "target_id": "cities-list", "toggle": cl_toggle, "layout_toggle": cll_toggle, "div_attrs": cl_attrs, "wide_hide_attr": ' style="display:none"' if config.cities_layout == "tall" else "", "tall_hide_attr": ' style="display:none"' if config.cities_layout != "tall" else "", **cities_data}
-
-    # --- Arrange sections into columns ---
-    list_sections = {"BASE_LIST", "CITIES_LIST"}
-    col_data: dict[int, list[tuple[float, str, dict]]] = {}
-    for key, section in named.items():
-        if section is None:
-            continue
-        col_num, pos = config.section_positions[key]
-        col_data.setdefault(col_num, []).append((pos, key, section))
-    for col_num in col_data:
-        col_data[col_num].sort()
-
-    num_cols = max(col_data) if col_data else 1
-    columns = []
-    if num_cols == 1:
-        col_sections = col_data.get(1, [])
-        columns.append({"width": "1fr", "sections": [s for _, _, s in col_sections]})
-    else:
-        for col_num in range(1, num_cols + 1):
-            col_sections = col_data.get(col_num, [])
-            has_list = any(k in list_sections for _, k, _ in col_sections)
-            columns.append({"width": "auto" if has_list else "1fr", "sections": [s for _, _, s in col_sections]})
-
-    grid_cols = " ".join(col["width"] for col in columns)
-
-    template = _jinja_env.get_template("summary.html.j2")
-    return template.render(table_id=table_id, icons_rel=ICONS_REL, cards_rel=CARDS_REL, num_cols=num_cols, columns=columns, grid_cols=grid_cols)
-
-
-def find_table(table_id: str) -> tuple[Path, str]:
-    """Find table data directory and opponent name from 'TABLE_ID opponent' folder."""
-    matches = list(DATA_DIR.glob(f"{table_id} *"))
-    if len(matches) != 1:
-        raise FileNotFoundError(f"No unique table directory for '{table_id}' in {DATA_DIR}")
-    table_dir = matches[0]
-    opponent = table_dir.name.split(" ", 1)[1]
-    return table_dir, opponent
+        template = _jinja_env.get_template("summary.html.j2")
+        return template.render(table_id=self.table_id, icons_rel=ICONS_REL, cards_rel=CARDS_REL, columns=columns)
 
 
 def main() -> None:
@@ -347,11 +225,11 @@ def main() -> None:
     print(f"Players: {', '.join(players)}")
 
     game_log_path = table_dir / "game_log.json"
-    card_db = CardDB(CARDINFO_PATH)
-    tracker = StateTracker(card_db, players, config.player_name)
+    card_db = CardDatabase(CARD_INFO_PATH)
+    tracker = GameLogProcessor(card_db, players, config.player_name)
     game_state = tracker.process_log(game_log_path)
 
-    html = format_summary(game_state, table_id, config)
+    html = SummaryFormatter(game_state, table_id, config, card_db, players, config.player_name).render()
 
     summary_path = table_dir / "summary.html"
     with open(summary_path, "w", encoding="utf-8") as f:

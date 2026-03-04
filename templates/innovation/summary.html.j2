@@ -9,100 +9,67 @@
 </style>
 </head>
 <body>
-{%- from "macros.html.j2" import card, unknown_card, render_item, tri_toggle, hand_row, deck_age_row -%}
-{%- set icon_eye_open %}{% include "eye_open.svg" %}{% endset -%}
-{%- set icon_eye_closed %}{% include "eye_closed.svg" %}{% endset -%}
-{%- set icon_question %}{% include "question.svg" %}{% endset -%}
+{%- from "macros.html.j2" import render_item, tri_toggle, section_row -%}
+{%- set _eye_open %}{% include "icons/eye_open.svg" %}{% endset -%}
+{%- set _eye_closed %}{% include "icons/eye_closed.svg" %}{% endset -%}
+{%- set _question %}{% include "icons/question.svg" %}{% endset -%}
+{%- set row_icons = {"eye_open": _eye_open, "eye_closed": _eye_closed, "question": _question} -%}
 
-{#- Macro: render a section by type -#}
+{#- Macro: render any section -#}
 {%- macro render_section(s) -%}
-{%- if s.type == "opponent_zone" -%}
-{{ _opponent_zone(s) }}
-{%- elif s.type == "my_cards" -%}
-{{ _my_cards(s) }}
-{%- elif s.type == "deck" -%}
-{{ _deck(s) }}
-{%- elif s.type == "achievements" -%}
-{{ _achievements(s) }}
-{%- elif s.type == "all_cards" -%}
-{{ _all_cards(s) }}
-{%- endif -%}
-{%- endmacro -%}
-
-{#- Section: opponent hand/score -#}
-{%- macro _opponent_zone(s) -%}
-<div class="section"><div class="section-title">{{ s.title }}</div>
+<div class="section"><div class="section-title">{{ s.title }}{% if s.toggle %} {{ tri_toggle(s.toggle) }}{% endif %}{% if s.layout_toggle %} {{ tri_toggle(s.layout_toggle) }}{% endif %}</div>
 {%- if s.empty -%}
-<div class="hand-row"><span class="row-label"> </span><div class="card-row"><div class="empty-card">empty</div></div></div>
-{%- else -%}
-<div class="hand-row"><span class="row-label"> </span><div class="card-row">{% for item in s.cards %}{{ render_item(item, cards_rel, icons_rel) }}{% endfor %}</div></div>
-{%- endif -%}
-</div>
-{%- endmacro -%}
-
-{#- Section: my hand/score -#}
-{%- macro _my_cards(s) -%}
-<div class="section"><div class="section-title">{{ s.title }}</div>
-{%- if s.empty -%}
-<div class="card-row"><div class="empty-card">empty</div></div>
-{%- else -%}
-{%- if s.hidden %}
-{{ hand_row(icon_eye_closed, s.hidden, cards_rel, icons_rel) }}
-{%- endif -%}
-{%- if s.suspected %}
-{{ hand_row(icon_question, s.suspected, cards_rel, icons_rel) }}
-{%- endif -%}
-{%- if s.revealed %}
-{{ hand_row(icon_eye_open, s.revealed, cards_rel, icons_rel) }}
-{%- endif -%}
-{%- endif -%}
-</div>
-{%- endmacro -%}
-
-{#- Section: deck (base or cities) -#}
-{%- macro _deck(s) -%}
-<div class="section"><div class="section-title">{{ s.title }} {{ tri_toggle(s.toggle) }}</div><div id="{{ s.target_id }}"{{ s.div_attrs }}>
-{%- for row in s.age_rows -%}
-{{ deck_age_row(row.age, row.cards, false, cards_rel, icons_rel) }}
+<div class="section-row"><span class="row-label"> </span><div class="card-row"><div class="empty-card">empty</div></div></div>
+{%- elif s.toggle -%}
+<div id="{{ s.section_id }}"{% if s.toggle and s.toggle.default_mode == "none" %} style="display:none"{% endif %}{% if s.toggle and s.toggle.default_mode == "unknown" %} class="mode-unknown"{% endif %}>
+{%- if s.layout_toggle -%}
+<div class="layout-wide" data-list="{{ s.section_id }}"{% if s.layout_toggle.default_mode == "tall" %} style="display:none"{% endif %}>
+{%- for row in s.rows -%}
+{{ section_row(row, row_icons, cards_rel, icons_rel, s.mark_resolved) }}
 {%- endfor -%}
-</div></div>
-{%- endmacro -%}
-
-{#- Section: achievements -#}
-{%- macro _achievements(s) -%}
-<div class="section"><div class="section-title">{{ s.title }} {{ tri_toggle(s.toggle) }} {{ tri_toggle(s.layout_toggle) }}</div><div id="achievements"{{ s.div_attrs }}><div class="layout-wide" data-list="achievements"{{ s.wide_hide_attr }}>{{ hand_row(" ", s.wide_items, cards_rel, icons_rel) }}</div><div class="layout-tall" data-list="achievements"{{ s.tall_hide_attr }}>{{ hand_row(" ", s.tall_row1, cards_rel, icons_rel) }}{{ hand_row(" ", s.tall_row2, cards_rel, icons_rel) }}</div></div></div>
-{%- endmacro -%}
-
-{#- Section: all cards (base list / cities list) -#}
-{%- macro _all_cards(s) -%}
-<div class="section"><div class="section-title">{{ s.title }} {{ tri_toggle(s.toggle) }} {{ tri_toggle(s.layout_toggle) }}</div><div id="{{ s.target_id }}"{{ s.div_attrs }}><div class="layout-wide" data-list="{{ s.target_id }}"{{ s.wide_hide_attr }}>
-{%- for row in s.wide_rows -%}
-{{ deck_age_row(row.age, row.cards, row.all_known, cards_rel, icons_rel) }}
-{%- endfor -%}
-</div><div class="layout-tall" data-list="{{ s.target_id }}"{{ s.tall_hide_attr }}><table class="tall-grid">
-{%- for row in s.tall_rows -%}
+</div><div class="layout-tall" data-list="{{ s.section_id }}"{% if s.layout_toggle.default_mode != "tall" %} style="display:none"{% endif %}>
+<table class="tall-grid">
+{%- for row in s.rows -%}
+{%- set num_rows = (row.cards|length + s.column_count - 1) // s.column_count -%}
+{%- for r in range(num_rows) -%}
 <tr{% if row.all_known %} class="all-known"{% endif %}>
-{%- if row.age_rowspan -%}
-<td class="deck-age-label" rowspan="{{ row.age_rowspan }}">{{ row.age }}</td>
+{%- if loop.first -%}
+<td class="row-label" rowspan="{{ num_rows }}">{{ row.label }}</td>
 {%- endif -%}
-{%- for cell in row.cells -%}
-<td>{% if cell %}{{ render_item(cell, cards_rel, icons_rel) }}{% endif %}</td>
+{%- for c in range(s.column_count) -%}
+{%- set idx = c * num_rows + r if s.arrange_by_columns else r * s.column_count + c -%}
+<td>{% if idx < row.cards|length and row.cards[idx] %}{{ render_item(row.cards[idx], cards_rel, icons_rel, s.mark_resolved) }}{% endif %}</td>
 {%- endfor -%}
 </tr>
 {%- endfor -%}
-</table></div></div></div>
+{%- endfor -%}
+</table>
+</div>
+{%- else -%}
+{%- for row in s.rows -%}
+{{ section_row(row, row_icons, cards_rel, icons_rel, s.mark_resolved) }}
+{%- endfor -%}
+{%- endif -%}
+</div>
+{%- else -%}
+{%- for row in s.rows -%}
+{{ section_row(row, row_icons, cards_rel, icons_rel, s.mark_resolved) }}
+{%- endfor -%}
+{%- endif -%}
+</div>
 {%- endmacro -%}
 
 {#- Page content: columns -#}
-{%- if num_cols == 1 -%}
-{%- for s in columns[0].sections %}
+{%- set list_ids = ["base-list", "cities-list"] -%}
+{%- if columns|length == 1 -%}
+{%- for s in columns[0] %}
 {{ render_section(s) }}
 {%- endfor -%}
 {%- else -%}
-<div class="page-grid" style="grid-template-columns: {{ grid_cols }};">
+<div class="page-grid" style="grid-template-columns: {% for col in columns %}{% if col | selectattr('section_id', 'in', list_ids) | list %}auto{% else %}1fr{% endif %}{% if not loop.last %} {% endif %}{% endfor %};">
 {%- for col in columns -%}
 <div class="page-col">
-{%- for s in col.sections %}
+{%- for s in col %}
 {{ render_section(s) }}
 {%- endfor -%}
 </div>
