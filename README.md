@@ -40,8 +40,8 @@ DEFAULT_CITIES_DECK=hide
 DEFAULT_BASE_LIST=none
 DEFAULT_CITIES_LIST=none
 # List layout: wide / tall
-DEFAULT_BASE_LAYOUT=wide
-DEFAULT_CITIES_LAYOUT=wide
+DEFAULT_BASE_LIST_LAYOUT=wide
+DEFAULT_CITIES_LIST_LAYOUT=wide
 
 # Section placement: column.position (e.g. 1.3 = column 1, 3rd section)
 # All in column 1 by default; set column 2+ to create multi-column layout
@@ -108,11 +108,14 @@ src/
   bga_tracker/
     __init__.py                 — exports PROJECT_ROOT
     innovation/
-      card.py                   — Card class (candidate sets) + CardDB loader
-      game_state.py             — GameState: locations, mutations, constraint propagation
-      state_tracker.py          — StateTracker: log parsing, regex patterns → Actions
-      track_state.py            — CLI entry point (delegates to StateTracker)
+      card.py                   — Card class (candidate sets) + CardDatabase loader
+      game_state.py             — GameState: card locations, queries, serialization
+      game_state_tracker.py     — GameStateTracker: mutations, constraint propagation
+      game_log_processor.py     — GameLogProcessor: log parsing → Actions
+      track_state.py            — CLI entry point (delegates to GameLogProcessor)
       format_state.py           — HTML summary formatter
+      config.py                 — Config dataclass from .env
+      paths.py                  — shared path constants and directory lookup
       download_assets.py        — download BGA sprites + extract icons & card images
   browser/
     browse.py                   — Playwright-based browser helper
@@ -121,7 +124,7 @@ scripts/
   innovation/
     extract_log.js              — notification parser (browser)
 assets/                         — static game data and images
-  cardinfo.json                 — shared card database (sets 0 + 3, 210 cards)
+  card_info.json                 — shared card database (sets 0 + 3, 210 cards)
   icons/                        — extracted icon PNGs (resource, hex, bonus, cities special)
   cards/                        — full card face images (750x550, used for hover tooltips)
 data/                           — per-game data (gitignored)
@@ -152,7 +155,7 @@ Fixtures live in `tests/innovation/fixtures/` — each subfolder contains a `gam
 
 ### game_state.json
 
-Structured game state with card objects. Card metadata (age, color, icons) is looked up from `cardinfo.json` by name — not duplicated in the output.
+Structured game state with card objects. Card metadata (age, color, icons) is looked up from `card_info.json` by name — not duplicated in the output.
 
 ```json
 {
@@ -224,7 +227,7 @@ Fonts: Barlow Condensed for card names, Russo One for age numbers.
 
 Separate draw piles per (age, set). Cards drawn from top, returned to bottom.
 
-Initialization from `cardinfo.json`:
+Initialization from `card_info.json`:
 - Base ages 1-9: card count minus 1 (achievement removed)
 - Base age 1: additionally minus 2 per player (initial deal, not logged)
 - Base age 10: full count
@@ -233,18 +236,18 @@ Initialization from `cardinfo.json`:
 ### Set identification
 
 `extract_log.js` extracts the BGA `type` field from spectator notifications:
-- BGA type `0` = base (set 0 in cardinfo.json)
-- BGA type `2` = cities (set 3 in cardinfo.json)
+- BGA type `0` = base (set 0 in card_info.json)
+- BGA type `2` = cities (set 3 in card_info.json)
 
 Hidden transfers include "from base" or "from cities" suffix in the extracted log.
 
 ### Card tracking architecture
 
-The tracker uses a candidate-set model (`card.py`, `game_state.py`, `state_tracker.py`):
+The tracker uses a candidate-set model (`card.py`, `game_state.py`, `game_state_tracker.py`, `game_log_processor.py`):
 
 - Each card slot is a `Card` object with a mutable set of candidate names that shrinks as information is revealed (draws, melds, reveals, transfers). A card is "resolved" when candidates narrow to a single name.
 - All card movements are represented as uniform `Action` dataclasses (source, dest, card_index, group_key, players)
-- `StateTracker` parses log entries into Actions; `GameState.move()` handles all movements through a single method
+- `GameLogProcessor` parses log entries into Actions; `GameStateTracker.move()` handles all movements through a single method
 - Constraint propagation runs per (age, set) group: singleton elimination, hidden singles, naked subsets, and suspect propagation
 - Achievements are deduced from remaining hidden base cards
 - A transient "revealed" zone handles draw-and-reveal sequences (deck → revealed → hand/board/deck)

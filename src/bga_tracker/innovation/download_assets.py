@@ -13,12 +13,10 @@ import urllib.request
 
 from PIL import Image
 
-from bga_tracker import PROJECT_ROOT
+from bga_tracker.innovation.paths import ASSETS_DIR, CARD_INFO_PATH
 
-ASSETS_DIR = PROJECT_ROOT / "assets"
 SPRITES_DIR = ASSETS_DIR / "sprites"
 ICONS_DIR = ASSETS_DIR / "icons"
-CARDINFO_PATH = ASSETS_DIR / "cardinfo.json"
 
 BASE_URL = "https://raw.githubusercontent.com/micahstairs/bga-innovation/main-dev/img/"
 
@@ -76,7 +74,7 @@ def extract_resource_icons():
 
 
 def load_cardinfo():
-    with open(CARDINFO_PATH) as f:
+    with open(CARD_INFO_PATH) as f:
         return json.load(f)
 
 
