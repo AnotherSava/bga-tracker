@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Innovation Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Barlow+Condensed&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/sidepanel/sidepanel.css">
+</head>
+<body>
+  <div id="toolbar" class="toolbar" style="display:none">
+    <button id="btn-game-log">game_log.json</button>
+    <button id="btn-game-state">game_state.json</button>
+    <button id="btn-summary">summary.html</button>
+  </div>
+  <div id="content">
+    <div class="status">Waiting for game data...</div>
+  </div>
+  <script type="module" src="src/sidepanel/sidepanel.ts"></script>
+</body>
+</html>

@@ -1,20 +1,27 @@
-.chrome_bga_profile/
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Project data
+data/
+assets/sprites/
+output/
+
+# IDE and tools
+.idea/
+.vscode/
 .claude/settings.json
 .claude/settings.local.json
+
+# Environment
 .env
-.idea/
-output/
-venv/
-data/
+.chrome_bga_profile/
 
-assets/sprites/
+# OS
+.DS_Store
+Thumbs.db
 
-.pytest_cache/
-__pycache__/
-*.egg-info/
-
-# ralphex
-.venv/
+# Ralphex
 .ralphex/progress/
-.coverage
 docs/plans/

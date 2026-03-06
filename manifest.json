@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "BGA Innovation Tracker",
+  "version": "1.0",
+  "description": "Track Innovation game state on Board Game Arena.",
+  "permissions": ["activeTab", "scripting", "sidePanel"],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    },
+    "default_title": "Track Innovation Game"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "minimum_chrome_version": "128",
+  "background": {
+    "service_worker": "dist/background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "dist/sidepanel.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["https://*.boardgamearena.com/*"]
+    }
+  ]
+}
