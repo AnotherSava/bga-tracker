@@ -57,9 +57,12 @@ def clean_html(msg: str) -> str:
     return re.sub(r'\s+', ' ', msg).strip()
 
 
-def normalize_hyphens(text: str) -> str:
-    """Replace U+2011 (non-breaking hyphen) with ASCII hyphen."""
-    return text.replace("\u2011", "-")
+def normalize_name(text: str) -> str:
+    """Normalize BGA card names to match card_info.json entries."""
+    import unicodedata
+    text = text.replace("\u2011", "-")
+    text = "".join(c if not unicodedata.combining(c) else "" for c in unicodedata.normalize("NFD", text))
+    return text
 
 
 def process_raw_log(raw_data: dict) -> dict:
@@ -89,7 +92,7 @@ def process_raw_log(raw_data: dict) -> dict:
         info = gd_cards.get(str(card["id"]), {})
         name = info.get("name")
         if name:
-            my_hand.append(normalize_hyphens(name))
+            my_hand.append(normalize_name(name))
 
     # Pass 1: collect player-view transferedCard args, grouped by move_id.
     # move_ids are sequential integers — use a list indexed by move_id.
@@ -119,7 +122,7 @@ def process_raw_log(raw_data: dict) -> dict:
                     card_set=SET_MAP[notif["args"]["type"]],
                     source=player_args["location_from"],
                     dest=player_args["location_to"],
-                    card_name=normalize_hyphens(player_args["name"]) if player_args.get("name") else None,
+                    card_name=normalize_name(player_args["name"]) if player_args.get("name") else None,
                     card_age=int(player_args["age"]) if player_args["age"] is not None else None,
                     source_owner=player_names.get(player_args["owner_from"]),
                     dest_owner=player_names.get(player_args["owner_to"]),

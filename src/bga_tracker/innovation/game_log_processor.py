@@ -47,7 +47,7 @@ class GameLogProcessor:
                     self.tracker.confirm_meld_filter(m.group(1))
 
 
-            case "transfer" if entry.get("dest") not in ("achievements", "claimed"):
+            case "transfer" if entry.get("dest") not in ("achievements", "claimed", "flags") and entry.get("source") not in ("achievements", "claimed", "flags"):
                 self._process_move_action(entry)
 
     def _process_move_action(self, entry: dict) -> None:
