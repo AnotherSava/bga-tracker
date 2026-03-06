@@ -1,8 +1,8 @@
 {
-  "name": "bga-innovation-tracker",
+  "name": "bga-assistant",
   "version": "1.0.0",
   "private": true,
-  "description": "Chrome extension to track BGA Innovation game state",
+  "description": "Chrome extension — game assistant for Board Game Arena",
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",

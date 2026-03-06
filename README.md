@@ -1,14 +1,18 @@
-# BGA Innovation Tracker
+# BGA Assistant
 
-A Chrome extension that tracks hidden card information in [Innovation](https://boardgamegeek.com/boardgame/63888/innovation) games on [Board Game Arena](https://boardgamearena.com). No more struggling to remember deck stack order, opponent hand contents, or revealed cards.
+A Chrome extension for [Board Game Arena](https://boardgamearena.com) that keeps track of the game state so you don't have to. Turn-based games on BGA can stretch across days or weeks — by the time it's your turn, you may have forgotten what was drawn, returned, transferred, or scored several moves ago. BGA Assistant reads the game log and reconstructs the complete picture for you.
 
-## Features
+## Supported Games
 
-- Extracts game data directly from BGA game pages
-- Tracks all card movements, deck stack order, and opponent knowledge
-- Constraint propagation deduces hidden card identities (singleton elimination, hidden singles, naked subsets)
-- Colored HTML summary in a Chrome side panel with card tooltips
-- Download buttons for game_log.json, game_state.json, and self-contained summary.html
+### Innovation
+
+Reads the full game log from [Innovation](https://boardgamegeek.com/boardgame/63888/innovation) tables and reconstructs the game state — deck stack order, hand contents, score piles — displayed as a visual summary in a Chrome side panel.
+
+- Card grids: hands, scores, achievements, decks, full card lists
+- Visibility toggles: None / All / Unknown (show only unaccounted cards)
+- Layout toggles: Wide (one row per age) / Tall (color columns)
+- Hover tooltips: card face images for base cards, names for cities
+- Download: game_log.json, game_state.json, standalone summary.html
 
 ## Setup
 
@@ -29,25 +33,14 @@ npm run build
 1. Open Chrome and navigate to `chrome://extensions`
 2. Enable "Developer mode" (toggle in the top-right corner)
 3. Click "Load unpacked" and select this project's root directory
-4. The Innovation tracker icon appears in the Chrome toolbar
+4. The BGA Assistant icon appears in the Chrome toolbar
 
 ## Usage
 
-1. Navigate to a BGA Innovation game page in Chrome
-2. Click the Innovation tracker icon in the toolbar
-   - Badge shows "..." while extracting
-   - Badge shows a green checkmark on success
-   - Badge shows red "ERR" on failure
+1. Navigate to a supported BGA game page in Chrome
+2. Click the BGA Assistant icon in the toolbar
 3. The side panel opens with a visual summary of the game state
-4. Use the download toolbar to save game_log.json, game_state.json, or summary.html
-
-### Summary Features
-
-- Card grids showing hand, score, board, deck, and full card lists
-- Visibility toggles: None / All / Unknown (show only unaccounted cards)
-- Layout toggles: Wide (one row per age) / Tall (color columns)
-- Hover tooltips: card face images for base cards, name and dogma text for cities
-- Dark theme with color-coded cards (blue, red, green, yellow, purple)
+4. Use the download toolbar to save game data or a standalone summary
 
 ## Development
 
@@ -77,6 +70,7 @@ src/
   render/
     summary.ts         GameState -> HTML string via template literals
     config.ts          Section layout config, visibility/layout defaults
+    help.ts            Help page content
 assets/
   card_info.json       Card database (210 cards: 105 base + 105 cities)
   icons/               Resource and hex icon PNGs
@@ -85,7 +79,7 @@ assets/
 ```
 
 Data flow:
-1. User clicks extension icon on a BGA Innovation game page
+1. User clicks extension icon on a BGA game page
 2. extract.ts (MAIN world) fetches game data from BGA internals
 3. background.ts receives data, runs pipeline (processRawLog -> GameState)
 4. background.ts opens side panel, sends results via chrome.runtime messaging
