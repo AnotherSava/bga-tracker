@@ -13,6 +13,10 @@ Do not break long single-expression lines (template literals, chained calls, etc
 
 Avoid cryptic abbreviations in variable and attribute names. Use descriptive names (`playerPattern` not `pp`, `cardIndex` not `ci`).
 
+## Workflow
+
+Run `npm run build` after each batch of changes so the extension can be reloaded and tested in the browser.
+
 ## Commands
 
 - `npm run build` — build the extension to dist/
