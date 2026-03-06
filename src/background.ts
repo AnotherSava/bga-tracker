@@ -74,11 +74,14 @@ function timeout(ms: number, message: string): Promise<never> {
 chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   if (extracting || !tab.id) return;
 
-  // Validate URL
+  // Non-game page: open side panel with help message instead of ERR badge
   if (!tab.url || !BGA_URL_PATTERN.test(tab.url)) {
-    setBadge(tab.id, "ERR", "#D32F2F");
-    console.error("Not a BGA game page:", tab.url);
-    clearBadgeLater(tab.id);
+    try {
+      await chrome.sidePanel.open({ tabId: tab.id });
+      chrome.runtime.sendMessage({ type: "notAGame", url: tab.url ?? "" }).catch(() => {});
+    } catch (err) {
+      console.warn("Could not open side panel:", err);
+    }
     return;
   }
 
@@ -124,7 +127,7 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
     // Success badge
     setBadge(tab.id, "\u2713", "#388E3C");
   } catch (err) {
-    console.error("BGA Innovation Tracker error:", err);
+    console.error("BGA Assistant error:", err);
     setBadge(tab.id, "ERR", "#D32F2F");
   }
 

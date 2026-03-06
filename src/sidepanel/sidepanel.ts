@@ -1,6 +1,7 @@
 // Side panel: receives data from background, renders summary, handles downloads.
 
 import { renderSummary, renderFullPage, setAssetResolver } from "../render/summary.js";
+import { renderHelp } from "../render/help.js";
 import { CardDatabase } from "../models/types.js";
 import { GameState } from "../engine/game_state.js";
 import type { PipelineResults } from "../background.js";
@@ -201,6 +202,71 @@ async function loadCss(): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// Zoom (Ctrl+/- and Ctrl+0)
+// ---------------------------------------------------------------------------
+
+const ZOOM_STEP = 0.1;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 2.0;
+let zoomLevel = 1.0;
+let zoomFadeTimeout: ReturnType<typeof setTimeout> | undefined;
+
+function applyZoom(): void {
+  document.body.style.zoom = String(zoomLevel);
+  const indicator = document.getElementById("zoom-indicator");
+  if (indicator) {
+    indicator.textContent = `${Math.round(zoomLevel * 100)}%`;
+    indicator.classList.add("visible");
+    clearTimeout(zoomFadeTimeout);
+    zoomFadeTimeout = setTimeout(() => indicator.classList.remove("visible"), 1200);
+  }
+}
+
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+  if (!e.ctrlKey && !e.metaKey) return;
+  if (e.key === "=" || e.key === "+") {
+    e.preventDefault();
+    zoomLevel = Math.min(ZOOM_MAX, Math.round((zoomLevel + ZOOM_STEP) * 10) / 10);
+    applyZoom();
+  } else if (e.key === "-") {
+    e.preventDefault();
+    zoomLevel = Math.max(ZOOM_MIN, Math.round((zoomLevel - ZOOM_STEP) * 10) / 10);
+    applyZoom();
+  } else if (e.key === "0") {
+    e.preventDefault();
+    zoomLevel = 1.0;
+    applyZoom();
+  }
+});
+
+document.getElementById("btn-zoom-out")?.addEventListener("click", () => {
+  zoomLevel = Math.max(ZOOM_MIN, Math.round((zoomLevel - ZOOM_STEP) * 10) / 10);
+  applyZoom();
+});
+document.getElementById("btn-zoom-in")?.addEventListener("click", () => {
+  zoomLevel = Math.min(ZOOM_MAX, Math.round((zoomLevel + ZOOM_STEP) * 10) / 10);
+  applyZoom();
+});
+
+// ---------------------------------------------------------------------------
+// Help page
+// ---------------------------------------------------------------------------
+
+function showHelp(notAGameUrl?: string): void {
+  const contentEl = document.getElementById("content");
+  const toolbarEl = document.getElementById("toolbar");
+  if (!contentEl) return;
+  contentEl.innerHTML = renderHelp(notAGameUrl);
+  if (toolbarEl) toolbarEl.style.display = "none";
+}
+
+// Wire help button
+document.getElementById("btn-help")?.addEventListener("click", () => {
+  showHelp();
+});
+
+
+// ---------------------------------------------------------------------------
 // Message listener
 // ---------------------------------------------------------------------------
 
@@ -210,13 +276,15 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
     if (response) {
       currentResults = response;
       render(response);
+    } else {
+      showHelp();
     }
   }).catch(() => {
     document.getElementById("content")!.innerHTML = '<div class="status">Connection lost. Click the extension icon to re-extract.</div>';
   });
 
   // Listen for pushed updates when re-extraction occurs while panel is open
-  chrome.runtime.onMessage.addListener((message: { type: string }) => {
+  chrome.runtime.onMessage.addListener((message: { type: string; url?: string }) => {
     if (message.type === "resultsReady") {
       chrome.runtime.sendMessage({ type: "getResults" }).then((response: PipelineResults | null) => {
         if (response) {
@@ -226,10 +294,12 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
       }).catch(() => {
         document.getElementById("content")!.innerHTML = '<div class="status">Connection lost. Click the extension icon to re-extract.</div>';
       });
+    } else if (message.type === "notAGame") {
+      showHelp(message.url);
     }
     return undefined;
   });
 }
 
 // Export for testing
-export { render, setupTooltips, setupToggles, downloadJson, downloadHtml, fetchCardDb };
+export { render, showHelp, setupTooltips, setupToggles, downloadJson, downloadHtml, fetchCardDb };
