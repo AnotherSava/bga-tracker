@@ -24,7 +24,7 @@ import type { RawExtractionData } from "../engine/process_log";
 const thisDir = dirname(fileURLToPath(import.meta.url));
 
 function loadCardDb(): CardDatabase {
-  const raw = JSON.parse(readFileSync(resolve(thisDir, "../../assets/card_info.json"), "utf-8"));
+  const raw = JSON.parse(readFileSync(resolve(thisDir, "../../assets/bga/innovation/card_info.json"), "utf-8"));
   return new CardDatabase(raw);
 }
 
@@ -62,7 +62,7 @@ describe("runPipeline", () => {
 
   it("processes empty extraction data without errors", () => {
     const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
     expect(result.gameLog).toBeDefined();
     expect(result.gameState).toBeDefined();
     expect(result.gameLog.players).toEqual({ "1": "Alice", "2": "Bob" });
@@ -71,7 +71,7 @@ describe("runPipeline", () => {
 
   it("initializes game state with correct deck structure", () => {
     const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // Decks should exist for each age/set combo
     expect(Object.keys(result.gameState.decks).length).toBeGreaterThan(0);
@@ -85,7 +85,7 @@ describe("runPipeline", () => {
 
   it("initializes achievements from base ages 1-9", () => {
     const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
     expect(result.gameState.achievements.length).toBe(9);
   });
 
@@ -101,7 +101,7 @@ describe("runPipeline", () => {
       packets,
       { my_hand: [], cards: {} },
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // Alice should have 3 cards in hand (2 initial + 1 drawn)
     expect(result.gameState.hands["Alice"].length).toBe(3);
@@ -124,7 +124,7 @@ describe("runPipeline", () => {
       packets,
       { my_hand: [{ id: 1 }], cards: { "1": { name: "Pottery" } } },
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // Alice should have 1 card on board
     expect(result.gameState.boards["Alice"].length).toBe(1);
@@ -142,7 +142,7 @@ describe("runPipeline", () => {
         cards: { "10": { name: "Pottery" }, "20": { name: "Tools" } },
       },
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // Alice (first player = perspective) should have her hand resolved
     const hand = result.gameState.hands["Alice"];
@@ -172,7 +172,7 @@ describe("runPipeline", () => {
       packets,
       { my_hand: [], cards: {} },
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // Metalworking should be on Alice's board
     expect(result.gameState.boards["Alice"].length).toBe(1);
@@ -193,7 +193,7 @@ describe("runPipeline", () => {
       packets,
       { my_hand: [{ id: 1 }], cards: { "1": { name: "Pottery" } } },
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     expect(result.gameState.scores["Alice"].length).toBe(1);
     expect(result.gameState.scores["Alice"][0].resolved).toBe("pottery");
@@ -201,7 +201,7 @@ describe("runPipeline", () => {
 
   it("returns serializable game state", () => {
     const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // The result should be JSON-serializable (no Sets, Maps, class instances)
     const json = JSON.stringify(result.gameState);
@@ -225,7 +225,7 @@ describe("runPipeline", () => {
       { "1": "Alice", "2": "Bob" },
       packets,
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     expect(result.gameLog.log.length).toBe(1);
     const entry = result.gameLog.log[0];
@@ -256,7 +256,7 @@ describe("runPipeline", () => {
       { "1": "Alice", "2": "Bob" },
       packets,
     );
-    const result = runPipeline(rawData, cardDb);
+    const result = runPipeline(rawData, cardDb, "12345");
 
     // Bob should have 3 cards in hand (2 initial + 1 drawn)
     expect(result.gameState.hands["Bob"].length).toBe(3);
@@ -264,7 +264,7 @@ describe("runPipeline", () => {
 
   it("pipeline results contain both gameLog and gameState", () => {
     const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
-    const result: PipelineResults = runPipeline(rawData, cardDb);
+    const result: PipelineResults = runPipeline(rawData, cardDb, "12345");
     expect(result).toHaveProperty("gameLog");
     expect(result).toHaveProperty("gameState");
     expect(result.gameLog).toHaveProperty("players");

@@ -25,7 +25,7 @@ import {
 const thisDir = dirname(fileURLToPath(import.meta.url));
 
 function loadCardDatabase(): CardDatabase {
-  const path = resolve(thisDir, "../../assets/card_info.json");
+  const path = resolve(thisDir, "../../assets/bga/innovation/card_info.json");
   const raw = JSON.parse(readFileSync(path, "utf-8"));
   return new CardDatabase(raw);
 }

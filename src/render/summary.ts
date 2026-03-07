@@ -37,16 +37,16 @@ const ROW_LABEL_ICONS: Record<string, string> = {
 
 function iconImg(iconName: string, color: string, spriteIndex: number): string {
   if (iconName === "hex") {
-    return `<img src="${resolveAssetUrl(`assets/icons/hex_${spriteIndex}.png`)}" width="20" height="20" alt="${iconName}">`;
+    return `<img src="${resolveAssetUrl(`assets/bga/innovation/icons/hex_${spriteIndex}.png`)}" width="20" height="20" alt="${iconName}">`;
   }
   if (iconName === "left" || iconName === "right" || iconName === "up") {
-    return `<img src="${resolveAssetUrl(`assets/icons/arrow_${color}.png`)}" width="20" height="20" alt="${iconName}">`;
+    return `<img src="${resolveAssetUrl(`assets/bga/innovation/icons/arrow_${color}.png`)}" width="20" height="20" alt="${iconName}">`;
   }
   if (iconName.startsWith("bonus-")) {
     const bonusNum = iconName.split("-")[1];
-    return `<img src="${resolveAssetUrl(`assets/icons/bonus_${bonusNum}.png`)}" width="20" height="20" alt="${iconName}">`;
+    return `<img src="${resolveAssetUrl(`assets/bga/innovation/icons/bonus_${bonusNum}.png`)}" width="20" height="20" alt="${iconName}">`;
   }
-  return `<img src="${resolveAssetUrl(`assets/icons/${iconName}_${color}.png`)}" width="20" height="20" alt="${iconName}">`;
+  return `<img src="${resolveAssetUrl(`assets/bga/innovation/icons/${iconName}_${color}.png`)}" width="20" height="20" alt="${iconName}">`;
 }
 
 // ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ function renderKnownCard(info: CardInfo, markResolved: boolean): string {
       + `<div class="cb-bl">${iconImg(info.icons[1], color, info.spriteIndex)}</div>`
       + `<div class="cb-mid">${iconImg(info.icons[2], color, info.spriteIndex)}${iconImg(info.icons[3], color, info.spriteIndex)}</div>`
       + `<div class="card-age">${info.age}</div>`
-      + `<div class="card-tip"><img src="${resolveAssetUrl(`assets/cards/card_${info.spriteIndex}.png`)}"></div>`
+      + `<div class="card-tip"><img src="${resolveAssetUrl(`assets/bga/innovation/cards/card_${info.spriteIndex}.png`)}"></div>`
       + `</div>`;
   }
 

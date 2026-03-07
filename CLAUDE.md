@@ -35,4 +35,5 @@ Run `npm run build` after each batch of changes so the extension can be reloaded
 - `src/background.ts` — service worker
 - `sidepanel.html` — side panel HTML entry point (project root, Vite input)
 - `src/sidepanel/` — side panel UI
-- `assets/card_info.json` — card database
+- `assets/bga/innovation/` — game data (card_info.json, cards/, icons/, sprites/)
+- `assets/extension/` — extension icons

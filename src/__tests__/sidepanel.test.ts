@@ -26,7 +26,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let cardDb: CardDatabase;
 
 beforeAll(() => {
-  const rawPath = path.join(__dirname, "../../assets/card_info.json");
+  const rawPath = path.join(__dirname, "../../assets/bga/innovation/card_info.json");
   const raw = JSON.parse(readFileSync(rawPath, "utf-8"));
   cardDb = new CardDatabase(raw);
   // Use identity resolver for tests (no chrome.runtime.getURL)
@@ -235,7 +235,7 @@ describe("renderSummary", () => {
     const html = renderSummary(gs, cardDb, "Alice", ["Alice", "Bob"], "12345");
 
     // Cards should have icon images
-    expect(html).toContain("assets/icons/");
+    expect(html).toContain("assets/bga/innovation/icons/");
     expect(html).toContain('width="20"');
   });
 
@@ -246,7 +246,7 @@ describe("renderSummary", () => {
 
     // Known base cards should have image tooltips
     expect(html).toContain("card-tip");
-    expect(html).toContain("assets/cards/card_");
+    expect(html).toContain("assets/bga/innovation/cards/card_");
   });
 
   it("classifies my cards by opponent knowledge", () => {

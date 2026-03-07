@@ -1,5 +1,6 @@
 // Side panel: receives data from background, renders summary, handles downloads.
 
+import JSZip from "jszip";
 import { renderSummary, renderFullPage, setAssetResolver } from "../render/summary.js";
 import { renderHelp } from "../render/help.js";
 import { CardDatabase } from "../models/types.js";
@@ -25,18 +26,7 @@ if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
 // Downloads
 // ---------------------------------------------------------------------------
 
-function downloadJson(data: unknown, filename: string): void {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function downloadHtml(html: string, filename: string): void {
-  const blob = new Blob([html], { type: "text/html" });
+function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -116,13 +106,12 @@ function setupToggles(): void {
 
 function render(results: PipelineResults): void {
   const contentEl = document.getElementById("content")!;
-  const toolbarEl = document.getElementById("toolbar")!;
 
   const cardInfoUrl = typeof chrome !== "undefined" && chrome.runtime?.getURL
-    ? chrome.runtime.getURL("assets/card_info.json")
-    : "assets/card_info.json";
+    ? chrome.runtime.getURL("assets/bga/innovation/card_info.json")
+    : "assets/bga/innovation/card_info.json";
   fetchCardDb(cardInfoUrl).then((db) => {
-    renderWithDb(db, results, contentEl, toolbarEl);
+    renderWithDb(db, results, contentEl);
   }).catch(() => {
     contentEl.innerHTML = '<div class="status">Error loading card database</div>';
   });
@@ -134,7 +123,7 @@ async function fetchCardDb(url: string): Promise<CardDatabase> {
   return new CardDatabase(data);
 }
 
-function renderWithDb(cardDb: CardDatabase, results: PipelineResults, contentEl: HTMLElement, toolbarEl: HTMLElement): void {
+function renderWithDb(cardDb: CardDatabase, results: PipelineResults, contentEl: HTMLElement): void {
   const { gameLog, gameState: serializedState } = results;
 
   // Reconstruct GameState from serialized form
@@ -147,9 +136,6 @@ function renderWithDb(cardDb: CardDatabase, results: PipelineResults, contentEl:
   const summaryHtml = renderSummary(gameState, cardDb, perspective, players, tableId);
   contentEl.innerHTML = summaryHtml;
 
-  // Show toolbar
-  toolbarEl.style.display = "flex";
-
   // Set up interactivity
   setupTooltips();
   setupToggles();
@@ -157,27 +143,30 @@ function renderWithDb(cardDb: CardDatabase, results: PipelineResults, contentEl:
   // Cache CSS for downloads
   loadCss();
 
-  // Wire download buttons (use onclick to replace any previous handler on re-render)
-  const btnGameLog = document.getElementById("btn-game-log");
-  if (btnGameLog) btnGameLog.onclick = () => { downloadJson(gameLog, "game_log.json"); };
-
-  const btnGameState = document.getElementById("btn-game-state");
-  if (btnGameState) btnGameState.onclick = () => { downloadJson(serializedState, "game_state.json"); };
-
-  const btnSummary = document.getElementById("btn-summary");
-  if (btnSummary) btnSummary.onclick = () => {
-    const css = currentCss ?? "";
-    // Use relative asset paths for standalone HTML (chrome-extension:// URLs don't work outside the extension)
-    setAssetResolver((path: string) => path);
-    try {
-      const fullHtml = renderFullPage(gameState, cardDb, perspective, players, tableId, css);
-      downloadHtml(fullHtml, "summary.html");
-    } finally {
-      if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
-        setAssetResolver((path: string) => chrome.runtime.getURL(path));
+  // Show and wire download button (use onclick to replace any previous handler on re-render)
+  const btnDownload = document.getElementById("btn-download");
+  if (btnDownload) {
+    btnDownload.style.display = "";
+    btnDownload.onclick = async () => {
+      const css = currentCss ?? "";
+      setAssetResolver((path: string) => path);
+      let summaryHtmlFile: string;
+      try {
+        summaryHtmlFile = renderFullPage(gameState, cardDb, perspective, players, tableId, css);
+      } finally {
+        if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
+          setAssetResolver((path: string) => chrome.runtime.getURL(path));
+        }
       }
-    }
-  };
+      const zip = new JSZip();
+      zip.file("raw_data.json", JSON.stringify(results.rawData, null, 2));
+      zip.file("game_log.json", JSON.stringify(gameLog, null, 2));
+      zip.file("game_state.json", JSON.stringify(serializedState, null, 2));
+      zip.file("summary.html", summaryHtmlFile);
+      const blob = await zip.generateAsync({ type: "blob" });
+      downloadBlob(blob, `bgaa_${results.tableNumber}.zip`);
+    };
+  }
 }
 
 async function loadCss(): Promise<void> {
@@ -254,10 +243,10 @@ document.getElementById("btn-zoom-in")?.addEventListener("click", () => {
 
 function showHelp(notAGameUrl?: string): void {
   const contentEl = document.getElementById("content");
-  const toolbarEl = document.getElementById("toolbar");
   if (!contentEl) return;
   contentEl.innerHTML = renderHelp(notAGameUrl);
-  if (toolbarEl) toolbarEl.style.display = "none";
+  const btnDownload = document.getElementById("btn-download");
+  if (btnDownload) btnDownload.style.display = "none";
 }
 
 // Wire help button
@@ -302,4 +291,4 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
 }
 
 // Export for testing
-export { render, showHelp, setupTooltips, setupToggles, downloadJson, downloadHtml, fetchCardDb };
+export { render, showHelp, setupTooltips, setupToggles, downloadBlob, fetchCardDb };

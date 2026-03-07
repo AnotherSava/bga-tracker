@@ -32,7 +32,7 @@ describe("smoke tests", () => {
   });
 
   it("loads card_info.json asset", () => {
-    const cardInfoPath = resolve(thisDir, "../../assets/card_info.json");
+    const cardInfoPath = resolve(thisDir, "../../assets/bga/innovation/card_info.json");
     const data = JSON.parse(readFileSync(cardInfoPath, "utf-8"));
     expect(data).toBeDefined();
     expect(Array.isArray(data) || typeof data === "object").toBe(true);

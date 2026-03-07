@@ -3,7 +3,7 @@
 import { processRawLog, type RawExtractionData, type GameLog } from "./engine/process_log.js";
 import { GameState } from "./engine/game_state.js";
 import { CardDatabase } from "./models/types.js";
-import cardInfoRaw from "../assets/card_info.json";
+import cardInfoRaw from "../assets/bga/innovation/card_info.json";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -19,6 +19,8 @@ const BGA_URL_PATTERN = /^https?:\/\/([a-z0-9]+\.)?boardgamearena\.com\/.*[?&]ta
 
 /** Serialized pipeline results for side panel consumption. */
 export interface PipelineResults {
+  tableNumber: string;
+  rawData: RawExtractionData;
   gameLog: GameLog;
   gameState: ReturnType<GameState["toJSON"]>;
 }
@@ -38,14 +40,14 @@ const cardDb = new CardDatabase(cardInfoRaw as any[]);
  * Run the full analysis pipeline on raw extraction data.
  * Exported for testing.
  */
-export function runPipeline(rawData: RawExtractionData, database: CardDatabase): PipelineResults {
+export function runPipeline(rawData: RawExtractionData, database: CardDatabase, tableNumber: string): PipelineResults {
   const gameLog = processRawLog(rawData);
   const players = Object.values(gameLog.players);
   const perspective = gameLog.currentPlayerId && gameLog.players[gameLog.currentPlayerId] ? gameLog.players[gameLog.currentPlayerId] : players[0];
   const state = new GameState(database, players, perspective);
   state.initGame();
   state.processLog(gameLog.log, gameLog.myHand);
-  return { gameLog, gameState: state.toJSON() };
+  return { tableNumber, rawData, gameLog, gameState: state.toJSON() };
 }
 
 // ---------------------------------------------------------------------------
@@ -118,7 +120,8 @@ chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
     }
 
     // Run pipeline
-    lastResults = runPipeline(extractResult as RawExtractionData, cardDb);
+    const tableNumber = tab.url?.match(/table=(\d+)/)?.[1] ?? "unknown";
+    lastResults = runPipeline(extractResult as RawExtractionData, cardDb, tableNumber);
     console.log("Pipeline complete:", Object.keys(lastResults));
 
     // Notify side panel of new results
