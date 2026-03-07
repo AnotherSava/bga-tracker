@@ -9,27 +9,6 @@ body {
   margin: 0;
 }
 
-/* Toolbar */
-.toolbar {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-.toolbar button {
-  background: #333;
-  color: #ccc;
-  border: 1px solid #555;
-  border-radius: 4px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 12px;
-}
-.toolbar button:hover {
-  background: #444;
-  color: #fff;
-}
 
 /* Status messages */
 .status {
@@ -267,6 +246,7 @@ body {
 .help-sections-grid {
   display: grid;
   grid-template-columns: auto 1fr;
+  align-items: center;
   gap: 4px 12px;
   font-size: 12px;
   color: #bbb;
@@ -274,3 +254,18 @@ body {
 .help-grid-item { display: contents; }
 .help-grid-label { color: #ddd; font-weight: bold; white-space: nowrap; min-width: 90px; }
 .help-grid-item:not(:has(.help-grid-label)) { grid-column: 1 / -1; }
+
+/* Help page button circles (mirrors .top-buttons button) */
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #555;
+  background: rgba(51, 51, 51, 0.8);
+  color: #aaa;
+  vertical-align: middle;
+}
+.help-btn-text { font-size: 14px; font-weight: bold; }

@@ -28,6 +28,15 @@ export function renderHelp(notAGameUrl?: string): string {
   </div>
 
   <div class="help-section">
+    <div class="help-section-title">Top bar</div>
+    <div class="help-sections-grid">
+      <div class="help-grid-item"><span class="help-grid-label"><span class="help-btn"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span> <span class="help-btn"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span></span><span> Zoom out / in (also <b>Ctrl</b>+<b>\u2212</b> / <b>Ctrl</b>+<b>=</b>)</span></div>
+      <div class="help-grid-item"><span class="help-grid-label"><span class="help-btn"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></span></span><span> Download a zip archive with raw packets, game log, game state, and summary page</span></div>
+      <div class="help-grid-item"><span class="help-grid-label"><span class="help-btn help-btn-text">?</span></span><span> This help page</span></div>
+    </div>
+  </div>
+
+  <div class="help-section">
     <div class="help-section-title">Sections</div>
     <div class="help-sections-grid">
       <div class="help-grid-item"><span class="help-grid-label">Hands</span> Your cards and what your opponent knows about them, and vice versa</div>
@@ -52,15 +61,6 @@ export function renderHelp(notAGameUrl?: string): string {
     <div class="help-sections-grid">
       <div class="help-grid-item"><span class="help-grid-label">Wide</span> One horizontal row per age</div>
       <div class="help-grid-item"><span class="help-grid-label">Tall</span> Columnar grid grouped by color</div>
-    </div>
-  </div>
-
-  <div class="help-section">
-    <div class="help-section-title">Downloads</div>
-    <div class="help-sections-grid">
-      <div class="help-grid-item"><span class="help-grid-label">Game log</span> Raw extraction data (json)</div>
-      <div class="help-grid-item"><span class="help-grid-label">Game state</span> Processed game state (json)</div>
-      <div class="help-grid-item"><span class="help-grid-label">Summary</span> Standalone summary page (html)</div>
     </div>
   </div>
 

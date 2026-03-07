@@ -21,43 +21,26 @@ vi.hoisted(() => {
   };
 });
 
-import { downloadJson, downloadHtml, setupTooltips, setupToggles } from "../sidepanel/sidepanel";
+import { downloadBlob, setupTooltips, setupToggles } from "../sidepanel/sidepanel";
 
 describe("sidepanel UI functions", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
   });
 
-  describe("downloadJson", () => {
-    it("creates a download link with JSON blob", () => {
+  describe("downloadBlob", () => {
+    it("creates a download link with the given blob", () => {
       const createObjectURL = vi.fn(() => "blob:test");
       const revokeObjectURL = vi.fn();
       globalThis.URL.createObjectURL = createObjectURL;
       globalThis.URL.revokeObjectURL = revokeObjectURL;
       const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
 
-      downloadJson({ foo: "bar" }, "test.json");
+      downloadBlob(new Blob(["test"]), "test.zip");
 
       expect(createObjectURL).toHaveBeenCalledOnce();
       expect(clickSpy).toHaveBeenCalledOnce();
       expect(revokeObjectURL).toHaveBeenCalledWith("blob:test");
-      clickSpy.mockRestore();
-    });
-  });
-
-  describe("downloadHtml", () => {
-    it("creates a download link with HTML blob", () => {
-      const createObjectURL = vi.fn(() => "blob:html");
-      const revokeObjectURL = vi.fn();
-      globalThis.URL.createObjectURL = createObjectURL;
-      globalThis.URL.revokeObjectURL = revokeObjectURL;
-      const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-
-      downloadHtml("<html></html>", "test.html");
-
-      expect(createObjectURL).toHaveBeenCalledOnce();
-      expect(clickSpy).toHaveBeenCalledOnce();
-      expect(revokeObjectURL).toHaveBeenCalledWith("blob:html");
       clickSpy.mockRestore();
     });
   });
