@@ -14,4 +14,5 @@ assets/bga/innovation/sprites/
 # Ralphex
 .ralphex/
 coverage/
-docs/plans/
+docs/plans/*
+!docs/plans/completed/
