@@ -11,7 +11,8 @@ import cardInfoRaw from "../assets/bga/innovation/card_info.json";
 
 const BADGE_CLEAR_DELAY_MS = 5000;
 const EXTRACTION_TIMEOUT_MS = 60000;
-const BGA_URL_PATTERN = /^https:\/\/([a-z0-9]+\.)?boardgamearena\.com\/.*[?&]table=\d/;
+const SUPPORTED_GAMES = ["innovation"];
+const BGA_URL_PATTERN = /^https:\/\/([a-z0-9]+\.)?boardgamearena\.com\/\d+\/(\w+).*[?&]table=\d/;
 
 // ---------------------------------------------------------------------------
 // State
@@ -92,10 +93,15 @@ function timeout(ms: number, message: string): Promise<never> {
  * Pure function — no side effects, easy to test.
  */
 export function classifyNavigation(url: string | undefined, currentTableNumber: string | null): NavigationAction {
-  if (!url || !BGA_URL_PATTERN.test(url)) {
+  const match = url?.match(BGA_URL_PATTERN);
+  if (!match) {
     return { action: "showHelp", url: url ?? "" };
   }
-  const tableNumber = url.match(/table=(\d+)/)?.[1] ?? "";
+  const gameName = match[2];
+  if (!SUPPORTED_GAMES.includes(gameName)) {
+    return { action: "showHelp", url: url ?? "" };
+  }
+  const tableNumber = url!.match(/table=(\d+)/)?.[1] ?? "";
   if (tableNumber === currentTableNumber) {
     return { action: "skip" };
   }
@@ -154,8 +160,9 @@ chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
 chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   if (extracting || !tab.id) return;
 
-  // Non-game page: open side panel with help message instead of ERR badge
-  if (!tab.url || !BGA_URL_PATTERN.test(tab.url)) {
+  // Non-game or unsupported game: open side panel with help message
+  const clickNav = classifyNavigation(tab.url, null);
+  if (clickNav.action === "showHelp") {
     lastResults = null;
     try {
       await chrome.sidePanel.open({ tabId: tab.id });

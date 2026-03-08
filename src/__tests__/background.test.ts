@@ -285,17 +285,17 @@ describe("runPipeline", () => {
 
 describe("classifyNavigation", () => {
   it("returns skip when URL matches the current table", () => {
-    const result = classifyNavigation("https://boardgamearena.com/table?table=999", "999");
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=999", "999");
     expect(result).toEqual({ action: "skip" });
   });
 
   it("returns extract when URL is a different BGA table", () => {
-    const result = classifyNavigation("https://boardgamearena.com/table?table=888", "999");
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=888", "999");
     expect(result).toEqual({ action: "extract", tableNumber: "888" });
   });
 
   it("returns extract when no current table is tracked", () => {
-    const result = classifyNavigation("https://boardgamearena.com/table?table=555", null);
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=555", null);
     expect(result).toEqual({ action: "extract", tableNumber: "555" });
   });
 
@@ -314,13 +314,18 @@ describe("classifyNavigation", () => {
     expect(result).toEqual({ action: "showHelp", url: "https://boardgamearena.com/lobby" });
   });
 
+  it("returns showHelp for an unsupported game", () => {
+    const result = classifyNavigation("https://boardgamearena.com/1/thecrewdeepsea?table=123", null);
+    expect(result).toEqual({ action: "showHelp", url: "https://boardgamearena.com/1/thecrewdeepsea?table=123" });
+  });
+
   it("handles BGA subdomain URLs with table param", () => {
-    const result = classifyNavigation("https://en.boardgamearena.com/table?table=123", null);
+    const result = classifyNavigation("https://en.boardgamearena.com/8/innovation?table=123", null);
     expect(result).toEqual({ action: "extract", tableNumber: "123" });
   });
 
   it("handles table param embedded in longer query string", () => {
-    const result = classifyNavigation("https://boardgamearena.com/innovation?table=456&other=1", null);
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=456&other=1", null);
     expect(result).toEqual({ action: "extract", tableNumber: "456" });
   });
 });
