@@ -603,6 +603,18 @@ function showHelp(errorMessage?: string): void {
   const btnDownload = document.getElementById("btn-download");
   if (btnDownload) btnDownload.style.display = "none";
   chrome.runtime.sendMessage({ type: "pauseLive" }).catch(() => {});
+
+  // Show download button if raw data is available (e.g. unsupported game)
+  chrome.runtime.sendMessage({ type: "getRawData" }).then((rawData: { rawData: unknown; tableNumber: string } | null) => {
+    if (!rawData || !btnDownload) return;
+    btnDownload.style.display = "";
+    btnDownload.onclick = async () => {
+      const zip = new JSZip();
+      zip.file("raw_data.json", JSON.stringify(rawData.rawData, null, 2));
+      const blob = await zip.generateAsync({ type: "blob" });
+      downloadBlob(blob, `bgaa_${rawData.tableNumber}.zip`);
+    };
+  }).catch(() => {});
 }
 
 // Wire help button — toggles between help and summary

@@ -401,9 +401,9 @@ describe("classifyNavigation", () => {
     expect(result).toEqual({ action: "showHelp", url: "https://boardgamearena.com/lobby" });
   });
 
-  it("returns showHelp for an unsupported game", () => {
+  it("returns unsupportedGame for an unsupported game with table param", () => {
     const result = classifyNavigation("https://boardgamearena.com/1/thecrewdeepsea?table=123", null);
-    expect(result).toEqual({ action: "showHelp", url: "https://boardgamearena.com/1/thecrewdeepsea?table=123" });
+    expect(result).toEqual({ action: "unsupportedGame", tableNumber: "123" });
   });
 
   it("handles BGA subdomain URLs with table param", () => {

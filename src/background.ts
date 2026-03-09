@@ -31,13 +31,15 @@ export interface PipelineResults {
 export type NavigationAction =
   | { action: "skip" }
   | { action: "extract"; tableNumber: string }
-  | { action: "showHelp"; url: string };
+  | { action: "showHelp"; url: string }
+  | { action: "unsupportedGame"; tableNumber: string };
 
 /** Pin mode controlling auto-hide behavior. */
 export type PinMode = "pinned" | "autohide-bga" | "autohide-game";
 const VALID_PIN_MODES: ReadonlySet<string> = new Set<PinMode>(["pinned", "autohide-bga", "autohide-game"]);
 
 let lastResults: PipelineResults | null = null;
+let lastRawData: { rawData: RawExtractionData; tableNumber: string } | null = null;
 let extracting = false;
 let sidePanelOpen = false;
 let activeTabId: number | null = null;
@@ -348,10 +350,10 @@ export function classifyNavigation(url: string | undefined, currentTableNumber: 
     return { action: "showHelp", url: url ?? "" };
   }
   const gameName = match[2];
-  if (!SUPPORTED_GAMES.includes(gameName)) {
-    return { action: "showHelp", url: url ?? "" };
-  }
   const tableNumber = url!.match(/table=(\d+)/)?.[1] ?? "";
+  if (!SUPPORTED_GAMES.includes(gameName)) {
+    return { action: "unsupportedGame", tableNumber };
+  }
   if (tableNumber === currentTableNumber) {
     return { action: "skip" };
   }
@@ -366,7 +368,8 @@ export function shouldAutoClose(url: string | undefined, mode: PinMode): boolean
   if (mode === "pinned") return false;
   if (mode === "autohide-bga") return !url || !BGA_DOMAIN_PATTERN.test(url);
   // autohide-game: close when not on a supported game table
-  return classifyNavigation(url, null).action === "showHelp";
+  const nav = classifyNavigation(url, null);
+  return nav.action !== "extract" && nav.action !== "skip";
 }
 
 // ---------------------------------------------------------------------------
@@ -473,11 +476,39 @@ async function togglePanel(tabId: number): Promise<void> {
     tab = await chrome.tabs.get(tabId);
   } catch { return; }
 
-  // Non-game or unsupported game: show help
+  // Non-game: show help
   const clickNav = classifyNavigation(tab.url, null);
   if (clickNav.action === "showHelp") {
     lastResults = null;
+    lastRawData = null;
     stopLiveTracking("click: not a game");
+    chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+    return;
+  }
+
+  // Unsupported game: extract raw data for download, then show help
+  if (clickNav.action === "unsupportedGame") {
+    lastResults = null;
+    stopLiveTracking("click: unsupported game");
+    setBadge(tabId, "...", "#1976D2");
+    extracting = true;
+    try {
+      const results = await Promise.race([
+        chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" }),
+        timeout(EXTRACTION_TIMEOUT_MS, "Extraction timed out"),
+      ]);
+      const extractResult = (results as chrome.scripting.InjectionResult[])[0]?.result;
+      if (extractResult && !(extractResult as Record<string, unknown>).error) {
+        lastRawData = { rawData: extractResult as RawExtractionData, tableNumber: clickNav.tableNumber };
+      } else {
+        lastRawData = null;
+      }
+    } catch {
+      lastRawData = null;
+    } finally {
+      extracting = false;
+      clearBadgeLater(tabId);
+    }
     chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
     return;
   }
@@ -553,8 +584,27 @@ async function handleNavigation(initialTabId: number): Promise<void> {
           const errorMsg = err instanceof Error ? err.message : String(err);
           chrome.runtime.sendMessage({ type: "gameError", error: errorMsg }).catch(() => {});
         }
+      } else if (nav.action === "unsupportedGame") {
+        lastResults = null;
+        stopLiveTracking("nav: unsupported game");
+        try {
+          const results = await Promise.race([
+            chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" }),
+            timeout(EXTRACTION_TIMEOUT_MS, "Extraction timed out"),
+          ]);
+          const extractResult = (results as chrome.scripting.InjectionResult[])[0]?.result;
+          if (extractResult && !(extractResult as Record<string, unknown>).error) {
+            lastRawData = { rawData: extractResult as RawExtractionData, tableNumber: nav.tableNumber };
+          } else {
+            lastRawData = null;
+          }
+        } catch {
+          lastRawData = null;
+        }
+        chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
       } else if (nav.action === "showHelp") {
         lastResults = null;
+        lastRawData = null;
         stopLiveTracking("nav: not a game");
         chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
       }
@@ -612,6 +662,8 @@ chrome.runtime.onMessage.addListener(
   ) => {
     if (message.type === "getResults") {
       sendResponse(lastResults);
+    } else if (message.type === "getRawData") {
+      sendResponse(lastRawData);
     } else if (message.type === "pauseLive") {
       stopLiveTracking("help page opened");
     } else if (message.type === "resumeLive") {
