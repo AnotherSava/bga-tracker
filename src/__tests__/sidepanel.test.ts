@@ -13,10 +13,10 @@ import {
   layoutToggle,
   compositeToggle,
   type SectionId,
-} from "../innovation/config.js";
-import { renderSummary, renderFullPage, setAssetResolver, SUMMARY_JS } from "../innovation/render.js";
+} from "../games/innovation/config.js";
+import { renderSummary, renderFullPage, setAssetResolver, SUMMARY_JS } from "../games/innovation/render.js";
 import { CardDatabase, CardSet, Card, ageSetKey } from "../models/types.js";
-import { GameState } from "../innovation/game_state.js";
+import { GameState } from "../games/innovation/game_state.js";
 
 // ---------------------------------------------------------------------------
 // Helpers

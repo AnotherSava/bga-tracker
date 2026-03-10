@@ -6,8 +6,8 @@ import {
   cleanHtml,
   normalizeName,
   processRawLog,
-} from "../innovation/process_log.js";
-import type { RawExtractionData, RawPacket } from "../models/types.js";
+} from "../process_log.js";
+import type { RawExtractionData, RawPacket } from "../types.js";
 
 // ---------------------------------------------------------------------------
 // ICON_MAP / SET_MAP

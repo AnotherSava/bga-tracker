@@ -1,6 +1,6 @@
 // Raw BGA packets -> structured Azul game log
 
-import type { RawExtractionData, RawPacket } from "../models/types.js";
+import type { RawExtractionData, RawPacket } from "../../models/types.js";
 
 // ---------------------------------------------------------------------------
 // Azul tile types

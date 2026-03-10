@@ -1,6 +1,6 @@
 // Raw BGA packets -> structured game log
 
-import type { TransferEntry, MessageEntry, GameLogEntry, RawNotification, RawPacket, RawExtractionData } from "../models/types.js";
+import type { TransferEntry, MessageEntry, GameLogEntry, RawNotification, RawPacket, RawExtractionData } from "./types.js";
 
 // ---------------------------------------------------------------------------
 // Constants

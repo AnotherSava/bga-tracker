@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { renderAzulSummary, setAssetResolver } from "../azul/render.js";
-import type { AzulGameState } from "../azul/game_state.js";
-import { initGame } from "../azul/game_state.js";
+import { renderAzulSummary, setAssetResolver } from "../render.js";
+import type { AzulGameState } from "../game_state.js";
+import { initGame } from "../game_state.js";
 
 // ---------------------------------------------------------------------------
 // Helpers

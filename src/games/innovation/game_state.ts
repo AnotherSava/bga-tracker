@@ -17,7 +17,7 @@ import {
   cardSetFromLabel,
   cardSetLabel,
   parseAgeSetKey,
-} from "../models/types.js";
+} from "./types.js";
 
 const REGULAR_ICONS = new Set(["crown", "leaf", "lightbulb", "castle", "factory", "clock"]);
 

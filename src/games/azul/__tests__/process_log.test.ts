@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { processAzulLog, TILE_TYPES, COLOR_COUNT, type AzulGameLog, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../azul/process_log.js";
-import type { RawExtractionData, RawPacket } from "../models/types.js";
+import { processAzulLog, TILE_TYPES, COLOR_COUNT, type AzulGameLog, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../process_log.js";
+import type { RawExtractionData, RawPacket } from "../../../models/types.js";
 
 // ---------------------------------------------------------------------------
 // Constants

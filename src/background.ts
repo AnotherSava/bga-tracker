@@ -1,9 +1,9 @@
 // Service worker: orchestrates extraction pipeline, opens side panel, handles messaging.
 
-import { processRawLog } from "./innovation/process_log.js";
-import { GameState } from "./innovation/game_state.js";
-import { processAzulLog } from "./azul/process_log.js";
-import { processLog as processAzulState, toJSON as azulToJSON } from "./azul/game_state.js";
+import { processRawLog } from "./games/innovation/process_log.js";
+import { GameState } from "./games/innovation/game_state.js";
+import { processAzulLog } from "./games/azul/process_log.js";
+import { processLog as processAzulState, toJSON as azulToJSON } from "./games/azul/game_state.js";
 import { CardDatabase, CardSet, type GameName, type RawExtractionData } from "./models/types.js";
 import cardInfoRaw from "../assets/bga/innovation/card_info.json";
 

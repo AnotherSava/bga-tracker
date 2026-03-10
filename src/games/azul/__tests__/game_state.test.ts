@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { initGame, processLog, toJSON, fromJSON, type AzulGameState, type TileCounts } from "../azul/game_state.js";
-import { processAzulLog, type AzulLogEntry, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../azul/process_log.js";
-import type { RawExtractionData } from "../models/types.js";
+import { initGame, processLog, toJSON, fromJSON, type AzulGameState, type TileCounts } from "../game_state.js";
+import { processAzulLog, type AzulLogEntry, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../process_log.js";
+import type { RawExtractionData } from "../../../models/types.js";
 
 // ---------------------------------------------------------------------------
 // Helpers

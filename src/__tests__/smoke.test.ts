@@ -12,22 +12,22 @@ describe("smoke tests", () => {
   });
 
   it("imports from innovation/process_log without errors", async () => {
-    const module = await import("../innovation/process_log");
+    const module = await import("../games/innovation/process_log");
     expect(module).toBeDefined();
   });
 
   it("imports from innovation/game_state without errors", async () => {
-    const module = await import("../innovation/game_state");
+    const module = await import("../games/innovation/game_state");
     expect(module).toBeDefined();
   });
 
   it("imports from innovation/render without errors", async () => {
-    const module = await import("../innovation/render");
+    const module = await import("../games/innovation/render");
     expect(module).toBeDefined();
   });
 
   it("imports from innovation/config without errors", async () => {
-    const module = await import("../innovation/config");
+    const module = await import("../games/innovation/config");
     expect(module).toBeDefined();
   });
 

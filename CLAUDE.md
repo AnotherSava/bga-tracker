@@ -3,6 +3,8 @@ Always use relative paths to project files/folders — never absolute paths (Win
 
 Always ask clarifying questions before implementing if anything is ambiguous or unclear.
 
+Exclude `node_modules/` from all file and content search patterns — it clogs results with false positives.
+
 ## TypeScript Conventions
 
 This is a TypeScript Chrome extension project. Build with Vite, test with vitest.
@@ -17,6 +19,8 @@ Avoid cryptic abbreviations in variable and attribute names. Use descriptive nam
 
 Run `npm run build` after each batch of changes so the extension can be reloaded and tested in the browser.
 
+Keep `README.md` in the project root up to date when code changes affect project structure, features, or usage.
+
 ## Commands
 
 - `npm run build` — build the extension to dist/
@@ -26,14 +30,15 @@ Run `npm run build` after each batch of changes so the extension can be reloaded
 
 ## Project Structure
 
-- `src/models/types.ts` — core types (Card, CardInfo, CardDatabase, GameName, enums)
-- `src/innovation/process_log.ts` — Innovation BGA packet processing
-- `src/innovation/game_state.ts` — Innovation state engine
-- `src/innovation/render.ts` — Innovation HTML summary renderer
-- `src/innovation/config.ts` — Innovation section layout configuration
-- `src/azul/process_log.ts` — Azul BGA packet processing
-- `src/azul/game_state.ts` — Azul bag/discard/wall tracking
-- `src/azul/render.ts` — Azul tile count table renderer
+- `src/models/types.ts` — shared BGA types (GameName, RawPacket, RawExtractionData, cardIndex) + re-exports Innovation types
+- `src/games/innovation/types.ts` — Innovation types (Card, CardInfo, CardDatabase, enums, actions, log entries)
+- `src/games/innovation/process_log.ts` — Innovation BGA packet processing
+- `src/games/innovation/game_state.ts` — Innovation state engine
+- `src/games/innovation/render.ts` — Innovation HTML summary renderer
+- `src/games/innovation/config.ts` — Innovation section layout configuration
+- `src/games/azul/process_log.ts` — Azul BGA packet processing
+- `src/games/azul/game_state.ts` — Azul bag/discard/wall tracking
+- `src/games/azul/render.ts` — Azul tile count table renderer
 - `src/render/help.ts` — help page content (shared)
 - `src/render/icons.ts` — shared icon utilities
 - `src/extract.ts` — content script (MAIN world)

@@ -85,16 +85,18 @@ src/
     sidepanel.ts             Receives data, triggers render, handles downloads
     sidepanel.css            Dark theme, card grids, tooltips
   models/
-    types.ts                 Type definitions: Card, CardInfo, GameState, Action, enums
-  innovation/
-    process_log.ts           Raw BGA packets -> structured Innovation game log
-    game_state.ts            Innovation state tracking + constraint propagation
-    render.ts                GameState -> HTML string via template literals
-    config.ts                Section layout config, visibility/layout defaults
-  azul/
-    process_log.ts           Raw BGA packets -> structured Azul game log
-    game_state.ts            Azul bag/discard/wall tracking
-    render.ts                AzulGameState -> HTML tile count table
+    types.ts                 Shared BGA types (GameName, RawPacket, RawExtractionData)
+  games/
+    innovation/
+      types.ts               Innovation types: Card, CardInfo, CardDatabase, enums, actions
+      process_log.ts         Raw BGA packets -> structured Innovation game log
+      game_state.ts          Innovation state tracking + constraint propagation
+      render.ts              GameState -> HTML string via template literals
+      config.ts              Section layout config, visibility/layout defaults
+    azul/
+      process_log.ts         Raw BGA packets -> structured Azul game log
+      game_state.ts          Azul bag/discard/wall tracking
+      render.ts              AzulGameState -> HTML tile count table
   render/
     help.ts                  Help page content
     icons.ts                 Shared icon utilities

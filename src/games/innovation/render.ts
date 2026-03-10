@@ -1,8 +1,8 @@
 // GameState -> HTML string via template literals.
 // Replaces Jinja2 templates + DTO layer (TemplateCard/Row/Section).
 
-import { type CardInfo, type Card, CardSet, Color, CardDatabase, colorLabel, cardSetLabel, ageSetKey } from "../models/types.js";
-import { escapeHtml } from "../render/icons.js";
+import { type CardInfo, type Card, CardSet, Color, CardDatabase, colorLabel, cardSetLabel, ageSetKey } from "./types.js";
+import { escapeHtml } from "../../render/icons.js";
 import { GameState } from "./game_state.js";
 import { type SectionId, type SectionConfig, type Toggle, DEFAULT_SECTION_CONFIG, SECTION_IDS, TALL_COLUMNS, visibilityToggle, layoutToggle, compositeToggle } from "./config.js";
 

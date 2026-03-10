@@ -1,13 +1,13 @@
 // Side panel: receives data from background, renders summary, handles downloads.
 
 import JSZip from "jszip";
-import { renderSummary, renderFullPage, setAssetResolver } from "../innovation/render.js";
-import { SECTION_IDS, SECTION_LABELS } from "../innovation/config.js";
+import { renderSummary, renderFullPage, setAssetResolver } from "../games/innovation/render.js";
+import { SECTION_IDS, SECTION_LABELS } from "../games/innovation/config.js";
 import { renderHelp } from "../render/help.js";
 import { CardDatabase, type GameName } from "../models/types.js";
-import { GameState } from "../innovation/game_state.js";
-import { renderAzulSummary, renderAzulFullPage, setAssetResolver as setAzulAssetResolver } from "../azul/render.js";
-import { fromJSON as azulFromJSON, type SerializedAzulGameState } from "../azul/game_state.js";
+import { GameState } from "../games/innovation/game_state.js";
+import { renderAzulSummary, renderAzulFullPage, setAssetResolver as setAzulAssetResolver } from "../games/azul/render.js";
+import { fromJSON as azulFromJSON, type SerializedAzulGameState } from "../games/azul/game_state.js";
 import type { PipelineResults, PinMode } from "../background.js";
 
 // ---------------------------------------------------------------------------
