@@ -444,6 +444,59 @@ async function extractFromTab(tabId: number, url: string, gameName: GameName, ta
 }
 
 // ---------------------------------------------------------------------------
+// Content resolution helpers
+// ---------------------------------------------------------------------------
+
+/** Extract raw data from a tab for download (used for unsupported games). */
+async function extractRawData(tabId: number, tableNumber: string): Promise<void> {
+  try {
+    const results = await Promise.race([
+      chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" }),
+      timeout(EXTRACTION_TIMEOUT_MS, "Extraction timed out"),
+    ]);
+    const extractResult = (results as chrome.scripting.InjectionResult[])[0]?.result;
+    if (extractResult && !(extractResult as Record<string, unknown>).error) {
+      lastRawData = { rawData: extractResult as RawExtractionData, tableNumber };
+    } else {
+      lastRawData = null;
+    }
+  } catch {
+    lastRawData = null;
+  }
+}
+
+/**
+ * Evaluate a tab and update side panel content accordingly.
+ * Handles extract, unsupported game, and help actions.
+ * Throws on extraction errors — callers handle error display.
+ */
+async function resolveContent(tabId: number, tabUrl: string, currentTable: string | null, source: string): Promise<void> {
+  const nav = classifyNavigation(tabUrl, currentTable);
+
+  if (nav.action === "skip") return;
+
+  if (nav.action === "extract") {
+    chrome.runtime.sendMessage({ type: "loading" }).catch(() => {});
+    await extractFromTab(tabId, tabUrl, nav.gameName, nav.tableNumber);
+    return;
+  }
+
+  if (nav.action === "unsupportedGame") {
+    lastResults = null;
+    stopLiveTracking(source + ": unsupported game");
+    await extractRawData(tabId, nav.tableNumber);
+    chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+    return;
+  }
+
+  // showHelp
+  lastResults = null;
+  lastRawData = null;
+  stopLiveTracking(source + ": not a game");
+  chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+}
+
+// ---------------------------------------------------------------------------
 // Chrome event listeners
 // ---------------------------------------------------------------------------
 
@@ -502,51 +555,19 @@ async function togglePanel(tabId: number): Promise<void> {
     tab = await chrome.tabs.get(tabId);
   } catch { return; }
 
-  // Non-game: show help
+  // Non-game pages resolve immediately without badge
   const clickNav = classifyNavigation(tab.url, null);
   if (clickNav.action === "showHelp") {
-    lastResults = null;
-    lastRawData = null;
-    stopLiveTracking("click: not a game");
-    chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+    await resolveContent(tabId, tab.url ?? "", null, "click");
     return;
   }
 
-  // Unsupported game: extract raw data for download, then show help
-  if (clickNav.action === "unsupportedGame") {
-    lastResults = null;
-    stopLiveTracking("click: unsupported game");
-    setBadge(tabId, "...", "#1976D2");
-    extracting = true;
-    try {
-      const results = await Promise.race([
-        chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" }),
-        timeout(EXTRACTION_TIMEOUT_MS, "Extraction timed out"),
-      ]);
-      const extractResult = (results as chrome.scripting.InjectionResult[])[0]?.result;
-      if (extractResult && !(extractResult as Record<string, unknown>).error) {
-        lastRawData = { rawData: extractResult as RawExtractionData, tableNumber: clickNav.tableNumber };
-      } else {
-        lastRawData = null;
-      }
-    } catch {
-      lastRawData = null;
-    } finally {
-      extracting = false;
-      clearBadgeLater(tabId);
-    }
-    chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
-    return;
-  }
-
-  if (clickNav.action !== "extract") return;
-
+  // Extraction needed (supported or unsupported game)
   setBadge(tabId, "...", "#1976D2");
   extracting = true;
-
   try {
-    await extractFromTab(tabId, tab.url ?? "", clickNav.gameName);
-    setBadge(tabId, "\u2713", "#388E3C");
+    await resolveContent(tabId, tab.url ?? "", null, "click");
+    if (lastResults) setBadge(tabId, "\u2713", "#388E3C");
   } catch (err) {
     console.error("BGA Assistant error:", err);
     setBadge(tabId, "ERR", "#D32F2F");
@@ -600,46 +621,11 @@ async function handleNavigation(initialTabId: number): Promise<void> {
         break;
       }
 
-      const nav = classifyNavigation(tab.url, lastResults?.tableNumber ?? null);
-      if (nav.action === "extract") {
-        chrome.runtime.sendMessage({ type: "loading" }).catch(() => {});
-        try {
-          await extractFromTab(tabId, tab.url ?? "", nav.gameName, nav.tableNumber);
-        } catch (err) {
-          console.error("Extraction error:", err);
-          lastResults = null;
-          stopLiveTracking("nav: extraction error");
-          const errorMsg = err instanceof Error ? err.message : String(err);
-          chrome.runtime.sendMessage({ type: "gameError", error: errorMsg }).catch(() => {});
-        }
-      } else if (nav.action === "unsupportedGame") {
-        lastResults = null;
-        stopLiveTracking("nav: unsupported game");
-        try {
-          const results = await Promise.race([
-            chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" }),
-            timeout(EXTRACTION_TIMEOUT_MS, "Extraction timed out"),
-          ]);
-          const extractResult = (results as chrome.scripting.InjectionResult[])[0]?.result;
-          if (extractResult && !(extractResult as Record<string, unknown>).error) {
-            lastRawData = { rawData: extractResult as RawExtractionData, tableNumber: nav.tableNumber };
-          } else {
-            lastRawData = null;
-          }
-        } catch {
-          lastRawData = null;
-        }
-        chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
-      } else if (nav.action === "showHelp") {
-        lastResults = null;
-        lastRawData = null;
-        stopLiveTracking("nav: not a game");
-        chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
-      }
+      await resolveContent(tabId, tab.url ?? "", lastResults?.tableNumber ?? null, "nav");
     } catch (err) {
       console.error("Navigation error:", err);
       lastResults = null;
-      stopLiveTracking("nav: infrastructure error");
+      stopLiveTracking("nav: error");
       chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
     } finally {
       extracting = false;
@@ -679,6 +665,25 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     return;
   }
   handleNavigation(tabId);
+});
+
+// React to window focus changes (switching between Chrome windows)
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) return;
+  let tabs: chrome.tabs.Tab[];
+  try {
+    tabs = await chrome.tabs.query({ active: true, windowId });
+  } catch { return; }
+  const tab = tabs[0];
+  if (!tab?.id) return;
+  activeTabId = tab.id;
+  updateIcon(tab.id, tab.url);
+  if (!sidePanelOpen) return;
+  if (extracting) {
+    pendingNavTabId = tab.id;
+    return;
+  }
+  handleNavigation(tab.id);
 });
 
 // Handle messages from side panel and content scripts

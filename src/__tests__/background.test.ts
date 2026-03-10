@@ -50,6 +50,10 @@ vi.hoisted(() => {
       get: vi.fn(() => Promise.resolve({})),
       query: () => Promise.resolve([]),
     },
+    windows: {
+      onFocusChanged: { addListener: (cb: Function) => { _listeners.onFocusChanged = cb; } },
+      WINDOW_ID_NONE: -1,
+    },
   };
 });
 
