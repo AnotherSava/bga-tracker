@@ -813,6 +813,68 @@ describe("processLog", () => {
     gs.processLog(log, myHand);
   });
 
+  it("keeps resolved cards after grouped discard from meld filter (bgaa_818433588)", () => {
+    const gs = createInitializedGameState();
+
+    // Opponent melds Hoi An (cities age 5, icon[5]=crown), triggering meld filter.
+    // Draws 5 named age-5 base cards through revealed → hand, then returns 1 unnamed (Coal, no crown).
+    const log: GameLogEntry[] = [
+      { type: "transfer", move: 1, cardSet: "cities", source: "deck", dest: "hand", cardName: "Hoi An", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "cities", source: "hand", dest: "board", cardName: "Hoi An", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: true },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Coal", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Coal", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "The pirate code", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "The pirate code", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Steam engine", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Steam engine", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Astronomy", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Astronomy", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Banking", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Banking", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "log", move: 1, msg: "The revealed cards with a [crown] will be kept and the others will be returned." },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "deck", cardName: null, cardAge: 5, sourceOwner: "Bob", destOwner: null, meldKeyword: false },
+    ];
+    const myHand = ["Agriculture", "Archery"];
+
+    gs.processLog(log, myHand);
+
+    // The 4 kept cards in Bob's hand should still be resolved
+    const bobHand = gs.hands.get("Bob")!;
+    const age5Cards = bobHand.filter(c => c.age === 5 && c.cardSet === CardSet.BASE);
+    expect(age5Cards.length).toBe(4);
+    const resolvedNames = age5Cards.filter(c => c.isResolved).map(c => c.resolvedName).sort();
+    expect(resolvedNames.length).toBe(4);
+  });
+
+  it("decrements meld filter counter for named returns from perspective player (bgaa_818433588)", () => {
+    const gs = createInitializedGameState();
+
+    // Perspective player (Alice) melds Nanjing (cities age 2, icon[5]=castle), draws 2 cards
+    // without castle, then returns both as named transfers. After that, Philosophy should be
+    // drawable from deck without error.
+    const log: GameLogEntry[] = [
+      { type: "transfer", move: 1, cardSet: "cities", source: "deck", dest: "hand", cardName: "Nanjing", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "cities", source: "hand", dest: "board", cardName: "Nanjing", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Philosophy", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Philosophy", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Calendar", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Calendar", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false },
+      { type: "log", move: 1, msg: "The revealed cards with a [castle] will be kept and the others will be returned." },
+      { type: "transfer", move: 2, cardSet: "base", source: "hand", dest: "deck", cardName: "Calendar", cardAge: 2, sourceOwner: "Alice", destOwner: null, meldKeyword: false },
+      { type: "transfer", move: 2, cardSet: "base", source: "hand", dest: "deck", cardName: "Philosophy", cardAge: 2, sourceOwner: "Alice", destOwner: null, meldKeyword: false },
+      // After returns, another player draws Philosophy from deck — should not throw
+      { type: "transfer", move: 3, cardSet: "base", source: "deck", dest: "revealed", cardName: "Philosophy", cardAge: 2, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 3, cardSet: "base", source: "revealed", dest: "hand", cardName: "Philosophy", cardAge: 2, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+    ];
+    const myHand = ["Agriculture", "Archery"];
+
+    // Should not throw "Card 'philosophy' not found in revealed"
+    gs.processLog(log, myHand);
+
+    const bobHand = gs.hands.get("Bob")!;
+    expect(bobHand.some(c => c.resolvedName === "philosophy")).toBe(true);
+  });
+
   it("skips achievement transfers", () => {
     const gs = createInitializedGameState();
 

@@ -264,7 +264,7 @@ export class CardDatabase {
 // ---------------------------------------------------------------------------
 
 /** Zone names for card locations. */
-export type Zone = "deck" | "hand" | "board" | "score" | "revealed";
+export type Zone = "deck" | "hand" | "board" | "score" | "revealed" | "forecast";
 
 interface ActionBase {
   source: Zone;

@@ -427,6 +427,7 @@ async function extractFromTab(tabId: number, url: string, gameName: GameName, ta
   }
 
   const tblNum = tableNumber ?? url.match(/table=(\d+)/)?.[1] ?? "unknown";
+  lastRawData = { rawData: extractResult as RawExtractionData, tableNumber: tblNum };
   lastResults = runPipeline(extractResult as RawExtractionData, cardDb, tblNum, gameName);
   console.log("Pipeline complete:", Object.keys(lastResults));
 

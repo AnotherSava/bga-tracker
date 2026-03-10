@@ -43,6 +43,7 @@ interface SerializedGameState {
   boards: Record<string, SerializedCard[]>;
   scores: Record<string, SerializedCard[]>;
   revealed: Record<string, SerializedCard[]>;
+  forecast: Record<string, SerializedCard[]>;
   achievements: SerializedCard[];
 }
 
@@ -56,6 +57,7 @@ export class GameState {
   boards: Map<string, Card[]>;
   scores: Map<string, Card[]>;
   revealed: Map<string, Card[]>;
+  forecast: Map<string, Card[]>;
   achievements: Card[];
 
   /** All Card objects per (age, cardSet) group - master list for propagation. */
@@ -82,6 +84,7 @@ export class GameState {
     this.boards = new Map(players.map(p => [p, []]));
     this.scores = new Map(players.map(p => [p, []]));
     this.revealed = new Map(players.map(p => [p, []]));
+    this.forecast = new Map(players.map(p => [p, []]));
     this.achievements = [];
     this._groups = new Map();
   }
@@ -119,6 +122,8 @@ export class GameState {
         return this.scores.get(player!) ?? [];
       case "revealed":
         return this.revealed.get(player!) ?? [];
+      case "forecast":
+        return this.forecast.get(player!) ?? [];
     }
   }
 
@@ -132,7 +137,7 @@ export class GameState {
       }
       return deck;
     }
-    const zoneMap = zone === "hand" ? this.hands : zone === "board" ? this.boards : zone === "score" ? this.scores : this.revealed;
+    const zoneMap = zone === "hand" ? this.hands : zone === "board" ? this.boards : zone === "score" ? this.scores : zone === "forecast" ? this.forecast : this.revealed;
     const cards = zoneMap.get(player!);
     if (!cards) throw new Error(`Player "${player}" not found in ${zone} zone`);
     return cards;
@@ -244,7 +249,7 @@ export class GameState {
     }
   }
 
-  private static readonly VALID_ZONES: ReadonlySet<string> = new Set(["deck", "hand", "board", "score", "revealed"]);
+  private static readonly VALID_ZONES: ReadonlySet<string> = new Set(["deck", "hand", "board", "score", "revealed", "forecast"]);
 
   /** Convert a TransferEntry to an Action and execute it. */
   private processTransfer(entry: TransferEntry): void {
@@ -312,18 +317,26 @@ export class GameState {
       }
     }
 
+    // Meld filter return phase: resolve grouped discard to a named action.
+    // We know which cards lack the meld icon, so pick one from discardNames.
+    if (this.remainingReturns > 0 && action.source === "hand" && action.dest === "deck") {
+      if (action.type === "grouped") {
+        const sourceCards = this.cardsAt(action.source, action.sourcePlayer, groupKey);
+        const match = sourceCards.find(c => c.isResolved && this.discardNames.has(c.resolvedName!));
+        if (match) {
+          action = { type: "named", cardName: match.resolvedName!, source: action.source, dest: action.dest, sourcePlayer: action.sourcePlayer, destPlayer: action.destPlayer, meldKeyword: action.meldKeyword };
+        }
+      }
+      // Decrement for both named and grouped-resolved returns that match discardNames
+      if (action.type === "named" && this.discardNames.has(action.cardName)) {
+        this.remainingReturns -= 1;
+        if (this.remainingReturns === 0) this.meldIcon = null;
+      }
+    }
+
     const card = this.takeFromSource(action, groupKey);
     this.cardsAtMut(action.dest, action.destPlayer, groupKey).push(card);
     this.updateOpponentKnowledge(card, action);
-
-    // Filter returns (return phase: remaining > 0)
-    // BGA routes meld filter returns through hand (revealed->hand, then hand->deck).
-    if (this.remainingReturns > 0 && action.source === "hand" && action.dest === "deck" && card.isResolved && this.discardNames.has(card.resolvedName!)) {
-      this.remainingReturns -= 1;
-      if (this.remainingReturns === 0) {
-        this.meldIcon = null;
-      }
-    }
 
     return card;
   }
@@ -365,7 +378,12 @@ export class GameState {
       if (sourceCards.length === 0) {
         throw new Error(`Cannot draw from empty deck: ${groupKey}`);
       }
-      card = sourceCards[0];
+      // Prefer a card already resolved to the target name (e.g. returned to deck earlier)
+      if (action.type === "named") {
+        card = sourceCards.find(c => c.isResolved && c.resolvedName === action.cardName) ?? sourceCards[0];
+      } else {
+        card = sourceCards[0];
+      }
     } else {
       sourceCards = this.cardsAt(action.source, action.sourcePlayer, groupKey);
       if (action.type === "named") {
@@ -391,7 +409,7 @@ export class GameState {
     sourceCards.splice(idx, 1);
 
     // Hidden action from private zone: can't tell which card moved
-    if (action.type === "grouped" && (action.source === "hand" || action.source === "score")) {
+    if (action.type === "grouped" && (action.source === "hand" || action.source === "score" || action.source === "forecast")) {
       this.mergeCandidates(card, sourceCards);
     }
 
@@ -409,7 +427,7 @@ export class GameState {
       return;
     }
 
-    const isVisibleToOpponent = (action.dest === "hand" || action.dest === "score") && action.destPlayer !== this.perspective;
+    const isVisibleToOpponent = (action.dest === "hand" || action.dest === "score" || action.dest === "forecast") && action.destPlayer !== this.perspective;
     if (isVisibleToOpponent) {
       card.opponentKnowledge = { kind: "exact", name: card.resolvedName };
     }
@@ -434,8 +452,8 @@ export class GameState {
   private mergeSuspects(card: Card, remainingSource: Card[], action: Action): void {
     // Only relevant when our card moves between private zones
     if (!(
-      (action.source === "hand" || action.source === "score")
-      && (action.dest === "deck" || action.dest === "hand" || action.dest === "score")
+      (action.source === "hand" || action.source === "score" || action.source === "forecast")
+      && (action.dest === "deck" || action.dest === "hand" || action.dest === "score" || action.dest === "forecast")
       && action.sourcePlayer === this.perspective
       && (action.destPlayer === null || action.destPlayer === this.perspective)
     )) return;
@@ -635,15 +653,18 @@ export class GameState {
     const boards: Record<string, SerializedCard[]> = {};
     const scores: Record<string, SerializedCard[]> = {};
     const revealed: Record<string, SerializedCard[]> = {};
+    const forecast: Record<string, SerializedCard[]> = {};
     for (const player of this.players) {
       hands[player] = serializeCards(this.hands.get(player)!);
       boards[player] = serializeCards(this.boards.get(player)!);
       scores[player] = serializeCards(this.scores.get(player)!);
       const rev = this.revealed.get(player) ?? [];
       if (rev.length > 0) revealed[player] = serializeCards(rev);
+      const fc = this.forecast.get(player) ?? [];
+      if (fc.length > 0) forecast[player] = serializeCards(fc);
     }
 
-    return { decks, hands, boards, scores, revealed, achievements: serializeCards(this.achievements) };
+    return { decks, hands, boards, scores, revealed, forecast, achievements: serializeCards(this.achievements) };
   }
 
   /** Deserialize game state from JSON, using CardDatabase to reconstruct candidates. */
@@ -694,6 +715,8 @@ export class GameState {
       state.scores.set(player, loadCards(data.scores[player] ?? []));
       const rev = data.revealed?.[player];
       if (rev && rev.length > 0) state.revealed.set(player, loadCards(rev));
+      const fc = data.forecast?.[player];
+      if (fc && fc.length > 0) state.forecast.set(player, loadCards(fc));
     }
 
     // Load achievements
