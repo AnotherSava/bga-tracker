@@ -62,3 +62,21 @@ export function renderAzulSummary(state: AzulGameState): string {
   html += '</div>';
   return html;
 }
+
+/** Render a full standalone HTML page (for download). */
+export function renderAzulFullPage(state: AzulGameState, tableId: string, css: string): string {
+  const bodyHtml = renderAzulSummary(state);
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Azul &mdash; ${tableId}</title>
+<style>
+${css}
+</style>
+</head>
+<body>
+${bodyHtml}
+</body>
+</html>`;
+}

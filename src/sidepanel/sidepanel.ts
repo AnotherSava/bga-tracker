@@ -6,7 +6,7 @@ import { SECTION_IDS, SECTION_LABELS } from "../innovation/config.js";
 import { renderHelp } from "../render/help.js";
 import { CardDatabase, type GameName } from "../models/types.js";
 import { GameState } from "../innovation/game_state.js";
-import { renderAzulSummary, setAssetResolver as setAzulAssetResolver } from "../azul/render.js";
+import { renderAzulSummary, renderAzulFullPage, setAssetResolver as setAzulAssetResolver } from "../azul/render.js";
 import { fromJSON as azulFromJSON, type SerializedAzulGameState } from "../azul/game_state.js";
 import type { PipelineResults, PinMode } from "../background.js";
 
@@ -54,6 +54,13 @@ if (typeof chrome !== "undefined" && chrome.runtime?.connect) {
 // Downloads
 // ---------------------------------------------------------------------------
 
+function lastMoveId(packets: { move_id: number | null }[]): string {
+  for (let i = packets.length - 1; i >= 0; i--) {
+    if (packets[i].move_id != null) return `_${packets[i].move_id}`;
+  }
+  return "";
+}
+
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -61,6 +68,34 @@ function downloadBlob(blob: Blob, filename: string): void {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+/** Replace all `src="assets/..."` references in HTML with inline data URIs. */
+async function inlineAssets(html: string): Promise<string> {
+  const pattern = /src="(assets\/[^"]+)"/g;
+  const paths = new Set<string>();
+  for (const match of html.matchAll(pattern)) paths.add(match[1]);
+  if (paths.size === 0) return html;
+
+  const dataUris = new Map<string, string>();
+  await Promise.all([...paths].map(async (path) => {
+    try {
+      const url = typeof chrome !== "undefined" && chrome.runtime?.getURL ? chrome.runtime.getURL(path) : path;
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const reader = new FileReader();
+      const dataUri = await new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+      dataUris.set(path, dataUri);
+    } catch { /* skip failed assets */ }
+  }));
+
+  return html.replace(pattern, (full, path: string) => {
+    const dataUri = dataUris.get(path);
+    return dataUri ? `src="${dataUri}"` : full;
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -216,17 +251,26 @@ function render(results: PipelineResults): void {
       timeEl.textContent = lastTime ? new Date(lastTime * 1000).toLocaleDateString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }) : "";
     }
 
+    // Cache CSS for downloads
+    loadCss();
+
     // Show download button for Azul
     const btnDownload = document.getElementById("btn-download");
     if (btnDownload) {
       btnDownload.classList.remove("disabled");
       btnDownload.onclick = async () => {
+        const css = currentCss ?? "";
+        setAzulAssetResolver((path: string) => path);
+        const rawHtml = renderAzulFullPage(azulState, results.tableNumber, css);
+        if (typeof chrome !== "undefined" && chrome.runtime?.getURL) setAzulAssetResolver((path: string) => chrome.runtime.getURL(path));
+        const summaryHtmlFile = await inlineAssets(rawHtml);
         const zip = new JSZip();
         zip.file("raw_data.json", JSON.stringify(results.rawData, null, 2));
         zip.file("game_log.json", JSON.stringify(results.gameLog, null, 2));
         zip.file("game_state.json", JSON.stringify(results.gameState, null, 2));
+        zip.file("summary.html", summaryHtmlFile);
         const blob = await zip.generateAsync({ type: "blob" });
-        downloadBlob(blob, `bgaa_${results.tableNumber}.zip`);
+        downloadBlob(blob, `bgaa_${results.tableNumber}${lastMoveId(results.rawData.packets)}.zip`);
       };
     }
 
@@ -303,21 +347,16 @@ function renderWithDb(cardDb: CardDatabase, results: PipelineResults, contentEl:
     btnDownload.onclick = async () => {
       const css = currentCss ?? "";
       setAssetResolver((path: string) => path);
-      let summaryHtmlFile: string;
-      try {
-        summaryHtmlFile = renderFullPage(gameState, cardDb, perspective, players, tableId, css);
-      } finally {
-        if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
-          setAssetResolver((path: string) => chrome.runtime.getURL(path));
-        }
-      }
+      const rawHtml = renderFullPage(gameState, cardDb, perspective, players, tableId, css, { textTooltips: true });
+      if (typeof chrome !== "undefined" && chrome.runtime?.getURL) setAssetResolver((path: string) => chrome.runtime.getURL(path));
+      const summaryHtmlFile = await inlineAssets(rawHtml);
       const zip = new JSZip();
       zip.file("raw_data.json", JSON.stringify(results.rawData, null, 2));
       zip.file("game_log.json", JSON.stringify(gameLog, null, 2));
       zip.file("game_state.json", JSON.stringify(serializedState, null, 2));
       zip.file("summary.html", summaryHtmlFile);
       const blob = await zip.generateAsync({ type: "blob" });
-      downloadBlob(blob, `bgaa_${results.tableNumber}.zip`);
+      downloadBlob(blob, `bgaa_${results.tableNumber}${lastMoveId(results.rawData.packets)}.zip`);
     };
   }
 }
@@ -706,7 +745,8 @@ function showHelp(errorMessage?: string, forceGameTab?: GameName): void {
       const zip = new JSZip();
       zip.file("raw_data.json", JSON.stringify(rawData.rawData, null, 2));
       const blob = await zip.generateAsync({ type: "blob" });
-      downloadBlob(blob, `bgaa_${rawData.tableNumber}.zip`);
+      const packets = (rawData.rawData as { packets?: { move_id: number | null }[] })?.packets ?? [];
+      downloadBlob(blob, `bgaa_${rawData.tableNumber}${lastMoveId(packets)}.zip`);
     };
   }).catch(() => {});
 }

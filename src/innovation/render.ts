@@ -18,6 +18,9 @@ export function setAssetResolver(resolver: (path: string) => string): void {
   resolveAssetUrl = resolver;
 }
 
+/** When true, all cards use text-only tooltips (no card face images). */
+let useTextTooltips = false;
+
 // ---------------------------------------------------------------------------
 // SVG icons (inlined to avoid external file dependencies)
 // ---------------------------------------------------------------------------
@@ -65,13 +68,16 @@ function renderKnownCard(info: CardInfo, markResolved: boolean): string {
   const resolvedAttr = markResolved ? " data-known" : "";
 
   if (info.cardSet === CardSet.BASE || info.cardSet === CardSet.ECHOES) {
+    const tip = useTextTooltips
+      ? `<div class="card-tip-text">${escapeHtml(info.name)}</div>`
+      : `<div class="card-tip"><img src="${resolveAssetUrl(`assets/bga/innovation/cards/card_${info.spriteIndex}.png`)}"></div>`;
     return `<div class="card card-base b-${color}"${resolvedAttr}>`
       + `<div class="cb-tl">${iconImg(info.icons[0], color, info.spriteIndex)}</div>`
       + `<div class="cb-name">${escapeHtml(info.name)}</div>`
       + `<div class="cb-bl">${iconImg(info.icons[1], color, info.spriteIndex)}</div>`
       + `<div class="cb-mid">${iconImg(info.icons[2], color, info.spriteIndex)}${iconImg(info.icons[3], color, info.spriteIndex)}</div>`
       + `<div class="card-age">${info.age}</div>`
-      + `<div class="card-tip"><img src="${resolveAssetUrl(`assets/bga/innovation/cards/card_${info.spriteIndex}.png`)}"></div>`
+      + tip
       + `</div>`;
   }
 
@@ -253,6 +259,8 @@ function renderSection(section: SectionData): string {
 
 export interface RenderOptions {
   sectionConfig?: Record<SectionId, SectionConfig>;
+  /** Use text-only tooltips for all cards (no card face images). */
+  textTooltips?: boolean;
 }
 
 /** Sort key for a card: (age, isUnknown, color, name). */
@@ -404,6 +412,8 @@ function makeCompositeSection(sectionId: SectionId, title: string, baseRows: Row
 
 /** Render the full summary HTML for a game state. */
 export function renderSummary(gameState: GameState, cardDb: CardDatabase, perspective: string, players: string[], tableId: string, options?: RenderOptions): string {
+  const prevTextTooltips = useTextTooltips;
+  useTextTooltips = options?.textTooltips ?? false;
   const config = options?.sectionConfig ?? DEFAULT_SECTION_CONFIG;
   const opponent = players.find(p => p !== perspective) ?? players[0];
 
@@ -425,6 +435,7 @@ export function renderSummary(gameState: GameState, cardDb: CardDatabase, perspe
   for (const id of SECTION_IDS) {
     html += renderSection(sectionBuilders[id]());
   }
+  useTextTooltips = prevTextTooltips;
   return html;
 }
 
