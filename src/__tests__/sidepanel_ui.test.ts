@@ -25,6 +25,7 @@ vi.hoisted(() => {
 });
 
 import { downloadBlob, setupTooltips, setupToggles, render, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode } from "../sidepanel/sidepanel";
+import { positionTooltip } from "../render/toggle";
 import type { PipelineResults } from "../background";
 
 describe("sidepanel UI functions", () => {
@@ -61,19 +62,17 @@ describe("sidepanel UI functions", () => {
     it("positions tooltip elements on mousemove", () => {
       setupTooltips();
 
-      // Create a card with a tooltip
-      document.body.innerHTML = `
-        <div class="card" style="position: relative;">
-          <div class="card-tip" style="position: fixed; width: 100px; height: 100px;"></div>
-        </div>
-      `;
+      // Create a card with a tooltip — call positionTooltip directly since
+      // jsdom doesn't support :hover pseudo-class for querySelectorAll matching
+      const tip = document.createElement("div");
+      tip.className = "card-tip";
+      tip.style.position = "fixed";
+      document.body.appendChild(tip);
 
-      // Simulate mousemove - tip should be positioned
-      const event = new MouseEvent("mousemove", { clientX: 200, clientY: 200 });
-      document.dispatchEvent(event);
-
-      // The tooltip positioning logic runs on :hover which jsdom doesn't fully support,
-      // but the listener was attached successfully
+      // Import and call positionTooltip directly to verify the integration
+      positionTooltip(tip, 200, 200);
+      expect(tip.style.left).toBe("212px");
+      expect(tip.style.top).toBe("212px");
     });
   });
 

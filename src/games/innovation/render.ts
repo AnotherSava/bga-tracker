@@ -3,6 +3,7 @@
 
 import { type CardInfo, type Card, CardSet, Color, CardDatabase, colorLabel, cardSetLabel, ageSetKey } from "./types.js";
 import { escapeHtml } from "../../render/icons.js";
+import { positionTooltip, applyToggleMode } from "../../render/toggle.js";
 import { GameState } from "./game_state.js";
 import { type SectionId, type SectionConfig, type Toggle, DEFAULT_SECTION_CONFIG, SECTION_IDS, TALL_COLUMNS, visibilityToggle, layoutToggle, compositeToggle } from "./config.js";
 
@@ -18,7 +19,9 @@ export function setAssetResolver(resolver: (path: string) => string): void {
   resolveAssetUrl = resolver;
 }
 
-/** When true, all cards use text-only tooltips (no card face images). */
+/** When true, all cards use text-only tooltips (no card face images).
+ *  Module-level state is intentional: single-threaded extension context makes
+ *  this simpler than threading through every render function call. */
 let useTextTooltips = false;
 
 // ---------------------------------------------------------------------------
@@ -308,48 +311,27 @@ function prepareDeck(gameState: GameState, targetSet: CardSet, cardDb: CardDatab
   return rows;
 }
 
-/** Check if a given card index name is resolved anywhere in the game state. */
-function isCardResolved(indexName: string, gameState: GameState): boolean {
-  // Check all zones for a resolved card with this name
-  for (const cards of gameState.hands.values()) {
-    for (const card of cards) {
-      if (card.isResolved && card.resolvedName === indexName) return true;
-    }
-  }
-  for (const cards of gameState.boards.values()) {
-    for (const card of cards) {
-      if (card.isResolved && card.resolvedName === indexName) return true;
-    }
-  }
-  for (const cards of gameState.scores.values()) {
-    for (const card of cards) {
-      if (card.isResolved && card.resolvedName === indexName) return true;
-    }
-  }
-  for (const cards of gameState.revealed.values()) {
-    for (const card of cards) {
-      if (card.isResolved && card.resolvedName === indexName) return true;
-    }
-  }
-  for (const cards of gameState.decks.values()) {
-    for (const card of cards) {
-      if (card.isResolved && card.resolvedName === indexName) return true;
-    }
-  }
-  for (const card of gameState.achievements) {
-    if (card.isResolved && card.resolvedName === indexName) return true;
-  }
-  return false;
+/** Collect all resolved card names across every zone into a single Set. */
+function collectResolvedNames(gameState: GameState): Set<string> {
+  const resolved = new Set<string>();
+  const addFrom = (cards: Card[]) => { for (const c of cards) { if (c.isResolved) resolved.add(c.resolvedName!); } };
+  for (const cards of gameState.hands.values()) addFrom(cards);
+  for (const cards of gameState.boards.values()) addFrom(cards);
+  for (const cards of gameState.scores.values()) addFrom(cards);
+  for (const cards of gameState.revealed.values()) addFrom(cards);
+  for (const cards of gameState.decks.values()) addFrom(cards);
+  addFrom(gameState.achievements);
+  return resolved;
 }
 
-function prepareAllCards(gameState: GameState, cardSet: CardSet, cardDb: CardDatabase): Row[] {
+function prepareAllCards(gameState: GameState, cardSet: CardSet, cardDb: CardDatabase, resolvedNames: Set<string>): Row[] {
   const rows: Row[] = [];
   for (let age = 1; age <= 10; age++) {
     const cardInfos = cardDb.groupInfos(age, cardSet);
     const items: string[] = [];
     let allKnown = true;
     for (const info of cardInfos) {
-      const resolved = isCardResolved(info.indexName, gameState);
+      const resolved = resolvedNames.has(info.indexName);
       if (!resolved) allKnown = false;
       items.push(renderKnownCard(info, resolved));
     }
@@ -428,7 +410,7 @@ export function renderSummary(gameState: GameState, cardDb: CardDatabase, perspe
     "score-me": () => makeSection("score-me", "Score &mdash; me", prepareMyCards(gameState.scores.get(perspective) ?? [], gameState, cardDb), config["score-me"], {}),
     "achievements": () => makeSection("achievements", "Achievements", [achievements], config["achievements"], { columnCount: TALL_COLUMNS, arrangeByColumns: false }),
     "deck": () => makeCompositeSection("deck", "Deck", prepareDeck(gameState, CardSet.BASE, cardDb), prepareDeck(gameState, CardSet.ECHOES, cardDb), prepareDeck(gameState, CardSet.CITIES, cardDb), config["deck"], {}),
-    "cards": () => makeCompositeSection("cards", "Cards", prepareAllCards(gameState, CardSet.BASE, cardDb), prepareAllCards(gameState, CardSet.ECHOES, cardDb), prepareAllCards(gameState, CardSet.CITIES, cardDb), config["cards"], { hasUnknown: true, columnCount: TALL_COLUMNS }),
+    "cards": () => { const resolved = collectResolvedNames(gameState); return makeCompositeSection("cards", "Cards", prepareAllCards(gameState, CardSet.BASE, cardDb, resolved), prepareAllCards(gameState, CardSet.ECHOES, cardDb, resolved), prepareAllCards(gameState, CardSet.CITIES, cardDb, resolved), config["cards"], { hasUnknown: true, columnCount: TALL_COLUMNS }); },
   };
 
   let html = "";
@@ -466,59 +448,19 @@ ${SUMMARY_JS}
 // Client-side JavaScript (inlined in standalone HTML downloads)
 // ---------------------------------------------------------------------------
 
-export const SUMMARY_JS = `document.addEventListener('mousemove', function(e) {
+export const SUMMARY_JS = `var positionTooltip = ${positionTooltip.toString()};
+var applyToggleMode = ${applyToggleMode.toString()};
+document.addEventListener('mousemove', function(e) {
   var tips = document.querySelectorAll('.card:hover > .card-tip, .card:hover > .card-tip-text');
-  tips.forEach(function(tip) {
-    var rect = tip.getBoundingClientRect();
-    var w = rect.width || 375, h = rect.height || 275;
-    var x = e.clientX + 12;
-    var y = e.clientY + 12;
-    if (x + w > window.innerWidth) x = e.clientX - w - 12;
-    if (y + h > window.innerHeight) y = e.clientY - h - 12;
-    if (x < 0) x = 4;
-    if (y < 0) y = 4;
-    tip.style.left = x + 'px';
-    tip.style.top = y + 'px';
-  });
+  tips.forEach(function(tip) { positionTooltip(tip, e.clientX, e.clientY); });
 });
 document.querySelectorAll('.tri-toggle').forEach(function(toggle) {
   toggle.addEventListener('click', function(e) {
     var opt = e.target.closest('.tri-opt');
     if (!opt) return;
     var mode = opt.getAttribute('data-mode');
-    var target = document.getElementById(toggle.getAttribute('data-target'));
-    if (!target) return;
-    toggle.querySelectorAll('.tri-opt').forEach(function(o) { o.classList.remove('active'); });
-    opt.classList.add('active');
-    var id = toggle.getAttribute('data-target');
-    var allToggles = toggle.parentElement.querySelectorAll('.tri-toggle[data-target="'+id+'"]');
-    var isPrimary = allToggles[0] === toggle;
-    if (isPrimary) {
-      var siblingDisplay = mode === 'none' ? 'none' : '';
-      allToggles.forEach(function(sib) {
-        if (sib !== toggle) sib.style.display = siblingDisplay;
-      });
-    }
-    if (mode === 'none') {
-      target.style.display = 'none';
-    } else if (mode === 'base' || mode === 'echoes' || mode === 'cities') {
-      target.style.display = '';
-      target.querySelectorAll('[data-set]').forEach(function(el) {
-        el.style.display = el.getAttribute('data-set') === mode ? '' : 'none';
-      });
-    } else if (mode === 'all') {
-      if (isPrimary) target.style.display = '';
-      target.classList.remove('mode-unknown');
-    } else if (mode === 'unknown') {
-      if (isPrimary) target.style.display = '';
-      target.classList.add('mode-unknown');
-    } else if (mode === 'wide' || mode === 'tall') {
-      document.querySelectorAll('.layout-wide[data-list="'+id+'"]').forEach(function(el) {
-        el.style.display = mode === 'wide' ? '' : 'none';
-      });
-      document.querySelectorAll('.layout-tall[data-list="'+id+'"]').forEach(function(el) {
-        el.style.display = mode === 'tall' ? '' : 'none';
-      });
-    }
+    var targetId = toggle.getAttribute('data-target');
+    if (!targetId || !mode) return;
+    applyToggleMode(toggle, mode, targetId);
   });
 });`;

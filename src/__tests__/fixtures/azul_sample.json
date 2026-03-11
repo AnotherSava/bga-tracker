@@ -1,0 +1,112 @@
+{
+  "players": { "1": "Alice", "2": "Bob", "3": "Carol" },
+  "packets": [
+    {
+      "move_id": 1,
+      "time": 1000,
+      "data": [
+        {
+          "type": "factoriesFilled",
+          "args": {
+            "factories": [
+              [
+                { "id": 1, "type": 1, "column": 0, "line": 0, "location": "factory_0" },
+                { "id": 2, "type": 2, "column": 0, "line": 0, "location": "factory_0" },
+                { "id": 3, "type": 3, "column": 0, "line": 0, "location": "factory_0" },
+                { "id": 4, "type": 1, "column": 0, "line": 0, "location": "factory_0" }
+              ],
+              [
+                { "id": 5, "type": 4, "column": 0, "line": 0, "location": "factory_1" },
+                { "id": 6, "type": 5, "column": 0, "line": 0, "location": "factory_1" },
+                { "id": 7, "type": 2, "column": 0, "line": 0, "location": "factory_1" },
+                { "id": 8, "type": 3, "column": 0, "line": 0, "location": "factory_1" }
+              ],
+              [
+                { "id": 9, "type": 1, "column": 0, "line": 0, "location": "factory_2" },
+                { "id": 10, "type": 5, "column": 0, "line": 0, "location": "factory_2" },
+                { "id": 11, "type": 4, "column": 0, "line": 0, "location": "factory_2" },
+                { "id": 12, "type": 2, "column": 0, "line": 0, "location": "factory_2" }
+              ],
+              [
+                { "id": 13, "type": 3, "column": 0, "line": 0, "location": "factory_3" },
+                { "id": 14, "type": 1, "column": 0, "line": 0, "location": "factory_3" },
+                { "id": 15, "type": 5, "column": 0, "line": 0, "location": "factory_3" },
+                { "id": 16, "type": 4, "column": 0, "line": 0, "location": "factory_3" }
+              ],
+              [
+                { "id": 17, "type": 2, "column": 0, "line": 0, "location": "factory_4" },
+                { "id": 18, "type": 3, "column": 0, "line": 0, "location": "factory_4" },
+                { "id": 19, "type": 1, "column": 0, "line": 0, "location": "factory_4" },
+                { "id": 20, "type": 5, "column": 0, "line": 0, "location": "factory_4" }
+              ],
+              [
+                { "id": 21, "type": 4, "column": 0, "line": 0, "location": "factory_5" },
+                { "id": 22, "type": 2, "column": 0, "line": 0, "location": "factory_5" },
+                { "id": 23, "type": 3, "column": 0, "line": 0, "location": "factory_5" },
+                { "id": 24, "type": 1, "column": 0, "line": 0, "location": "factory_5" }
+              ],
+              [
+                { "id": 25, "type": 5, "column": 0, "line": 0, "location": "factory_6" },
+                { "id": 26, "type": 1, "column": 0, "line": 0, "location": "factory_6" },
+                { "id": 27, "type": 4, "column": 0, "line": 0, "location": "factory_6" },
+                { "id": 28, "type": 2, "column": 0, "line": 0, "location": "factory_6" }
+              ]
+            ],
+            "remainingTiles": 72
+          }
+        }
+      ]
+    },
+    {
+      "move_id": 20,
+      "time": 1020,
+      "data": [
+        {
+          "type": "placeTileOnWall",
+          "args": {
+            "completeLines": {
+              "1": {
+                "placedTile": { "id": 1, "type": 1, "column": 0, "line": 0, "location": "wall" },
+                "discardedTiles": [
+                  { "id": 2, "type": 1, "column": 0, "line": 0, "location": "discard" }
+                ],
+                "pointsDetail": {}
+              },
+              "2": {
+                "placedTile": { "id": 5, "type": 4, "column": 3, "line": 0, "location": "wall" },
+                "discardedTiles": [],
+                "pointsDetail": {}
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "move_id": 21,
+      "time": 1021,
+      "data": [
+        {
+          "type": "emptyFloorLine",
+          "args": {
+            "floorLines": {
+              "1": {
+                "points": -1,
+                "tiles": [
+                  { "id": 30, "type": 3, "column": 0, "line": 0, "location": "floor" }
+                ]
+              },
+              "3": {
+                "points": -2,
+                "tiles": [
+                  { "id": 31, "type": 0, "column": 0, "line": 0, "location": "floor" },
+                  { "id": 32, "type": 5, "column": 0, "line": 0, "location": "floor" }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

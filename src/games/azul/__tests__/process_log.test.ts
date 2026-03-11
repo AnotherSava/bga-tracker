@@ -1,6 +1,4 @@
 import { describe, it, expect } from "vitest";
-import fs from "node:fs";
-import path from "node:path";
 import { processAzulLog, TILE_TYPES, COLOR_COUNT, type AzulGameLog, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../process_log.js";
 import type { RawExtractionData, RawPacket } from "../../../models/types.js";
 
@@ -364,82 +362,5 @@ describe("processAzulLog — mixed notifications", () => {
     expect(result.log[0].type).toBe("factoryFill");
     expect(result.log[1].type).toBe("wallPlacement");
     expect(result.log[2].type).toBe("floorClear");
-  });
-});
-
-// ---------------------------------------------------------------------------
-// processAzulLog — real fixture data
-// ---------------------------------------------------------------------------
-
-describe("processAzulLog — real fixture data (bgaa_816402832)", () => {
-  let gameLog: AzulGameLog;
-
-  beforeAll(() => {
-    const rawPath = path.resolve("data/bgaa_816402832/raw_data.json");
-    const rawData = JSON.parse(fs.readFileSync(rawPath, "utf8")) as RawExtractionData;
-    gameLog = processAzulLog(rawData);
-  });
-
-  it("identifies 3 players", () => {
-    expect(Object.keys(gameLog.players)).toHaveLength(3);
-  });
-
-  it("produces entries for 4 rounds of play", () => {
-    const factoryFills = gameLog.log.filter((e) => e.type === "factoryFill");
-    expect(factoryFills).toHaveLength(4);
-  });
-
-  it("round 1: draws 28 tiles (3-player = 7 factories x 4 tiles)", () => {
-    const entry = gameLog.log.find((e) => e.type === "factoryFill") as FactoryFillEntry;
-    const totalDrawn = entry.tileCounts.reduce((sum, c) => sum + c, 0);
-    expect(totalDrawn).toBe(28);
-    expect(entry.tileCounts).toEqual([0, 4, 7, 8, 3, 6]);
-    expect(entry.remainingTiles).toBe(72);
-  });
-
-  it("round 2: draws 28 tiles with correct distribution", () => {
-    const fills = gameLog.log.filter((e) => e.type === "factoryFill") as FactoryFillEntry[];
-    expect(fills[1].tileCounts).toEqual([0, 4, 6, 3, 11, 4]);
-    expect(fills[1].remainingTiles).toBe(44);
-  });
-
-  it("round 3: draws 28 tiles, remaining 16", () => {
-    const fills = gameLog.log.filter((e) => e.type === "factoryFill") as FactoryFillEntry[];
-    expect(fills[2].tileCounts).toEqual([0, 8, 7, 5, 2, 6]);
-    expect(fills[2].remainingTiles).toBe(16);
-  });
-
-  it("round 4: draws 28 tiles, remaining 36 (refill occurred)", () => {
-    const fills = gameLog.log.filter((e) => e.type === "factoryFill") as FactoryFillEntry[];
-    expect(fills[3].tileCounts).toEqual([0, 5, 4, 6, 6, 7]);
-    expect(fills[3].remainingTiles).toBe(36);
-  });
-
-  it("has wall placement entries", () => {
-    const walls = gameLog.log.filter((e) => e.type === "wallPlacement");
-    expect(walls.length).toBeGreaterThan(0);
-  });
-
-  it("round 1 wall placements include correct placed/discarded types", () => {
-    // Find wall placements between first and second factoryFill
-    const entries = gameLog.log;
-    const firstFillIdx = entries.findIndex((e) => e.type === "factoryFill");
-    const secondFillIdx = entries.findIndex((e, i) => i > firstFillIdx && e.type === "factoryFill");
-    const round1Walls = entries.slice(firstFillIdx + 1, secondFillIdx).filter((e) => e.type === "wallPlacement") as WallPlacementEntry[];
-
-    expect(round1Walls.length).toBe(10);
-
-    // First wall placement: player 95035511 places type 1, no discards
-    expect(round1Walls[0].placements["95035511"]).toEqual({ placedType: 1, discardedTypes: [] });
-  });
-
-  it("has floor clear entries with color tiles", () => {
-    const floors = gameLog.log.filter((e) => e.type === "floorClear") as FloorClearEntry[];
-    // Some rounds have color tiles on the floor
-    expect(floors.length).toBeGreaterThan(0);
-
-    // Round 2 has player 87929817 with type 4 on floor
-    const round2Floor = floors.find((e) => e.floorTiles["87929817"]?.includes(4));
-    expect(round2Floor).toBeDefined();
   });
 });

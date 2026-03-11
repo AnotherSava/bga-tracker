@@ -100,6 +100,7 @@ src/
   render/
     help.ts                  Help page content
     icons.ts                 Shared icon utilities
+    toggle.ts                Shared toggle/tooltip logic (side panel + ZIP export)
 assets/
   bga/
     innovation/
@@ -116,11 +117,13 @@ assets/
 1. User clicks extension icon on a BGA game page
 2. extract.ts (MAIN world) fetches game data from BGA internals
 3. background.ts receives data, identifies the game, and runs the appropriate pipeline (Innovation or Azul)
-4. background.ts opens side panel, sends results via chrome.runtime messaging
-5. sidepanel.ts dispatches to the game-specific renderer and displays the summary
+4. background.ts opens side panel and pushes results directly via chrome.runtime messaging (push-only, no request/response round trips)
+5. sidepanel.ts receives pushed results, dispatches to the game-specific renderer and displays the summary
 6. A MutationObserver watcher is injected to monitor the game log DOM for changes
-7. When new log entries appear, the watcher notifies the background (debounced + throttled)
+7. When new log entries appear, the watcher notifies the background (debounced + rate-limited with deferred catch-up)
 8. The background re-runs the extraction pipeline and pushes updated results to the side panel
+
+For unsupported BGA games, the same flow runs but skips pipeline processing — the side panel shows the help page with the download button enabled (ZIP contains raw data only).
 
 ## Testing
 

@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import { renderSummary, renderFullPage, setAssetResolver } from "../games/innovation/render.js";
 import { SECTION_IDS, SECTION_LABELS } from "../games/innovation/config.js";
 import { renderHelp } from "../render/help.js";
+import { positionTooltip, applyToggleMode } from "../render/toggle.js";
 import { CardDatabase, type GameName } from "../models/types.js";
 import { GameState } from "../games/innovation/game_state.js";
 import { renderAzulSummary, renderAzulFullPage, setAssetResolver as setAzulAssetResolver } from "../games/azul/render.js";
@@ -32,6 +33,7 @@ if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
 // Reconnect on disconnect (service worker restart) to keep sidePanelOpen accurate.
 if (typeof chrome !== "undefined" && chrome.runtime?.connect) {
   const connectToBackground = (): void => {
+    if (disconnectTimer) { clearTimeout(disconnectTimer); disconnectTimer = undefined; }
     try {
       const port = chrome.runtime.connect(undefined, { name: "sidepanel" });
       port.onDisconnect.addListener(() => {
@@ -109,19 +111,7 @@ function setupTooltips(): void {
   tooltipsInitialized = true;
   document.addEventListener("mousemove", (e: MouseEvent) => {
     const tips = document.querySelectorAll<HTMLElement>(".card:hover > .card-tip, .card:hover > .card-tip-text");
-    tips.forEach((tip) => {
-      const rect = tip.getBoundingClientRect();
-      const w = rect.width || 375;
-      const h = rect.height || 275;
-      let x = e.clientX + 12;
-      let y = e.clientY + 12;
-      if (x + w > window.innerWidth) x = e.clientX - w - 12;
-      if (y + h > window.innerHeight) y = e.clientY - h - 12;
-      if (x < 0) x = 4;
-      if (y < 0) y = 4;
-      tip.style.left = x + "px";
-      tip.style.top = y + "px";
-    });
+    tips.forEach((tip) => positionTooltip(tip, e.clientX, e.clientY));
   });
 }
 
@@ -144,47 +134,6 @@ function saveToggleState(state: Record<string, string[]>): void {
   try {
     localStorage.setItem(STORAGE_KEY_TOGGLES, JSON.stringify(state));
   } catch { /* ignore */ }
-}
-
-function applyToggleMode(toggle: HTMLElement, mode: string, targetId: string): void {
-  const target = document.getElementById(targetId);
-  if (!target) return;
-
-  toggle.querySelectorAll(".tri-opt").forEach((o) => o.classList.remove("active"));
-  toggle.querySelector<HTMLElement>(`.tri-opt[data-mode="${mode}"]`)?.classList.add("active");
-
-  // Only the primary (first) toggle for a target controls visibility and sibling display
-  const allToggles = toggle.parentElement?.querySelectorAll<HTMLElement>(`.tri-toggle[data-target="${targetId}"]`);
-  const isPrimary = !allToggles || allToggles[0] === toggle;
-
-  if (isPrimary) {
-    const siblingDisplay = mode === "none" ? "none" : "";
-    allToggles?.forEach((sib) => {
-      if (sib !== toggle) sib.style.display = siblingDisplay;
-    });
-  }
-
-  if (mode === "none") {
-    target.style.display = "none";
-  } else if (mode === "base" || mode === "echoes" || mode === "cities") {
-    target.style.display = "";
-    target.querySelectorAll<HTMLElement>("[data-set]").forEach((el) => {
-      el.style.display = el.getAttribute("data-set") === mode ? "" : "none";
-    });
-  } else if (mode === "all") {
-    if (isPrimary) target.style.display = "";
-    target.classList.remove("mode-unknown");
-  } else if (mode === "unknown") {
-    if (isPrimary) target.style.display = "";
-    target.classList.add("mode-unknown");
-  } else if (mode === "wide" || mode === "tall") {
-    document.querySelectorAll<HTMLElement>(`.layout-wide[data-list="${targetId}"]`).forEach((el) => {
-      el.style.display = mode === "wide" ? "" : "none";
-    });
-    document.querySelectorAll<HTMLElement>(`.layout-tall[data-list="${targetId}"]`).forEach((el) => {
-      el.style.display = mode === "tall" ? "" : "none";
-    });
-  }
 }
 
 function persistToggleMode(targetId: string, toggle: HTMLElement, mode: string): void {
@@ -736,19 +685,20 @@ function showHelp(errorMessage?: string, forceGameTab?: GameName): void {
   const btnDownload = document.getElementById("btn-download");
   if (btnDownload) { btnDownload.classList.add("disabled"); btnDownload.onclick = null; }
   chrome.runtime.sendMessage({ type: "pauseLive" }).catch(() => {});
+}
 
-  // Enable download button if raw data is available (e.g. unsupported game)
-  chrome.runtime.sendMessage({ type: "getRawData" }).then((rawData: { rawData: unknown; tableNumber: string } | null) => {
-    if (!rawData || !btnDownload) return;
-    btnDownload.classList.remove("disabled");
-    btnDownload.onclick = async () => {
-      const zip = new JSZip();
-      zip.file("raw_data.json", JSON.stringify(rawData.rawData, null, 2));
-      const blob = await zip.generateAsync({ type: "blob" });
-      const packets = (rawData.rawData as { packets?: { move_id: number | null }[] })?.packets ?? [];
-      downloadBlob(blob, `bgaa_${rawData.tableNumber}${lastMoveId(packets)}.zip`);
-    };
-  }).catch(() => {});
+/** Show help page with download enabled for unsupported game raw data. */
+function showHelpWithRawData(results: PipelineResults): void {
+  showHelp();
+  const btnDownload = document.getElementById("btn-download");
+  if (!btnDownload) return;
+  btnDownload.classList.remove("disabled");
+  btnDownload.onclick = async () => {
+    const zip = new JSZip();
+    zip.file("raw_data.json", JSON.stringify(results.rawData, null, 2));
+    const blob = await zip.generateAsync({ type: "blob" });
+    downloadBlob(blob, `bgaa_${results.tableNumber}${lastMoveId(results.rawData.packets)}.zip`);
+  };
 }
 
 function setupHelpTabs(): void {
@@ -770,10 +720,14 @@ function setupHelpTabs(): void {
 // Wire help button — toggles between help and summary
 document.getElementById("btn-help")?.addEventListener("click", () => {
   if (currentResults && document.getElementById("content")?.querySelector(".help")) {
-    render(currentResults);
-    chrome.runtime.sendMessage({ type: "resumeLive" }).catch(() => {});
+    if (currentResults.gameState) {
+      render(currentResults);
+      chrome.runtime.sendMessage({ type: "resumeLive" }).catch(() => {});
+    } else {
+      showHelpWithRawData(currentResults);
+    }
   } else {
-    showHelp(undefined, currentResults?.gameName);
+    showHelp(undefined, currentResults?.gameName as GameName | undefined);
   }
 });
 
@@ -783,20 +737,11 @@ document.getElementById("btn-help")?.addEventListener("click", () => {
 // ---------------------------------------------------------------------------
 
 if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
-  // Request data from background on load
-  chrome.runtime.sendMessage({ type: "getResults" }).then((response: PipelineResults | null) => {
-    if (response) {
-      currentResults = response;
-      render(response);
-    } else {
-      showHelp();
-    }
-  }).catch(() => {
-    document.getElementById("content")!.innerHTML = '<div class="status">Connection lost. Click the extension icon to re-extract.</div>';
-  });
+  // Start with help page — background will push results via "resultsReady" on port connect.
+  showHelp();
 
-  // Listen for pushed updates when re-extraction occurs while panel is open
-  chrome.runtime.onMessage.addListener((message: { type: string; error?: string; active?: boolean }) => {
+  // Listen for pushed updates from background
+  chrome.runtime.onMessage.addListener((message: { type: string; error?: string; active?: boolean; results?: PipelineResults }) => {
     if (message.type === "liveStatus") {
       if (disconnectTimer) { clearTimeout(disconnectTimer); disconnectTimer = undefined; }
       const indicator = document.getElementById("live-indicator");
@@ -805,14 +750,15 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
         indicator.classList.remove("disconnected");
       }
     } else if (message.type === "resultsReady") {
-      chrome.runtime.sendMessage({ type: "getResults" }).then((response: PipelineResults | null) => {
-        if (response) {
-          currentResults = response;
+      const response = message.results ?? null;
+      if (response) {
+        currentResults = response;
+        if (response.gameState) {
           render(response);
+        } else {
+          showHelpWithRawData(response);
         }
-      }).catch(() => {
-        document.getElementById("content")!.innerHTML = '<div class="status">Connection lost. Click the extension icon to re-extract.</div>';
-      });
+      }
     } else if (message.type === "loading") {
       document.getElementById("content")!.innerHTML = '<div class="status">Loading game data...</div>';
       const tableEl = document.getElementById("game-info-table");
@@ -833,4 +779,4 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
 function getCurrentPinMode(): PinMode { return currentPinMode; }
 
 // Export for testing
-export { render, showHelp, setupTooltips, setupToggles, applySectionVisibility, downloadBlob, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode, setupHelpTabs, switchZoomContext, PIN_ICONS };
+export { render, showHelp, showHelpWithRawData, setupTooltips, setupToggles, applySectionVisibility, downloadBlob, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode, setupHelpTabs, switchZoomContext, PIN_ICONS };

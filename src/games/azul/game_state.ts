@@ -10,7 +10,7 @@ import type { AzulLogEntry } from "./process_log.js";
  * Tile counts indexed by tile type (0 = first-player marker, 1-5 = colors).
  * 6-element array: [marker, black, cyan, blue, yellow, red].
  */
-export type TileCounts = number[];
+export type TileCounts = [number, number, number, number, number, number];
 
 /** Azul game state tracking bag, discard (box lid), and wall tile counts. */
 export interface AzulGameState {
@@ -133,9 +133,9 @@ export function toJSON(state: AzulGameState): SerializedAzulGameState {
 /** Deserialize game state from side panel message. */
 export function fromJSON(data: SerializedAzulGameState): AzulGameState {
   return {
-    bag: [...data.bag],
-    discard: [...data.discard],
-    wall: [...data.wall],
+    bag: [...data.bag] as TileCounts,
+    discard: [...data.discard] as TileCounts,
+    wall: [...data.wall] as TileCounts,
     refillRounds: [...data.refillRounds],
   };
 }

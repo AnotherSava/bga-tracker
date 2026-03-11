@@ -23,22 +23,22 @@ const BGA_DOMAIN_PATTERN = /^https:\/\/([a-z0-9]+\.)?boardgamearena\.com\//;
 
 /** Serialized pipeline results for side panel consumption. */
 export interface PipelineResults {
-  gameName: GameName;
+  gameName: string;
   tableNumber: string;
   rawData: RawExtractionData;
-  // Game-specific payloads — consumers cast based on gameName
+  // Game-specific payloads — consumers cast based on gameName.
+  // Null for unsupported games (rawData-only extraction).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  gameLog: any;
+  gameLog: any | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  gameState: any;
+  gameState: any | null;
 }
 
 /** What to do in response to a tab navigation event. */
 export type NavigationAction =
-  | { action: "skip" }
   | { action: "extract"; tableNumber: string; gameName: GameName }
   | { action: "showHelp"; url: string }
-  | { action: "unsupportedGame"; tableNumber: string };
+  | { action: "unsupportedGame"; tableNumber: string; gameName: string };
 
 /**
  * Check if a player count is valid for a given game.
@@ -54,7 +54,6 @@ export type PinMode = "pinned" | "autohide-bga" | "autohide-game";
 const VALID_PIN_MODES: ReadonlySet<string> = new Set<PinMode>(["pinned", "autohide-bga", "autohide-game"]);
 
 let lastResults: PipelineResults | null = null;
-let lastRawData: { rawData: RawExtractionData; tableNumber: string } | null = null;
 let extracting = false;
 let sidePanelOpen = false;
 let activeTabId: number | null = null;
@@ -62,6 +61,7 @@ let pendingNavTabId: number | null = null;
 let pinMode: PinMode = "pinned";
 let liveTabId: number | null = null;
 let lastExtractionTime = 0;
+let deferredExtractionTimer: ReturnType<typeof setTimeout> | null = null;
 
 // Load card database once at startup
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -299,7 +299,7 @@ const iconController = new IconController();
 
 /** Show lit icon when the tab has a supported game table open with a valid player count. */
 async function updateIcon(tabId: number, url: string | undefined): Promise<void> {
-  const nav = classifyNavigation(url, null);
+  const nav = classifyNavigation(url);
   if (nav.action !== "extract") {
     iconController.run(tabId, iconController.getFrame() > 0 ? FADE_OUT : INSTANT_NORMAL);
     return;
@@ -354,12 +354,59 @@ function injectWatcher(tabId: number): void {
   chrome.runtime.sendMessage({ type: "liveStatus", active: true }).catch(() => {});
 }
 
+function clearDeferredExtraction(): void {
+  if (deferredExtractionTimer !== null) {
+    clearTimeout(deferredExtractionTimer);
+    deferredExtractionTimer = null;
+  }
+}
+
 function stopLiveTracking(reason: string): void {
   if (liveTabId !== null) {
     console.log("[live] stopped:", reason);
   }
+  clearDeferredExtraction();
   liveTabId = null;
   chrome.runtime.sendMessage({ type: "liveStatus", active: false }).catch(() => {});
+}
+
+function triggerLiveExtraction(): void {
+  if (extracting || !sidePanelOpen || liveTabId === null) return;
+  const elapsed = Date.now() - lastExtractionTime;
+  if (elapsed < LIVE_MIN_INTERVAL_MS) {
+    if (deferredExtractionTimer === null) {
+      const remaining = LIVE_MIN_INTERVAL_MS - elapsed;
+      deferredExtractionTimer = setTimeout(() => {
+        deferredExtractionTimer = null;
+        triggerLiveExtraction();
+      }, remaining);
+    }
+    return;
+  }
+  const liveTableNumber = lastResults?.tableNumber;
+  if (!liveTableNumber) { console.log("[live] ignored: no table number"); return; }
+  const previousPacketCount = lastResults?.rawData?.packets?.length ?? 0;
+  clearDeferredExtraction();
+  extracting = true;
+  extractFromTab(liveTabId, "", lastResults!.gameName as GameName, liveTableNumber, true)
+    .then(() => {
+      const newPacketCount = lastResults?.rawData?.packets?.length ?? 0;
+      if (newPacketCount !== previousPacketCount) {
+        chrome.runtime.sendMessage({ type: "resultsReady", results: lastResults }).catch(() => {});
+      }
+    })
+    .catch((err) => {
+      console.warn("Live extraction error:", err);
+    })
+    .finally(() => {
+      extracting = false;
+      lastExtractionTime = Date.now();
+      const pending = pendingNavTabId;
+      pendingNavTabId = null;
+      if (sidePanelOpen && pending !== null) {
+        handleNavigation(pending);
+      }
+    });
 }
 
 // ---------------------------------------------------------------------------
@@ -370,7 +417,7 @@ function stopLiveTracking(reason: string): void {
  * Classify a tab's URL to decide what the extension should do.
  * Pure function — no side effects, easy to test.
  */
-export function classifyNavigation(url: string | undefined, currentTableNumber: string | null): NavigationAction {
+export function classifyNavigation(url: string | undefined): NavigationAction {
   const match = url?.match(BGA_URL_PATTERN);
   if (!match) {
     return { action: "showHelp", url: url ?? "" };
@@ -378,10 +425,7 @@ export function classifyNavigation(url: string | undefined, currentTableNumber: 
   const gameName = match[2];
   const tableNumber = url!.match(/table=(\d+)/)?.[1] ?? "";
   if (!(SUPPORTED_GAMES as readonly string[]).includes(gameName)) {
-    return { action: "unsupportedGame", tableNumber };
-  }
-  if (tableNumber === currentTableNumber) {
-    return { action: "skip" };
+    return { action: "unsupportedGame", tableNumber, gameName };
   }
   return { action: "extract", tableNumber, gameName: gameName as GameName };
 }
@@ -394,8 +438,8 @@ export function shouldAutoClose(url: string | undefined, mode: PinMode): boolean
   if (mode === "pinned") return false;
   if (mode === "autohide-bga") return !url || !BGA_DOMAIN_PATTERN.test(url);
   // autohide-game: close when not on a supported game table
-  const nav = classifyNavigation(url, null);
-  return nav.action !== "extract" && nav.action !== "skip";
+  const nav = classifyNavigation(url);
+  return nav.action !== "extract";
 }
 
 // ---------------------------------------------------------------------------
@@ -427,7 +471,6 @@ async function extractFromTab(tabId: number, url: string, gameName: GameName, ta
   }
 
   const tblNum = tableNumber ?? url.match(/table=(\d+)/)?.[1] ?? "unknown";
-  lastRawData = { rawData: extractResult as RawExtractionData, tableNumber: tblNum };
   lastResults = runPipeline(extractResult as RawExtractionData, cardDb, tblNum, gameName);
   console.log("Pipeline complete:", Object.keys(lastResults));
 
@@ -440,7 +483,7 @@ async function extractFromTab(tabId: number, url: string, gameName: GameName, ta
 
   // Notify side panel of new results
   if (!skipNotify) {
-    chrome.runtime.sendMessage({ type: "resultsReady" }).catch(() => {});
+    chrome.runtime.sendMessage({ type: "resultsReady", results: lastResults }).catch(() => {});
   }
 }
 
@@ -448,21 +491,24 @@ async function extractFromTab(tabId: number, url: string, gameName: GameName, ta
 // Content resolution helpers
 // ---------------------------------------------------------------------------
 
-/** Extract raw data from a tab for download (used for unsupported games). */
-async function extractRawData(tabId: number, tableNumber: string): Promise<void> {
+/** Extract raw data from a tab for unsupported games (no pipeline processing). */
+async function extractRawDataAsResults(tabId: number, tableNumber: string, gameName: string): Promise<void> {
   try {
+    const extractionPromise = chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" });
+    // Suppress unhandled rejection if extraction settles after timeout
+    extractionPromise.catch(() => {});
     const results = await Promise.race([
-      chrome.scripting.executeScript({ target: { tabId }, files: ["dist/extract.js"], world: "MAIN" }),
+      extractionPromise,
       timeout(EXTRACTION_TIMEOUT_MS, "Extraction timed out"),
     ]);
     const extractResult = (results as chrome.scripting.InjectionResult[])[0]?.result;
     if (extractResult && !(extractResult as Record<string, unknown>).error) {
-      lastRawData = { rawData: extractResult as RawExtractionData, tableNumber };
+      lastResults = { gameName, tableNumber, rawData: extractResult as RawExtractionData, gameLog: null, gameState: null };
     } else {
-      lastRawData = null;
+      lastResults = null;
     }
   } catch {
-    lastRawData = null;
+    lastResults = null;
   }
 }
 
@@ -471,10 +517,8 @@ async function extractRawData(tabId: number, tableNumber: string): Promise<void>
  * Handles extract, unsupported game, and help actions.
  * Throws on extraction errors — callers handle error display.
  */
-async function resolveContent(tabId: number, tabUrl: string, currentTable: string | null, source: string): Promise<void> {
-  const nav = classifyNavigation(tabUrl, currentTable);
-
-  if (nav.action === "skip") return;
+async function resolveContent(tabId: number, tabUrl: string, source: string): Promise<void> {
+  const nav = classifyNavigation(tabUrl);
 
   if (nav.action === "extract") {
     chrome.runtime.sendMessage({ type: "loading" }).catch(() => {});
@@ -483,16 +527,18 @@ async function resolveContent(tabId: number, tabUrl: string, currentTable: strin
   }
 
   if (nav.action === "unsupportedGame") {
-    lastResults = null;
     stopLiveTracking(source + ": unsupported game");
-    await extractRawData(tabId, nav.tableNumber);
-    chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+    await extractRawDataAsResults(tabId, nav.tableNumber, nav.gameName);
+    if (lastResults) {
+      chrome.runtime.sendMessage({ type: "resultsReady", results: lastResults }).catch(() => {});
+    } else {
+      chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+    }
     return;
   }
 
   // showHelp
   lastResults = null;
-  lastRawData = null;
   stopLiveTracking(source + ": not a game");
   chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
 }
@@ -507,16 +553,27 @@ chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
   console.log("[live] port connected");
   sidePanelOpen = true;
 
-  // After service worker restart, state is lost. Re-inject watcher on the active game tab
-  // so it can detect DOM changes and trigger extraction on demand (no immediate BGA query).
-  chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+  // Push cached results immediately so the side panel renders without a round trip.
+  if (lastResults) {
+    chrome.runtime.sendMessage({ type: "resultsReady", results: lastResults }).catch(() => {});
+  }
+
+  // After service worker restart, state is lost. Re-extract the active game tab so the
+  // side panel gets fresh results instead of showing stale data from before the restart.
+  chrome.tabs.query({ active: true, currentWindow: true }).then(async (tabs) => {
     const tab = tabs[0];
     if (!tab?.id || !tab.url) return;
     activeTabId = tab.id;
-    const nav = classifyNavigation(tab.url, null);
-    if (nav.action === "extract") {
-      console.log("[live] reconnect: re-injecting watcher on tab", tab.id);
-      injectWatcher(tab.id);
+    if (!lastResults && !extracting) {
+      extracting = true;
+      try {
+        await resolveContent(tab.id, tab.url, "reconnect");
+      } catch (err) {
+        console.warn("Reconnect extraction error:", err);
+        chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
+      } finally {
+        extracting = false;
+      }
     }
   });
 
@@ -541,33 +598,34 @@ async function togglePanel(tabId: number): Promise<void> {
   }
 
   if (extracting) return;
-
-  // Open side panel immediately while user gesture context is valid
-  try {
-    await chrome.sidePanel.open({ tabId });
-  } catch (err) {
-    console.warn("Could not open side panel:", err);
-    return;
-  }
-
-  // Fetch tab details for classification and extraction
-  let tab: chrome.tabs.Tab;
-  try {
-    tab = await chrome.tabs.get(tabId);
-  } catch { return; }
-
-  // Non-game pages resolve immediately without badge
-  const clickNav = classifyNavigation(tab.url, null);
-  if (clickNav.action === "showHelp") {
-    await resolveContent(tabId, tab.url ?? "", null, "click");
-    return;
-  }
-
-  // Extraction needed (supported or unsupported game)
-  setBadge(tabId, "...", "#1976D2");
+  // Set extracting before opening the panel so the onConnect reconnect handler
+  // sees it and skips its own extraction (prevents a race between the two paths).
   extracting = true;
   try {
-    await resolveContent(tabId, tab.url ?? "", null, "click");
+    // Open side panel immediately while user gesture context is valid
+    try {
+      await chrome.sidePanel.open({ tabId });
+    } catch (err) {
+      console.warn("Could not open side panel:", err);
+      return;
+    }
+
+    // Fetch tab details for classification and extraction
+    let tab: chrome.tabs.Tab;
+    try {
+      tab = await chrome.tabs.get(tabId);
+    } catch { return; }
+
+    // Non-game pages resolve immediately without badge
+    const clickNav = classifyNavigation(tab.url);
+    if (clickNav.action === "showHelp") {
+      await resolveContent(tabId, tab.url ?? "", "click");
+      return;
+    }
+
+    // Extraction needed (supported or unsupported game)
+    setBadge(tabId, "...", "#1976D2");
+    await resolveContent(tabId, tab.url ?? "", "click");
     if (lastResults) setBadge(tabId, "\u2713", "#388E3C");
   } catch (err) {
     console.error("BGA Assistant error:", err);
@@ -622,7 +680,7 @@ async function handleNavigation(initialTabId: number): Promise<void> {
         break;
       }
 
-      await resolveContent(tabId, tab.url ?? "", lastResults?.tableNumber ?? null, "nav");
+      await resolveContent(tabId, tab.url ?? "", "nav");
     } catch (err) {
       console.error("Navigation error:", err);
       lastResults = null;
@@ -694,11 +752,7 @@ chrome.runtime.onMessage.addListener(
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: unknown) => void,
   ) => {
-    if (message.type === "getResults") {
-      sendResponse(lastResults);
-    } else if (message.type === "getRawData") {
-      sendResponse(lastRawData);
-    } else if (message.type === "pauseLive") {
+    if (message.type === "pauseLive") {
       stopLiveTracking("help page opened");
     } else if (message.type === "resumeLive") {
       if (activeTabId !== null) injectWatcher(activeTabId);
@@ -711,31 +765,7 @@ chrome.runtime.onMessage.addListener(
       sendResponse(true);
     } else if (message.type === "gameLogChanged") {
       if (sender.tab?.id !== liveTabId) { console.log("[live] ignored: sender tab", sender.tab?.id, "!= liveTabId", liveTabId); return; }
-      if (extracting || !sidePanelOpen || liveTabId === null) { console.log("[live] ignored: extracting=", extracting, "sidePanelOpen=", sidePanelOpen, "liveTabId=", liveTabId); return; }
-      if (Date.now() - lastExtractionTime < LIVE_MIN_INTERVAL_MS) return;
-      const liveTableNumber = lastResults?.tableNumber;
-      if (!liveTableNumber) { console.log("[live] ignored: no table number"); return; }
-      const previousPacketCount = lastResults?.rawData?.packets?.length ?? 0;
-      extracting = true;
-      extractFromTab(liveTabId, "", lastResults!.gameName, liveTableNumber, true)
-        .then(() => {
-          const newPacketCount = lastResults?.rawData?.packets?.length ?? 0;
-          if (newPacketCount !== previousPacketCount) {
-            chrome.runtime.sendMessage({ type: "resultsReady" }).catch(() => {});
-          }
-        })
-        .catch((err) => {
-          console.warn("Live extraction error:", err);
-        })
-        .finally(() => {
-          extracting = false;
-          lastExtractionTime = Date.now();
-          const pending = pendingNavTabId;
-          pendingNavTabId = null;
-          if (sidePanelOpen && pending !== null) {
-            handleNavigation(pending);
-          }
-        });
+      triggerLiveExtraction();
     }
     return undefined;
   },

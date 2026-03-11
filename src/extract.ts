@@ -15,6 +15,8 @@
  * script for injection and external references would be undefined.
  */
 export async function extractGameData(): Promise<Record<string, unknown>> {
+  // Resolves with { error, msg } instead of rejecting because Chrome's
+  // executeScript wraps rejections in generic errors, losing the message.
   const tableMatch = window.location.search.match(/table=(\d+)/);
   if (!tableMatch) return { error: true, msg: "No table= param in URL" };
   const tableId = parseInt(tableMatch[1]);

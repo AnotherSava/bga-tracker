@@ -1,6 +1,7 @@
 // Raw BGA packets -> structured Azul game log
 
 import type { RawExtractionData, RawPacket } from "../../models/types.js";
+import type { TileCounts } from "./game_state.js";
 
 // ---------------------------------------------------------------------------
 // Azul tile types
@@ -32,7 +33,7 @@ function isColorTile(type: number): boolean {
 export interface FactoryFillEntry {
   type: "factoryFill";
   /** Number of tiles drawn per type (index = tile type 0-5). */
-  tileCounts: number[];
+  tileCounts: TileCounts;
   /** Tiles remaining in bag after draw (from BGA server). */
   remainingTiles: number;
 }
@@ -118,7 +119,7 @@ export function processAzulLog(rawData: RawExtractionData): AzulGameLog {
 /** Parse a factoriesFilled notification into a FactoryFillEntry. */
 function parseFactoriesFilled(args: Record<string, unknown>): FactoryFillEntry {
   const factories = (args.factories as BgaTile[][] | undefined) ?? [];
-  const tileCounts = [0, 0, 0, 0, 0, 0];
+  const tileCounts: TileCounts = [0, 0, 0, 0, 0, 0];
 
   for (const factory of factories) {
     for (const tile of factory) {

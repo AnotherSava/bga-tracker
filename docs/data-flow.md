@@ -30,15 +30,15 @@ Key files:
 
 ### Background Service Worker
 
-Persistent orchestrator. Processes raw extraction data into game state and serializes
-it before sending to the *Side Panel*.
+Persistent orchestrator. Processes raw extraction data into game state and pushes
+results to the *Side Panel*.
 
 Responsibilities:
 - Inject the *Content Script* into BGA game pages
 - Run game-specific processing pipelines (raw packets -> game log -> game state)
-- Store and serve results to the *Side Panel*
+- Push results to the *Side Panel* (no request/response — push-only model)
 - Manage toolbar icon/badge animations
-- Coordinate live tracking (watcher injection, rate-limited re-extraction)
+- Coordinate live tracking (watcher injection, rate-limited re-extraction with deferred catch-up)
 - Handle navigation events and auto-hide logic
 
 Key files:
@@ -49,11 +49,10 @@ Key files:
 ### Side Panel
 
 Extension page. Receives `PipelineResults` (raw data, game log, and serialized game state)
-from the *Background Service Worker*, renders interactive HTML in the browser side panel.
+pushed from the *Background Service Worker*, renders interactive HTML in the browser side panel.
 
 Responsibilities:
-- Request and receive results from the *Background Service Worker*
-- Render game-specific HTML summaries
+- Receive pushed results from the *Background Service Worker* and render game-specific HTML summaries
 - Manage UI state (toggles, zoom, section visibility) with localStorage persistence
 - Generate self-contained ZIP downloads with inlined assets
 - Maintain connection lifecycle (reconnect on service worker restart)
@@ -62,11 +61,14 @@ Key files:
 - `src/sidepanel/sidepanel.ts` — UI logic, message handling, downloads, zoom, toggles
 - `src/games/*/render.ts` — game-specific HTML rendering
 - `src/render/help.ts` — help page content
+- `src/render/toggle.ts` — shared toggle/tooltip logic (used by both side panel and ZIP export)
 
 ## Data Flow: Full Extraction
 
 Extracts game data from a BGA page, processes it through a game-specific pipeline,
-and delivers the result to the *Side Panel* for rendering.
+and delivers the result to the *Side Panel* for rendering. Both supported and
+unsupported games follow the same flow — the difference is whether the pipeline
+processes the data or passes it through as raw-only.
 
 Triggers:
 - User clicks the extension icon
@@ -81,11 +83,10 @@ Triggers:
 
 1. Classify the current tab URL via `background.classifyNavigation()`:
    - `"extract"` — supported game, continue below
-   - `"unsupportedGame"` — supported table but unsupported game, continue below (same extraction)
-   - `"showHelp"` — not a BGA page, send `"notAGame"` to *Side Panel*
-   - `"skip"` — same table already extracted (only for tab switch/navigation events, not icon clicks)
+   - `"unsupportedGame"` — BGA game table but unsupported game, continue below
+   - `"showHelp"` — not a BGA game page, send `"notAGame"` to *Side Panel*
 2. Determine gameName and tableNumber, lock against concurrent extractions
-3. Send `"loading"` message to *Side Panel* (may be lost if panel hasn't loaded yet)
+3. Send `"loading"` message to *Side Panel* (supported games only)
 4. Inject `dist/extract.js` into the BGA page
 
 ```
@@ -118,8 +119,8 @@ Triggers:
 1. Transform raw data via `background.runPipeline()`:
    - Innovation: `process_log.processRawLog()` &rarr; `GameState.processLog()` &rarr; `GameState.toJSON()`
    - Azul: `process_log.processAzulLog()` &rarr; `game_state.processLog()` &rarr; `game_state.toJSON()`
-2. Cache result for the *Side Panel* to retrieve
-3. Notify *Side Panel*
+2. Cache `PipelineResults` (with `gameLog` and `gameState`)
+3. Push results to *Side Panel*
 4. Inject live watcher (sets up Live Tracking)
 
 </td>
@@ -127,8 +128,8 @@ Triggers:
 
 ***Background Service Worker***
 
-1. Clear cached pipeline results
-2. Cache raw data for download
+1. Cache `PipelineResults` with `rawData` only (`gameLog` and `gameState` are `null`)
+2. Push results to *Side Panel*
 
 </td>
 </tr>
@@ -136,33 +137,8 @@ Triggers:
 <td valign="top">
 
 ```
-⇩   "resultsReady" message
-```
-
-***Side Panel***
-
-1. Send `"getResults"` message
-
-</td>
-<td valign="top">
-
-```
-⇩   "notAGame" message
-```
-
-***Side Panel***
-
-1. Show help page
-2. Request raw data via `"getRawData"`
-3. If available, enable download button (ZIP contains only `raw_data.json`)
-
-</td>
-</tr>
-<tr>
-<td valign="top">
-
-```
-⇩   PipelineResults { gameName, tableNumber, rawData, gameLog, gameState }
+⇩   "resultsReady" message with PipelineResults payload:
+⇩   { gameName, tableNumber, rawData, gameLog, gameState }
 ```
 
 ***Side Panel***
@@ -173,7 +149,19 @@ Triggers:
 2. Generate HTML, set up tooltips/toggles/zoom
 
 </td>
-<td></td>
+<td valign="top">
+
+```
+⇩   "resultsReady" message with PipelineResults payload:
+⇩   { gameName, tableNumber, rawData, gameLog: null, gameState: null }
+```
+
+***Side Panel***
+
+1. Detect `gameState` is `null` — show help page
+2. Enable download button (ZIP contains only `raw_data.json`)
+
+</td>
 </tr>
 </table>
 
@@ -196,52 +184,53 @@ and re-running the extraction pipeline. Initiated by the watcher injection in
 
 ***Background Service Worker***
 
-1. Validate re-extraction guards (silently drop if any fail — the next DOM mutation will retry):
+1. Validate re-extraction guards:
    - Sender tab matches tracked live tab
    - *Side Panel* is open
    - No extraction currently in progress
    - At least 5 seconds since last extraction
-2. If all guards pass, re-run Full Extraction flow silently
-3. Only notify *Side Panel* if packet count increased
+2. If rate-limited (less than 5s since last extraction): schedule a deferred
+   re-extraction after the remaining time. Only one deferred timer is active at
+   a time; subsequent mutations within the same window are coalesced.
+3. If all guards pass, re-run Full Extraction flow silently (clear any deferred timer)
+4. Only push results to *Side Panel* if packet count increased
 
-## Data Flow: Side Panel Show
+## Data Flow: Side Panel Connect
 
-Each time the *Side Panel* opens it starts as a fresh page. It immediately requests
-cached results while a Full Extraction may still be running in parallel (triggered by
-the same icon click or navigation event that opened the panel).
-
-This flow exists as a race condition safety net: if Full Extraction finishes before the
-side panel's JS loads and registers its message listener, the `"resultsReady"` message
-is lost. The on-load `"getResults"` request catches that case.
+When the *Side Panel* opens (or reconnects after a service worker restart), the
+*Background Service Worker* pushes any cached results immediately. This eliminates
+request/response round trips — the side panel never polls for data.
 
 Triggers:
 - User opens the side panel (via extension icon or keyboard shortcut)
+- Service worker restarts while the side panel is open
 
 ---
 
 ***Side Panel***
 
+1. Start in help page state by default
+2. Establish port via `chrome.runtime.connect({name: "sidepanel"})`
+
 ```
-⇩   "getResults" message
+⇩   Port connection event
 ```
 
 ***Background Service Worker***
 
-1. Respond with cached `PipelineResults` (a single global cache, not per-tab):
-   - Results from a previous extraction — may be for a different table
-   - `null` if no extraction has completed or cache was cleared by navigation
+1. If cached `lastResults` exists: push `"resultsReady"` with the cached `PipelineResults` payload
+2. If `lastResults` is `null` (e.g. after service worker restart): query the active tab
+   and run `background.resolveContent()` to extract fresh results
 
 ```
-⇩   PipelineResults or null
+⇩   "resultsReady" message with PipelineResults payload (if available)
 ```
 
 ***Side Panel***
 
-1. If results received: render game state (same as Full Extraction step 5) — no relevance check, may briefly show results from a different table
-2. If `null`: show help page
-
-If a Full Extraction is running concurrently, its `"resultsReady"` message will
-arrive later and trigger a re-render with fresh data.
+1. If results received with `gameState`: render game page
+2. If results received without `gameState`: show help page with download enabled
+3. If no results: remain on help page until a Full Extraction completes
 
 ## Data Flow: ZIP Download
 
@@ -255,13 +244,14 @@ Triggers:
 ***Side Panel***
 
 1. Use cached `PipelineResults` from the last render
-2. Generate self-contained HTML page via `render.renderFullPage()` with all assets inlined as base64 data URIs
+2. For supported games: generate self-contained HTML page via `render.renderFullPage()` with all assets inlined as base64 data URIs
 3. Package into ZIP via JSZip:
    - `raw_data.json` — original BGA packets
-   - `game_log.json` — structured log entries
-   - `game_state.json` — serialized game state
-   - `summary.html` — self-contained HTML
-4. Download as `bgaa_<tableNumber>_<moveId>.zip`
+   - `game_log.json` — structured log entries (supported games only)
+   - `game_state.json` — serialized game state (supported games only)
+   - `summary.html` — self-contained HTML (supported games only)
+4. For unsupported games: ZIP contains only `raw_data.json`
+5. Download as `bgaa_<tableNumber>_<moveId>.zip`
 
 ## Message Protocol
 
@@ -269,8 +259,6 @@ Triggers:
 
 | Message | Response | Purpose |
 |---------|----------|---------|
-| `"getResults"` | `PipelineResults` or `null` | Fetch current game state; `null` if no extraction has completed yet |
-| `"getRawData"` | `{rawData, tableNumber}` or `null` | Fetch raw data for unsupported game download; `null` if no data available |
 | `"getPinMode"` | `PinMode` | Get current auto-hide mode |
 | `"setPinMode"` | — | Set auto-hide mode (persisted to `chrome.storage.local`) |
 | `"pauseLive"` | — | Stop live tracking |
@@ -278,13 +266,13 @@ Triggers:
 
 ### *Background Service Worker* &rarr; *Side Panel*
 
-| Message | Purpose |
-|---------|---------|
-| `"loading"` | Show loading spinner |
-| `"resultsReady"` | Signal to refetch results and re-render |
-| `"notAGame"` | Current tab is not a BGA game — show help |
-| `"gameError"` | Extraction failed — show help with error message |
-| `"liveStatus"` | Update live tracking indicator |
+| Message | Payload | Purpose |
+|---------|---------|---------|
+| `"loading"` | — | Show loading spinner |
+| `"resultsReady"` | `{ results: PipelineResults }` | Push extraction results for rendering |
+| `"notAGame"` | — | Current tab is not a BGA game page — show help |
+| `"gameError"` | `{ error: string }` | Extraction failed — show help with error message |
+| `"liveStatus"` | `{ active: boolean }` | Update live tracking indicator |
 
 ### *Content Script* &rarr; *Background Service Worker*
 
@@ -297,6 +285,11 @@ Triggers:
 The *Side Panel* maintains a persistent port via `chrome.runtime.connect({name: "sidepanel"})`.
 The *Background Service Worker* uses port connection/disconnection to track whether the
 *Side Panel* is open.
+
+On port connect, the *Background Service Worker* immediately pushes any cached results
+(see [Side Panel Connect](#data-flow-side-panel-connect)). If no results are cached
+(e.g. after a service worker restart), it queries the active tab and triggers extraction
+so the side panel receives fresh data without needing to request it.
 
 If the service worker restarts (Chrome may terminate idle workers), the port disconnects.
 The *Side Panel* retries connection every 1 second and shows a "disconnected" indicator

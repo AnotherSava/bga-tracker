@@ -1,9 +1,6 @@
 import { describe, it, expect } from "vitest";
-import fs from "node:fs";
-import path from "node:path";
 import { initGame, processLog, toJSON, fromJSON, type AzulGameState, type TileCounts } from "../game_state.js";
-import { processAzulLog, type AzulLogEntry, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../process_log.js";
-import type { RawExtractionData } from "../../../models/types.js";
+import { type AzulLogEntry, type FactoryFillEntry, type WallPlacementEntry, type FloorClearEntry } from "../process_log.js";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -15,7 +12,7 @@ function colorTotal(counts: TileCounts): number {
 }
 
 /** Create a factory fill entry. */
-function fill(tileCounts: number[], remainingTiles: number): FactoryFillEntry {
+function fill(tileCounts: TileCounts, remainingTiles: number): FactoryFillEntry {
   return { type: "factoryFill", tileCounts, remainingTiles };
 }
 
@@ -350,104 +347,3 @@ describe("processLog — edge cases", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// processLog — real fixture data (bgaa_816402832)
-// ---------------------------------------------------------------------------
-
-describe("processLog — real fixture data (bgaa_816402832)", () => {
-  let log: AzulLogEntry[];
-
-  beforeAll(() => {
-    const rawPath = path.resolve("data/bgaa_816402832/raw_data.json");
-    const rawData = JSON.parse(fs.readFileSync(rawPath, "utf8")) as RawExtractionData;
-    const gameLog = processAzulLog(rawData);
-    log = gameLog.log;
-  });
-
-  it("produces correct final state", () => {
-    const state = processLog(log);
-    expect(state.bag).toEqual([0, 7, 8, 6, 8, 7]);
-    expect(state.discard).toEqual([0, 0, 0, 0, 0, 0]);
-    expect(state.wall).toEqual([0, 6, 6, 5, 6, 6]);
-  });
-
-  it("detects refill in round 4", () => {
-    const state = processLog(log);
-    expect(state.refillRounds).toEqual([4]);
-  });
-
-  it("bag total matches BGA remainingTiles after each factory fill", () => {
-    // Replay entry by entry, checking bag total after each factory fill
-    const state = initGame();
-    let roundNumber = 0;
-
-    for (const entry of log) {
-      switch (entry.type) {
-        case "factoryFill": {
-          roundNumber++;
-          const totalDrawn = entry.tileCounts.reduce((sum: number, c: number) => sum + c, 0);
-          const bagTotal = colorTotal(state.bag);
-          if (totalDrawn > bagTotal) {
-            for (let i = 0; i <= 5; i++) { state.bag[i] += state.discard[i]; state.discard[i] = 0; }
-          }
-          for (let i = 0; i <= 5; i++) state.bag[i] -= entry.tileCounts[i];
-          expect(colorTotal(state.bag)).toBe(entry.remainingTiles);
-          break;
-        }
-        case "wallPlacement":
-          for (const placement of Object.values(entry.placements)) {
-            state.wall[placement.placedType]++;
-            for (const dt of placement.discardedTypes) state.discard[dt]++;
-          }
-          break;
-        case "floorClear":
-          for (const tiles of Object.values(entry.floorTiles)) {
-            for (const tt of tiles) state.discard[tt]++;
-          }
-          break;
-      }
-    }
-
-    expect(roundNumber).toBe(4);
-  });
-
-  it("bag counts never go negative", () => {
-    const state = initGame();
-
-    for (const entry of log) {
-      if (entry.type === "factoryFill") {
-        const totalDrawn = entry.tileCounts.reduce((sum: number, c: number) => sum + c, 0);
-        const bagTotal = colorTotal(state.bag);
-        if (totalDrawn > bagTotal) {
-          for (let i = 0; i <= 5; i++) { state.bag[i] += state.discard[i]; state.discard[i] = 0; }
-        }
-        for (let i = 0; i <= 5; i++) state.bag[i] -= entry.tileCounts[i];
-        for (let i = 1; i <= 5; i++) {
-          expect(state.bag[i]).toBeGreaterThanOrEqual(0);
-        }
-      } else if (entry.type === "wallPlacement") {
-        for (const placement of Object.values(entry.placements)) {
-          state.wall[placement.placedType]++;
-          for (const dt of placement.discardedTypes) state.discard[dt]++;
-        }
-      } else if (entry.type === "floorClear") {
-        for (const tiles of Object.values(entry.floorTiles)) {
-          for (const tt of tiles) state.discard[tt]++;
-        }
-      }
-    }
-  });
-
-  it("wall total equals 29 (in-progress 3p game, 3 completed rounds)", () => {
-    const state = processLog(log);
-    expect(colorTotal(state.wall)).toBe(29);
-  });
-
-  it("tracked tiles (bag + discard + wall) <= 100", () => {
-    const state = processLog(log);
-    const tracked = colorTotal(state.bag) + colorTotal(state.discard) + colorTotal(state.wall);
-    expect(tracked).toBeLessThanOrEqual(100);
-    // In-play tiles = 100 - tracked = 35
-    expect(100 - tracked).toBe(35);
-  });
-});

@@ -41,6 +41,7 @@ Keep `README.md` in the project root up to date when code changes affect project
 - `src/games/azul/render.ts` — Azul tile count table renderer
 - `src/render/help.ts` — help page content (shared)
 - `src/render/icons.ts` — shared icon utilities
+- `src/render/toggle.ts` — shared toggle/tooltip logic (side panel + ZIP export)
 - `src/extract.ts` — content script (MAIN world)
 - `src/background.ts` — service worker (multi-game pipeline)
 - `sidepanel.html` — side panel HTML entry point (project root, Vite input)

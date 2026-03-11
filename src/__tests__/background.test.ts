@@ -9,8 +9,14 @@ const listeners: Record<string, Function> = {};
 // Mock Chrome APIs before background.ts module-level code runs.
 vi.hoisted(() => {
   // Mock OffscreenCanvas + createImageBitmap + fetch for icon frame preloading
-  const mockImageData = { width: 16, height: 16, data: new Uint8ClampedArray(16 * 16 * 4) };
-  const mockCtx = { drawImage: vi.fn(), getImageData: vi.fn(() => mockImageData) };
+  // Each getImageData call returns a unique object tagged with the frame index
+  // (2 sizes per frame: 16 and 48, loaded in order frame 0-9)
+  let _getImageDataCallCount = 0;
+  const mockCtx = { drawImage: vi.fn(), getImageData: vi.fn(() => {
+    const frame = Math.floor(_getImageDataCallCount / 2);
+    _getImageDataCallCount++;
+    return { width: 16, height: 16, data: new Uint8ClampedArray(16 * 16 * 4), _frame: frame };
+  }) };
   (globalThis as any).OffscreenCanvas = vi.fn(() => ({ getContext: () => mockCtx }));
   (globalThis as any).createImageBitmap = vi.fn(() => Promise.resolve({}));
   (globalThis as any).__origFetch = globalThis.fetch;
@@ -48,7 +54,7 @@ vi.hoisted(() => {
       onActivated: { addListener: (cb: Function) => { _listeners.onActivated = cb; } },
       onUpdated: { addListener: (cb: Function) => { _listeners.onUpdated = cb; } },
       get: vi.fn(() => Promise.resolve({})),
-      query: () => Promise.resolve([]),
+      query: vi.fn(() => Promise.resolve([])),
     },
     windows: {
       onFocusChanged: { addListener: (cb: Function) => { _listeners.onFocusChanged = cb; } },
@@ -65,6 +71,7 @@ const copyListeners = () => {
 import { runPipeline, classifyNavigation, shouldAutoClose, watcherFunction, isValidPlayerCount, type PipelineResults, type NavigationAction, type PinMode } from "../background";
 import { CardDatabase } from "../models/types";
 import type { RawExtractionData } from "../models/types";
+import { GameState } from "../games/innovation/game_state";
 
 // Initialize listeners after module import so all addListener calls have fired.
 copyListeners();
@@ -374,6 +381,28 @@ describe("runPipeline", () => {
     expect(result.gameLog.expansions.echoes).toBe(true);
   });
 
+  it("processes Innovation fixture data end-to-end", () => {
+    const raw = JSON.parse(readFileSync(resolve(thisDir, "fixtures/innovation_sample.json"), "utf-8"));
+    const result = runPipeline(raw, cardDb, "12345", "innovation");
+
+    expect(result.gameName).toBe("innovation");
+    expect(result.tableNumber).toBe("12345");
+
+    // Alice starts with Pottery+Tools, draws Metalworking, melds it, scores Pottery
+    // Hand: Tools + 1 unresolved (started with 2, drew 1, played 1, scored 1 => 1 resolved + 1 unresolved? No:
+    // Start: [Pottery, Tools] -> draw Metalworking -> [Pottery, Tools, Metalworking]
+    // Meld Metalworking -> board: [Metalworking], hand: [Pottery, Tools]
+    // Score Pottery -> score: [Pottery], hand: [Tools]
+    expect(result.gameState.hands["Alice"].length).toBe(1);
+    expect(result.gameState.boards["Alice"].length).toBe(1);
+    expect(result.gameState.boards["Alice"][0].resolved).toBe("metalworking");
+    expect(result.gameState.scores["Alice"].length).toBe(1);
+    expect(result.gameState.scores["Alice"][0].resolved).toBe("pottery");
+
+    // Game log should have 3 transfer entries
+    expect(result.gameLog.log.length).toBe(3);
+  });
+
   it("throws for unsupported game name", () => {
     const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
     expect(() => runPipeline(rawData, cardDb, "12345", "unknowngame" as any)).toThrow("Pipeline not implemented for game: unknowngame");
@@ -395,25 +424,28 @@ describe("runPipeline (azul)", () => {
   });
 
   it("processes Azul fixture data end-to-end", () => {
-    const raw = JSON.parse(readFileSync(resolve(thisDir, "../../data/bgaa_816402832/raw_data.json"), "utf-8"));
+    const raw = JSON.parse(readFileSync(resolve(thisDir, "fixtures/azul_sample.json"), "utf-8"));
     const result = runPipeline(raw, cardDb, "816402832", "azul");
 
     expect(result.gameName).toBe("azul");
     expect(result.tableNumber).toBe("816402832");
 
-    // After 4 rounds, bag should have tiles remaining
     const { bag, discard, wall } = result.gameState;
-    const bagTotal = bag[1] + bag[2] + bag[3] + bag[4] + bag[5];
-    expect(bagTotal).toBeGreaterThanOrEqual(0);
 
-    // Total tiles across bag + discard + wall should be <= 100
-    const discardTotal = discard[1] + discard[2] + discard[3] + discard[4] + discard[5];
-    const wallTotal = wall[1] + wall[2] + wall[3] + wall[4] + wall[5];
-    expect(bagTotal + discardTotal + wallTotal).toBeLessThanOrEqual(100);
+    // Factory fill drew 28 tiles (7 factories x 4): 7 black, 5 cyan, 5 blue, 5 yellow, 6 red
+    // Wall placed: 1 black + 1 yellow = 2 on wall
+    // Wall discard: 1 black discarded from placement
+    // Floor clear: 1 blue (player 1) + 1 red (player 3) discarded
+    // Total removed from bag: 28; wall: 2; discard: 1+1+1 = 3
+    // bag should be 100 - 28 = 72 remaining after fill
+    expect(bag[1] + bag[2] + bag[3] + bag[4] + bag[5]).toBe(72);
+    // Discard: 1 black (wall discard) + 1 blue (floor) + 1 red (floor) = 3
+    expect(discard[1] + discard[2] + discard[3] + discard[4] + discard[5]).toBe(3);
+    // Wall: 1 black + 1 yellow = 2
+    expect(wall[1] + wall[2] + wall[3] + wall[4] + wall[5]).toBe(2);
 
-    // Game log should have entries
     expect(result.gameLog.players).toBeDefined();
-    expect(result.gameLog.log.length).toBeGreaterThan(0);
+    expect(result.gameLog.log.length).toBe(3);
   });
 
   it("Azul pipeline result is JSON-serializable", () => {
@@ -427,54 +459,86 @@ describe("runPipeline (azul)", () => {
   });
 });
 
+describe("GameState.cardsAt fail-fast", () => {
+  const cardDb = loadCardDb();
+
+  function makeState(): GameState {
+    return new GameState(cardDb, ["Alice", "Bob"], "Alice");
+  }
+
+  it("throws when player zone is called with null player", () => {
+    const state = makeState();
+    state.initGame();
+    expect(() => state.cardsAt("hand", null)).toThrow('cardsAt("hand") requires a player');
+    expect(() => state.cardsAt("board", null)).toThrow('cardsAt("board") requires a player');
+    expect(() => state.cardsAt("score", null)).toThrow('cardsAt("score") requires a player');
+    expect(() => state.cardsAt("revealed", null)).toThrow('cardsAt("revealed") requires a player');
+    expect(() => state.cardsAt("forecast", null)).toThrow('cardsAt("forecast") requires a player');
+  });
+
+  it("throws when player zone is called with unknown player", () => {
+    const state = makeState();
+    state.initGame();
+    expect(() => state.cardsAt("hand", "Unknown")).toThrow('Player "Unknown" not found in hand zone');
+  });
+
+  it("throws when deck zone is called without groupKey", () => {
+    const state = makeState();
+    state.initGame();
+    expect(() => state.cardsAt("deck", null)).toThrow('cardsAt("deck") requires a groupKey');
+  });
+
+  it("returns cards for valid zone+player", () => {
+    const state = makeState();
+    state.initGame();
+    expect(state.cardsAt("hand", "Alice").length).toBe(2);
+    expect(state.cardsAt("board", "Alice").length).toBe(0);
+  });
+});
+
 describe("classifyNavigation", () => {
-  it("returns skip when URL matches the current table", () => {
-    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=999", "999");
-    expect(result).toEqual({ action: "skip" });
-  });
-
-  it("returns extract when URL is a different BGA table", () => {
-    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=888", "999");
-    expect(result).toEqual({ action: "extract", tableNumber: "888", gameName: "innovation" });
-  });
-
-  it("returns extract when no current table is tracked", () => {
-    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=555", null);
+  it("returns extract for a supported game table", () => {
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=555");
     expect(result).toEqual({ action: "extract", tableNumber: "555", gameName: "innovation" });
   });
 
+  it("returns extract for same-table navigation (no skip)", () => {
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=999");
+    expect(result).toEqual({ action: "extract", tableNumber: "999", gameName: "innovation" });
+  });
+
   it("returns showHelp for a non-BGA URL", () => {
-    const result = classifyNavigation("https://example.com/page", "999");
+    const result = classifyNavigation("https://example.com/page");
     expect(result).toEqual({ action: "showHelp", url: "https://example.com/page" });
   });
 
   it("returns showHelp for undefined URL", () => {
-    const result = classifyNavigation(undefined, "999");
+    const result = classifyNavigation(undefined);
     expect(result).toEqual({ action: "showHelp", url: "" });
   });
 
   it("returns showHelp for a BGA URL without a table parameter", () => {
-    const result = classifyNavigation("https://boardgamearena.com/lobby", "999");
+    const result = classifyNavigation("https://boardgamearena.com/lobby");
     expect(result).toEqual({ action: "showHelp", url: "https://boardgamearena.com/lobby" });
   });
 
   it("returns unsupportedGame for an unsupported game with table param", () => {
-    const result = classifyNavigation("https://boardgamearena.com/1/thecrewdeepsea?table=123", null);
-    expect(result).toEqual({ action: "unsupportedGame", tableNumber: "123" });
+    const result = classifyNavigation("https://boardgamearena.com/1/thecrewdeepsea?table=123");
+    expect(result).toEqual({ action: "unsupportedGame", tableNumber: "123", gameName: "thecrewdeepsea" });
   });
 
   it("handles BGA subdomain URLs with table param", () => {
-    const result = classifyNavigation("https://en.boardgamearena.com/8/innovation?table=123", null);
+    const result = classifyNavigation("https://en.boardgamearena.com/8/innovation?table=123");
     expect(result).toEqual({ action: "extract", tableNumber: "123", gameName: "innovation" });
   });
 
   it("handles table param embedded in longer query string", () => {
-    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=456&other=1", null);
+    const result = classifyNavigation("https://boardgamearena.com/8/innovation?table=456&other=1");
     expect(result).toEqual({ action: "extract", tableNumber: "456", gameName: "innovation" });
   });
 
   it("returns extract for an azul table URL", () => {
-    const result = classifyNavigation("https://boardgamearena.com/1/azul?table=789", null);
+    const result = classifyNavigation("https://boardgamearena.com/1/azul?table=789");
     expect(result).toEqual({ action: "extract", tableNumber: "789", gameName: "azul" });
   });
 });
@@ -700,7 +764,7 @@ describe("live tracking", () => {
     await new Promise((r) => setTimeout(r, 50));
   });
 
-  it("gameLogChanged skipped within minimum interval", async () => {
+  it("gameLogChanged within minimum interval schedules deferred extraction", async () => {
     await clickExtract(42);
     vi.clearAllMocks();
 
@@ -708,7 +772,7 @@ describe("live tracking", () => {
     const sender = { tab: { id: 42 } };
     listeners.onMessage({ type: "gameLogChanged" }, sender, () => {});
 
-    // No extraction should have been triggered
+    // No immediate extraction should have been triggered
     expect(mockExecuteScript).not.toHaveBeenCalled();
   });
 
@@ -756,6 +820,102 @@ describe("live tracking", () => {
     expect(mockExecuteScript).not.toHaveBeenCalled();
 
     vi.restoreAllMocks();
+  });
+
+  it("deferred extraction fires after remaining rate limit window", async () => {
+    await clickExtract(42);
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Simulate 3s elapsed since last extraction
+    const baseTime = Date.now();
+    vi.useFakeTimers({ now: baseTime + 3000 });
+    vi.clearAllMocks();
+
+    // Set up extraction mock for when deferred timer fires
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, [
+      { move_id: 1, time: 1001, data: [{ type: "transferedCard_spectator", args: { type: "0" } }] },
+    ]);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+
+    const sender = { tab: { id: 42 } };
+    listeners.onMessage({ type: "gameLogChanged" }, sender, () => {});
+
+    // No immediate extraction
+    expect(mockExecuteScript).not.toHaveBeenCalled();
+
+    // Advance past the remaining 2s window
+    await vi.advanceTimersByTimeAsync(2100);
+
+    // Deferred extraction should have fired
+    expect(mockExecuteScript).toHaveBeenCalled();
+
+    // Flush async extraction chain
+    await vi.advanceTimersByTimeAsync(100);
+
+    vi.useRealTimers();
+  });
+
+  it("deferred timer cleared when new extraction starts", async () => {
+    await clickExtract(42);
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Simulate 3s elapsed — triggers deferred timer
+    const baseTime = Date.now();
+    vi.useFakeTimers({ now: baseTime + 3000 });
+    vi.clearAllMocks();
+
+    const sender = { tab: { id: 42 } };
+    listeners.onMessage({ type: "gameLogChanged" }, sender, () => {});
+    expect(mockExecuteScript).not.toHaveBeenCalled();
+
+    // Now jump past 5s and trigger a normal extraction before the deferred fires
+    vi.setSystemTime(baseTime + 6000);
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, [
+      { move_id: 1, time: 1001, data: [{ type: "transferedCard_spectator", args: { type: "0" } }] },
+    ]);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+
+    // This should trigger immediately (past the interval) and clear the deferred timer
+    listeners.onMessage({ type: "gameLogChanged" }, sender, () => {});
+    expect(mockExecuteScript).toHaveBeenCalledTimes(1);
+
+    // Flush extraction chain
+    await vi.advanceTimersByTimeAsync(100);
+
+    // The original deferred timer would have fired around 2s from the first message
+    // but it should have been cleared. No additional extraction should happen.
+    vi.clearAllMocks();
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(mockExecuteScript).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it("deferred timer cleared on panel disconnect", async () => {
+    const { triggerDisconnect } = await clickExtract(42);
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Simulate 3s elapsed — triggers deferred timer
+    const baseTime = Date.now();
+    vi.useFakeTimers({ now: baseTime + 3000 });
+    vi.clearAllMocks();
+
+    const sender = { tab: { id: 42 } };
+    listeners.onMessage({ type: "gameLogChanged" }, sender, () => {});
+    expect(mockExecuteScript).not.toHaveBeenCalled();
+
+    // Disconnect panel — should stop live tracking and clear the deferred timer
+    triggerDisconnect();
+
+    // Advance past the remaining window
+    mockExecuteScript.mockResolvedValueOnce([{ result: makeRawData({ "1": "Alice", "2": "Bob" }, []) }]);
+    await vi.advanceTimersByTimeAsync(3000);
+
+    // No extraction should have fired
+    expect(mockExecuteScript).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
   });
 
   it("stopLiveTracking on panel disconnect", async () => {
@@ -884,6 +1044,278 @@ describe("auto-close in handleNavigation", () => {
   });
 });
 
+describe("unified extraction flow", () => {
+  const mockExecuteScript = chrome.scripting.executeScript as ReturnType<typeof vi.fn>;
+  const mockSendMessage = chrome.runtime.sendMessage as ReturnType<typeof vi.fn>;
+  const mockTabsGet = chrome.tabs.get as ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    await new Promise((r) => setTimeout(r, 50));
+    // Reset panel state
+    const { triggerDisconnect } = connectSidePanel();
+    triggerDisconnect();
+    // Reset pin mode to pinned so shouldAutoClose doesn't interfere
+    listeners.onMessage({ type: "setPinMode", mode: "pinned" }, {}, () => {});
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+  });
+
+  it("unsupported game sends resultsReady with rawData-only results", async () => {
+    const conn = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+    const tab = { id: 1, url: "https://boardgamearena.com/1/thecrewdeepsea?table=123", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Should send resultsReady (not notAGame) for unsupported games
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(1);
+    const notAGameCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "notAGame");
+    expect(notAGameCalls.length).toBe(0);
+
+    conn.triggerDisconnect();
+  });
+
+  it("unsupported game resultsReady includes PipelineResults with null gameLog/gameState", async () => {
+    const conn = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+    const tab = { id: 1, url: "https://boardgamearena.com/1/thecrewdeepsea?table=123", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Verify resultsReady message includes the rawData-only result
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(1);
+    const result = resultsCalls[0][0].results as PipelineResults;
+    expect(result).not.toBeNull();
+    expect(result.gameName).toBe("thecrewdeepsea");
+    expect(result.tableNumber).toBe("123");
+    expect(result.rawData).toEqual(rawData);
+    expect(result.gameLog).toBeNull();
+    expect(result.gameState).toBeNull();
+
+    conn.triggerDisconnect();
+  });
+
+  it("non-BGA page sends notAGame (not resultsReady)", async () => {
+    const conn = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const tab = { id: 1, url: "https://example.com", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    const notAGameCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "notAGame");
+    expect(notAGameCalls.length).toBe(1);
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(0);
+
+    conn.triggerDisconnect();
+  });
+
+  it("BGA lobby (no table param) sends notAGame", async () => {
+    const conn = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const tab = { id: 1, url: "https://boardgamearena.com/lobby", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    const notAGameCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "notAGame");
+    expect(notAGameCalls.length).toBe(1);
+
+    conn.triggerDisconnect();
+  });
+
+  it("supported game sends resultsReady with full pipeline results in payload", async () => {
+    const conn = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    // First executeScript call is updateIcon's probe, second is the extraction
+    mockExecuteScript
+      .mockResolvedValueOnce([{ result: 2 }])
+      .mockResolvedValueOnce([{ result: rawData }]);
+    const tab = { id: 1, url: "https://boardgamearena.com/8/innovation?table=456", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Verify resultsReady message includes full pipeline results
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(1);
+    const result = resultsCalls[0][0].results as PipelineResults;
+    expect(result).not.toBeNull();
+    expect(result.gameName).toBe("innovation");
+    expect(result.gameLog).not.toBeNull();
+    expect(result.gameState).not.toBeNull();
+
+    conn.triggerDisconnect();
+  });
+});
+
+describe("onConnect pushes cached results", () => {
+  const mockExecuteScript = chrome.scripting.executeScript as ReturnType<typeof vi.fn>;
+  const mockSendMessage = chrome.runtime.sendMessage as ReturnType<typeof vi.fn>;
+  const mockTabsGet = chrome.tabs.get as ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    await new Promise((r) => setTimeout(r, 50));
+    // Reset panel state
+    const { triggerDisconnect } = connectSidePanel();
+    triggerDisconnect();
+    // Reset pin mode to pinned so shouldAutoClose doesn't interfere
+    listeners.onMessage({ type: "setPinMode", mode: "pinned" }, {}, () => {});
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+  });
+
+  it("sends resultsReady with results on connect when lastResults is cached", async () => {
+    // First, populate lastResults by navigating to a supported game
+    const conn1 = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    // probe + extraction
+    mockExecuteScript
+      .mockResolvedValueOnce([{ result: 2 }])
+      .mockResolvedValueOnce([{ result: rawData }]);
+    const tab = { id: 1, url: "https://boardgamearena.com/8/innovation?table=789", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    conn1.triggerDisconnect();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    // Now reconnect — should push resultsReady with results payload
+    const conn2 = connectSidePanel();
+    await new Promise((r) => setTimeout(r, 50));
+
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(1);
+    const result = resultsCalls[0][0].results as PipelineResults;
+    expect(result).not.toBeNull();
+    expect(result.gameName).toBe("innovation");
+    expect(result.tableNumber).toBe("789");
+
+    conn2.triggerDisconnect();
+  });
+
+  it("does not send resultsReady on connect when lastResults is null and no active tab", async () => {
+    // Navigate to non-BGA page to clear lastResults
+    const conn1 = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const tab = { id: 1, url: "https://example.com", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab).mockResolvedValueOnce(tab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    conn1.triggerDisconnect();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    // tabs.query returns [] (default) — no active tab found
+    const conn2 = connectSidePanel();
+    await new Promise((r) => setTimeout(r, 50));
+
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(0);
+
+    conn2.triggerDisconnect();
+  });
+
+  it("re-extracts on reconnect when lastResults is null and active tab is a game", async () => {
+    const mockTabsQuery = chrome.tabs.query as ReturnType<typeof vi.fn>;
+
+    // Navigate to non-BGA page to clear lastResults
+    const conn1 = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const nonGameTab = { id: 1, url: "https://example.com", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(nonGameTab).mockResolvedValueOnce(nonGameTab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    conn1.triggerDisconnect();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    // Simulate service worker restart: lastResults is null, but user is now on a game tab
+    const gameTab = { id: 2, url: "https://boardgamearena.com/8/innovation?table=555", status: "complete", windowId: 10 };
+    mockTabsQuery.mockResolvedValueOnce([gameTab]);
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+
+    const conn2 = connectSidePanel();
+    await new Promise((r) => setTimeout(r, 100));
+
+    // Should have triggered extraction and pushed results
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBeGreaterThanOrEqual(1);
+    const result = resultsCalls[resultsCalls.length - 1][0].results as PipelineResults;
+    expect(result).not.toBeNull();
+    expect(result.gameName).toBe("innovation");
+    expect(result.tableNumber).toBe("555");
+
+    conn2.triggerDisconnect();
+  });
+
+  it("sends notAGame on reconnect when lastResults is null and active tab is not a game", async () => {
+    const mockTabsQuery = chrome.tabs.query as ReturnType<typeof vi.fn>;
+
+    // Navigate to non-BGA page to clear lastResults
+    const conn1 = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const nonGameTab = { id: 1, url: "https://example.com", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(nonGameTab).mockResolvedValueOnce(nonGameTab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    conn1.triggerDisconnect();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    // Simulate reconnect with non-game active tab
+    mockTabsQuery.mockResolvedValueOnce([nonGameTab]);
+
+    const conn2 = connectSidePanel();
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Should NOT have sent resultsReady
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBe(0);
+
+    // Should have sent notAGame
+    const notAGameCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "notAGame");
+    expect(notAGameCalls.length).toBe(1);
+
+    conn2.triggerDisconnect();
+  });
+});
+
 describe("icon swap behavior", () => {
   const mockSetIcon = chrome.action.setIcon as ReturnType<typeof vi.fn>;
   const mockTabsGet = chrome.tabs.get as ReturnType<typeof vi.fn>;
@@ -911,22 +1343,24 @@ describe("icon swap behavior", () => {
     await vi.advanceTimersByTimeAsync(2500);
   }
 
-  /** Check that the last setIcon call used imageData (animation ended on a lit frame). */
+  /** Check that the last setIcon call used frame 9 (lit). */
   function expectLastIconLit(): void {
     expect(mockSetIcon).toHaveBeenCalled();
     const calls = mockSetIcon.mock.calls;
     const last = calls[calls.length - 1][0];
     expect(last).toHaveProperty("imageData");
     expect(last).not.toHaveProperty("tabId");
+    expect((last.imageData as any)["16"]._frame).toBe(9);
   }
 
-  /** Check that the last setIcon call resulted in normal icon (imageData-based, frame 0). */
+  /** Check that the last setIcon call used frame 0 (normal/dark). */
   function expectLastIconNormal(): void {
     expect(mockSetIcon).toHaveBeenCalled();
     const calls = mockSetIcon.mock.calls;
     const last = calls[calls.length - 1][0];
     expect(last).toHaveProperty("imageData");
     expect(last).not.toHaveProperty("tabId");
+    expect((last.imageData as any)["16"]._frame).toBe(0);
   }
 
   it("sets lit icon when switching to game tab", async () => {

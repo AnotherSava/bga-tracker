@@ -112,18 +112,21 @@ export class GameState {
   /** Return the card list for a zone+player combination. */
   cardsAt(zone: Zone, player: string | null, groupKey?: AgeSetKey): Card[] {
     switch (zone) {
-      case "deck":
-        return this.decks.get(groupKey!) ?? [];
+      case "deck": {
+        if (!groupKey) throw new Error(`cardsAt("deck") requires a groupKey`);
+        return this.decks.get(groupKey) ?? [];
+      }
       case "hand":
-        return this.hands.get(player!) ?? [];
       case "board":
-        return this.boards.get(player!) ?? [];
       case "score":
-        return this.scores.get(player!) ?? [];
       case "revealed":
-        return this.revealed.get(player!) ?? [];
-      case "forecast":
-        return this.forecast.get(player!) ?? [];
+      case "forecast": {
+        if (!player) throw new Error(`cardsAt("${zone}") requires a player`);
+        const zoneMap = zone === "hand" ? this.hands : zone === "board" ? this.boards : zone === "score" ? this.scores : zone === "revealed" ? this.revealed : this.forecast;
+        const cards = zoneMap.get(player);
+        if (!cards) throw new Error(`Player "${player}" not found in ${zone} zone`);
+        return cards;
+      }
     }
   }
 

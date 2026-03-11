@@ -500,21 +500,21 @@ describe("SUMMARY_JS", () => {
   });
 
   it("handles visibility modes: none, all, unknown", () => {
-    expect(SUMMARY_JS).toContain("mode === 'none'");
-    expect(SUMMARY_JS).toContain("mode === 'all'");
-    expect(SUMMARY_JS).toContain("mode === 'unknown'");
+    expect(SUMMARY_JS).toContain('mode === "none"');
+    expect(SUMMARY_JS).toContain('mode === "all"');
+    expect(SUMMARY_JS).toContain('mode === "unknown"');
   });
 
   it("handles composite modes: base, echoes, cities", () => {
-    expect(SUMMARY_JS).toContain("mode === 'base'");
-    expect(SUMMARY_JS).toContain("mode === 'echoes'");
-    expect(SUMMARY_JS).toContain("mode === 'cities'");
+    expect(SUMMARY_JS).toContain('mode === "base"');
+    expect(SUMMARY_JS).toContain('mode === "echoes"');
+    expect(SUMMARY_JS).toContain('mode === "cities"');
     expect(SUMMARY_JS).toContain("data-set");
   });
 
   it("handles layout modes: wide, tall", () => {
-    expect(SUMMARY_JS).toContain("mode === 'wide'");
-    expect(SUMMARY_JS).toContain("mode === 'tall'");
+    expect(SUMMARY_JS).toContain('mode === "wide"');
+    expect(SUMMARY_JS).toContain('mode === "tall"');
   });
 });
 
