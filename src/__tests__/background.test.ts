@@ -68,7 +68,7 @@ const copyListeners = () => {
   Object.assign(listeners, (globalThis as any).__chromeMockListeners);
 };
 
-import { runPipeline, classifyNavigation, shouldAutoClose, watcherFunction, isValidPlayerCount, type PipelineResults, type NavigationAction, type PinMode } from "../background";
+import { runPipeline, classifyNavigation, shouldAutoClose, shouldShowLoading, watcherFunction, isValidPlayerCount, type PipelineResults, type NavigationAction, type PinMode } from "../background";
 import { CardDatabase } from "../models/types";
 import type { RawExtractionData } from "../models/types";
 import { GameState } from "../games/innovation/game_state";
@@ -540,6 +540,18 @@ describe("classifyNavigation", () => {
   it("returns extract for an azul table URL", () => {
     const result = classifyNavigation("https://boardgamearena.com/1/azul?table=789");
     expect(result).toEqual({ action: "extract", tableNumber: "789", gameName: "azul" });
+  });
+});
+
+describe("shouldShowLoading", () => {
+  it("returns true for click and navigation sources", () => {
+    expect(shouldShowLoading("click")).toBe(true);
+    expect(shouldShowLoading("navigation")).toBe(true);
+  });
+
+  it("returns false for reconnect and live sources", () => {
+    expect(shouldShowLoading("reconnect")).toBe(false);
+    expect(shouldShowLoading("live")).toBe(false);
   });
 });
 

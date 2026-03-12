@@ -34,6 +34,14 @@ export interface PipelineResults {
   gameState: any | null;
 }
 
+/** Where an extraction was triggered from. */
+export type ExtractionSource = "click" | "navigation" | "reconnect" | "live";
+
+/** Whether the given extraction source should show a loading indicator. */
+export function shouldShowLoading(source: ExtractionSource): boolean {
+  return source === "click" || source === "navigation";
+}
+
 /** What to do in response to a tab navigation event. */
 export type NavigationAction =
   | { action: "extract"; tableNumber: string; gameName: GameName }
@@ -517,11 +525,11 @@ async function extractRawDataAsResults(tabId: number, tableNumber: string, gameN
  * Handles extract, unsupported game, and help actions.
  * Throws on extraction errors — callers handle error display.
  */
-async function resolveContent(tabId: number, tabUrl: string, source: string): Promise<void> {
+async function resolveContent(tabId: number, tabUrl: string, source: ExtractionSource): Promise<void> {
   const nav = classifyNavigation(tabUrl);
 
   if (nav.action === "extract") {
-    if (source !== "reconnect") chrome.runtime.sendMessage({ type: "loading" }).catch(() => {});
+    if (shouldShowLoading(source)) chrome.runtime.sendMessage({ type: "loading" }).catch(() => {});
     await extractFromTab(tabId, tabUrl, nav.gameName, nav.tableNumber);
     return;
   }
@@ -680,11 +688,11 @@ async function handleNavigation(initialTabId: number): Promise<void> {
         break;
       }
 
-      await resolveContent(tabId, tab.url ?? "", "nav");
+      await resolveContent(tabId, tab.url ?? "", "navigation");
     } catch (err) {
       console.error("Navigation error:", err);
       lastResults = null;
-      stopLiveTracking("nav: error");
+      stopLiveTracking("navigation: error");
       chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});
     } finally {
       extracting = false;

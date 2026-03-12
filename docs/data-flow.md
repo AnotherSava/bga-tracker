@@ -308,9 +308,7 @@ happens while the *Side Panel* is open, a reconnect cycle occurs:
 This cycle repeats every ~30 seconds during idle periods. Two mechanisms prevent
 unnecessary re-renders and loading flicker:
 
-**Suppressed `"loading"` on reconnect:** when `background.resolveContent()` is called
-with source `"reconnect"`, the `"loading"` message is skipped. This prevents flashing
-"Loading game data..." over existing content while re-extraction runs silently.
+**Suppressed `"loading"` on reconnect:** `background.resolveContent()` uses `shouldShowLoading(source)` to decide whether to send the `"loading"` message. Sources like `"click"` and `"navigation"` show loading; `"reconnect"` does not. This prevents flashing "Loading game data..." over existing content while re-extraction runs silently.
 
 **Deduplication guard:** the *Side Panel* compares incoming `"resultsReady"` against
 `currentResults` by `tableNumber` and `rawData.packets.length`. If both match, the

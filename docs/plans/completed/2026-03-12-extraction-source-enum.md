@@ -43,7 +43,7 @@ Replace ad-hoc source string literals in `background.ts` with a typed `Extractio
 - Modify: `src/background.ts`
 - Modify: `src/__tests__/background.test.ts`
 
-- [ ] Add after `PipelineResults` interface (~line 35):
+- [x] Add after `PipelineResults` interface (~line 35):
   ```typescript
   export type ExtractionSource = "click" | "navigation" | "reconnect" | "live";
 
@@ -51,27 +51,27 @@ Replace ad-hoc source string literals in `background.ts` with a typed `Extractio
     return source === "click" || source === "navigation";
   }
   ```
-- [ ] Update `resolveContent` signature: `source: string` -> `source: ExtractionSource`
-- [ ] Replace loading guard (line 524):
+- [x] Update `resolveContent` signature: `source: string` -> `source: ExtractionSource`
+- [x] Replace loading guard (line 524):
   - Before: `if (source !== "reconnect") chrome.runtime.sendMessage(...)`
   - After: `if (shouldShowLoading(source)) chrome.runtime.sendMessage(...)`
-- [ ] Update call site at `handleNavigation` (line 683): `"nav"` -> `"navigation"`
-- [ ] Update error handler reason (line 687): `"nav: error"` -> `"navigation: error"`
-- [ ] Add tests for `shouldShowLoading` in `src/__tests__/background.test.ts`:
+- [x] Update call site at `handleNavigation` (line 683): `"nav"` -> `"navigation"`
+- [x] Update error handler reason (line 687): `"nav: error"` -> `"navigation: error"`
+- [x] Add tests for `shouldShowLoading` in `src/__tests__/background.test.ts`:
   - `click` -> true, `navigation` -> true, `reconnect` -> false, `live` -> false
-- [ ] Run `npm test` — all tests pass
-- [ ] Run `npm run lint` — type-check passes
+- [x] Run `npm test` — all tests pass
+- [x] Run `npm run lint` — type-check passes
 
 ### Task 2: Update documentation
 
 **Files:**
 - Modify: `docs/data-flow.md`
 
-- [ ] In "Service worker shutdown cycle" section, replace reference to `source !== "reconnect"` with `shouldShowLoading()`
+- [x] In "Service worker shutdown cycle" section, replace reference to `source !== "reconnect"` with `shouldShowLoading()`
 
 ### Task 3: Verify acceptance criteria
 
-- [ ] Run full test suite: `npm test`
-- [ ] Run linter: `npm run lint`
-- [ ] Run build: `npm run build`
-- [ ] Move this plan to `docs/plans/completed/`
+- [x] Run full test suite: `npm test`
+- [x] Run linter: `npm run lint`
+- [x] Run build: `npm run build`
+- [x] Move this plan to `docs/plans/completed/`
