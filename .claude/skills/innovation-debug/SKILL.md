@@ -1,7 +1,7 @@
 ---
 name: innovation-debug
 description: Debug a game state discrepancy reported by the user. Extracts archive, analyzes all pipeline stages, creates a failing regression test with correct expectations, fixes the logic, and verifies the fix.
-argument-hint: <archive-or-table-id> <description-of-discrepancy>
+argument-hint: [archive-or-table-id] <description-of-discrepancy>
 allowed-tools: Bash(unzip *), Bash(ls *), Bash(mkdir *), Bash(npm test*), Bash(npm run test*), Bash(npm run build*), Bash(npm run lint*), Read, Write, Edit, Glob, Grep, Agent
 ---
 
@@ -12,16 +12,16 @@ Investigate a user-reported discrepancy in the Innovation tracker output, create
 ## Input
 
 `$ARGUMENTS` should contain:
-1. An archive filename (e.g. `bgaa_816598364.zip`) or just a table ID (e.g. `816598364`). If a bare table ID is given, the archive is `data/bgaa_<TABLE_ID>.zip`.
+1. **(Optional)** An archive filename (e.g. `bgaa_816598364.zip`) or just a table ID (e.g. `816598364`). If a bare table ID is given, the archive is `data/bgaa_<TABLE_ID>.zip`. If neither is provided, use the most recently created `.zip` file in `data/` (find it with `ls -t data/*.zip | head -1`).
 2. A description of the discrepancy the user noticed
 
-If either is missing, ask the user.
+If the discrepancy description is missing, ask the user.
 
 ## Workflow
 
 ### Step 1: Extract archive
 
-Resolve the archive path from the argument (filename or table ID). Derive the folder name by stripping `.zip` (e.g. `bgaa_816598364`).
+Resolve the archive path from the argument (filename or table ID), or use the most recently created `.zip` in `data/` if not specified. Derive the folder name by stripping `.zip` (e.g. `bgaa_816598364`).
 
 ```
 mkdir -p data/<FOLDER>
