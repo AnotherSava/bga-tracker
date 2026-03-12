@@ -319,6 +319,7 @@ function collectResolvedNames(gameState: GameState): Set<string> {
   for (const cards of gameState.boards.values()) addFrom(cards);
   for (const cards of gameState.scores.values()) addFrom(cards);
   for (const cards of gameState.revealed.values()) addFrom(cards);
+  for (const cards of gameState.forecast.values()) addFrom(cards);
   for (const cards of gameState.decks.values()) addFrom(cards);
   addFrom(gameState.achievements);
   return resolved;
