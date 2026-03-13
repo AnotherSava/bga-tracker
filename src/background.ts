@@ -75,9 +75,13 @@ let deferredExtractionTimer: ReturnType<typeof setTimeout> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cardDb = new CardDatabase(cardInfoRaw as any[]);
 
-// Initialize activeTabId on service worker startup
+// Initialize activeTabId and icon on service worker startup
 chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-  if (tabs[0]?.id) activeTabId = tabs[0].id;
+  const tab = tabs[0];
+  if (tab?.id) {
+    activeTabId = tab.id;
+    updateIcon(tab.id, tab.url);
+  }
 });
 
 // Load pin mode from storage on service worker startup
