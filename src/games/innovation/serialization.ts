@@ -52,9 +52,8 @@ export function toJSON(state: GameState): SerializedGameState {
       result.resolved = card.resolvedName!;
     } else {
       const candidateList = [...card.candidates].sort();
-      if (candidateList.length > 0) {
-        result.candidates = candidateList;
-      }
+      if (candidateList.length === 0) throw new Error(`Cannot serialize unresolved card with no candidates (age ${card.age}, set ${card.cardSet})`);
+      result.candidates = candidateList;
     }
 
     // Serialize opponent knowledge (omit if "none")
@@ -107,7 +106,8 @@ export function fromJSON(data: SerializedGameState, players: string[], perspecti
     if (d.resolved !== undefined) {
       card = new Card(d.age!, d.cardSet as CardSet, [d.resolved]);
     } else {
-      card = new Card(d.age!, d.cardSet as CardSet, d.candidates ?? []);
+      if (!d.candidates || d.candidates.length === 0) throw new Error(`Serialized card has no resolved name and no candidates (age ${d.age}, set ${d.cardSet})`);
+      card = new Card(d.age!, d.cardSet as CardSet, d.candidates);
     }
 
     // Restore opponent knowledge

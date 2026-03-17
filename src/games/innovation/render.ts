@@ -87,8 +87,9 @@ function renderKnownCard(info: CardInfo, markResolved: boolean): string {
   }
 
   if (info.cardSet === CardSet.CITIES) {
-    const topIcons = [0, 5, 4].map(p => p < info.icons.length ? iconImg(info.icons[p], color, info.spriteIndex) : "").join("");
-    const botIcons = [1, 2, 3].map(p => p < info.icons.length ? iconImg(info.icons[p], color, info.spriteIndex) : "").join("");
+    if (info.icons.length < 6) throw new Error(`City card "${info.name}" has ${info.icons.length} icons, expected 6`);
+    const topIcons = [0, 5, 4].map(p => iconImg(info.icons[p], color, info.spriteIndex)).join("");
+    const botIcons = [1, 2, 3].map(p => iconImg(info.icons[p], color, info.spriteIndex)).join("");
     return `<div class="card card-cities b-${color}"${resolvedAttr}>`
       + `<div class="cc-top">${topIcons}</div>`
       + `<div class="cc-bot">${botIcons}</div>`
@@ -467,33 +468,37 @@ function makeCompositeSection(sectionId: SectionId, title: string, baseRows: Row
 export function renderSummary(gameState: GameState, engine: GameEngine, cardDb: CardDatabase, perspective: string, players: string[], tableId: string, options?: RenderOptions): string {
   const prevTextTooltips = useTextTooltips;
   useTextTooltips = options?.textTooltips ?? false;
-  const config = options?.sectionConfig ?? DEFAULT_SECTION_CONFIG;
-  const hasEchoes = options?.expansions?.echoes ?? false;
-  const opponent = players.find(p => p !== perspective) ?? players[0];
+  try {
+    const config = options?.sectionConfig ?? DEFAULT_SECTION_CONFIG;
+    const hasEchoes = options?.expansions?.echoes ?? false;
+    const opponent = players.find(p => p !== perspective);
+    if (!opponent) throw new Error(`No opponent found: perspective="${perspective}", players=[${players.join(", ")}]`);
 
-  const opponentHand = prepareCards(gameState.hands.get(opponent) ?? [], cardDb, "", true, false);
-  const opponentScore = prepareCards(gameState.scores.get(opponent) ?? [], cardDb, "", true, false);
-  const achievements = prepareCards(gameState.achievements, cardDb, "", true, false);
+    const opponentHand = prepareCards(gameState.hands.get(opponent) ?? [], cardDb, "", true, false);
+    const opponentScore = prepareCards(gameState.scores.get(opponent) ?? [], cardDb, "", true, false);
+    const achievements = prepareCards(gameState.achievements, cardDb, "", true, false);
 
-  const sectionBuilders: Record<SectionId, () => SectionData> = {
-    "hand-opponent": () => makeSection("hand-opponent", "Hand &mdash; opponent", [opponentHand], config["hand-opponent"], {}),
-    "hand-me": () => makeSection("hand-me", "Hand &mdash; me", prepareMyCards(gameState.hands.get(perspective) ?? [], engine, cardDb), config["hand-me"], {}),
-    "score-opponent": () => makeSection("score-opponent", "Score &mdash; opponent", [opponentScore], config["score-opponent"], {}),
-    "score-me": () => makeSection("score-me", "Score &mdash; me", prepareMyCards(gameState.scores.get(perspective) ?? [], engine, cardDb), config["score-me"], {}),
-    "forecast-opponent": () => makeSection("forecast-opponent", "Forecast &mdash; opponent", [prepareCards(gameState.forecast.get(opponent) ?? [], cardDb, "", true, false)], config["forecast-opponent"], {}),
-    "forecast-me": () => makeSection("forecast-me", "Forecast &mdash; me", prepareMyCards(gameState.forecast.get(perspective) ?? [], engine, cardDb), config["forecast-me"], {}),
-    "achievements": () => makeSection("achievements", "Achievements", [achievements], config["achievements"], { columnCount: TALL_COLUMNS, arrangeByColumns: false }),
-    "deck": () => makeCompositeSection("deck", "Deck", prepareDeck(gameState, CardSet.BASE, cardDb), prepareDeck(gameState, CardSet.ECHOES, cardDb), prepareDeck(gameState, CardSet.CITIES, cardDb), config["deck"], {}),
-    "cards": () => { const resolved = collectResolvedNames(gameState); return makeCompositeSection("cards", "Cards", prepareAllCards(gameState, CardSet.BASE, cardDb, resolved), prepareAllCards(gameState, CardSet.ECHOES, cardDb, resolved), prepareAllCards(gameState, CardSet.CITIES, cardDb, resolved), config["cards"], { hasUnknown: true, columnCount: TALL_COLUMNS }); },
-  };
+    const sectionBuilders: Record<SectionId, () => SectionData> = {
+      "hand-opponent": () => makeSection("hand-opponent", "Hand &mdash; opponent", [opponentHand], config["hand-opponent"], {}),
+      "hand-me": () => makeSection("hand-me", "Hand &mdash; me", prepareMyCards(gameState.hands.get(perspective) ?? [], engine, cardDb), config["hand-me"], {}),
+      "score-opponent": () => makeSection("score-opponent", "Score &mdash; opponent", [opponentScore], config["score-opponent"], {}),
+      "score-me": () => makeSection("score-me", "Score &mdash; me", prepareMyCards(gameState.scores.get(perspective) ?? [], engine, cardDb), config["score-me"], {}),
+      "forecast-opponent": () => makeSection("forecast-opponent", "Forecast &mdash; opponent", [prepareCards(gameState.forecast.get(opponent) ?? [], cardDb, "", true, false)], config["forecast-opponent"], {}),
+      "forecast-me": () => makeSection("forecast-me", "Forecast &mdash; me", prepareMyCards(gameState.forecast.get(perspective) ?? [], engine, cardDb), config["forecast-me"], {}),
+      "achievements": () => makeSection("achievements", "Achievements", [achievements], config["achievements"], { columnCount: TALL_COLUMNS, arrangeByColumns: false }),
+      "deck": () => makeCompositeSection("deck", "Deck", prepareDeck(gameState, CardSet.BASE, cardDb), prepareDeck(gameState, CardSet.ECHOES, cardDb), prepareDeck(gameState, CardSet.CITIES, cardDb), config["deck"], {}),
+      "cards": () => { const resolved = collectResolvedNames(gameState); return makeCompositeSection("cards", "Cards", prepareAllCards(gameState, CardSet.BASE, cardDb, resolved), prepareAllCards(gameState, CardSet.ECHOES, cardDb, resolved), prepareAllCards(gameState, CardSet.CITIES, cardDb, resolved), config["cards"], { hasUnknown: true, columnCount: TALL_COLUMNS }); },
+    };
 
-  let html = "";
-  for (const id of SECTION_IDS) {
-    if (ECHOES_ONLY_SECTIONS.has(id) && !hasEchoes) continue;
-    html += renderSection(sectionBuilders[id]());
+    let html = "";
+    for (const id of SECTION_IDS) {
+      if (ECHOES_ONLY_SECTIONS.has(id) && !hasEchoes) continue;
+      html += renderSection(sectionBuilders[id]());
+    }
+    return html;
+  } finally {
+    useTextTooltips = prevTextTooltips;
   }
-  useTextTooltips = prevTextTooltips;
-  return html;
 }
 
 /** Render a full standalone HTML page (for download). */

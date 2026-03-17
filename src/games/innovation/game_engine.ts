@@ -176,10 +176,7 @@ export class GameEngine {
   /** Process a single log entry: dispatch to move, revealHand, or confirmMeldFilter. */
   private processEntry(state: GameState, entry: GameLogEntry): void {
     if (entry.type === "transfer") {
-      const te = entry as TransferEntry;
-      if (["achievements", "claimed", "flags"].includes(te.dest)) return;
-      if (["achievements", "claimed", "flags"].includes(te.source)) return;
-      this.processTransfer(state, te);
+      this.processTransfer(state, entry as TransferEntry);
     } else if (entry.type === "logWithCardTooltips") {
       const me = entry as MessageEntry;
       const match = me.msg.match(new RegExp(`^(${this._playerPattern}) reveals (?:his|her|their) hand: (.+)\\.$`));
@@ -196,17 +193,25 @@ export class GameEngine {
     }
   }
 
-  private static readonly VALID_ZONES: ReadonlySet<string> = new Set(["deck", "hand", "board", "score", "revealed", "forecast"]);
+  private static readonly TRACKED_ZONES: ReadonlySet<string> = new Set(["deck", "hand", "board", "score", "revealed", "forecast"]);
+  private static readonly SKIPPED_ZONES: ReadonlySet<string> = new Set(["achievements", "claimed", "fountains", "flags"]);
 
   /** Convert a TransferEntry to an Action and execute it. */
   private processTransfer(state: GameState, entry: TransferEntry): void {
-    if (!GameEngine.VALID_ZONES.has(entry.source) || !GameEngine.VALID_ZONES.has(entry.dest)) return;
+    if (GameEngine.SKIPPED_ZONES.has(entry.source) || GameEngine.SKIPPED_ZONES.has(entry.dest)) return;
+    if (!GameEngine.TRACKED_ZONES.has(entry.source) || !GameEngine.TRACKED_ZONES.has(entry.dest)) {
+      throw new Error(`Unknown zone in transfer: source="${entry.source}", dest="${entry.dest}"`);
+    }
 
     const cardName = entry.cardName;
     const cardIdx = cardName ? cardIndex(cardName) : null;
 
+    if (cardIdx && !this.cardDb.has(cardIdx)) {
+      throw new Error(`Card "${cardName}" (index "${cardIdx}") not found in card database`);
+    }
+
     let action: Action;
-    if (cardIdx && this.cardDb.has(cardIdx)) {
+    if (cardIdx) {
       action = {
         type: "named",
         cardName: cardIdx,
@@ -301,10 +306,10 @@ export class GameEngine {
     const hand = state.hands.get(player)!;
     for (const idx of cardIndices) {
       const info = this.cardDb.get(idx);
-      if (!info) continue;
+      if (!info) throw new Error(`Revealed card "${idx}" not found in card database`);
       const groupKey = ageSetKey(info.age, info.cardSet);
       const card = hand.find(c => c.candidates.has(idx));
-      if (!card) continue;
+      if (!card) throw new Error(`Revealed card "${idx}" not found among hand candidates for player "${player}"`);
       card.candidates = new Set([idx]);
       card.opponentKnowledge = { kind: "exact", name: card.resolvedName };
       this.propagate(groupKey);

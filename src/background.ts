@@ -410,6 +410,8 @@ function triggerLiveExtraction(): void {
     })
     .catch((err) => {
       console.warn("Live extraction error:", err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      chrome.runtime.sendMessage({ type: "gameError", error: errorMsg }).catch(() => {});
     })
     .finally(() => {
       extracting = false;

@@ -77,7 +77,9 @@ export function expandTemplate(template: string, args: Record<string, unknown>):
 export function cleanHtml(msg: string): string {
   // Icon spans: <span ... icon_N ...></span> -> [iconName]
   msg = msg.replace(/<span[^>]*icon_(\d)[^>]*><\/span>/g, (_m, digit: string) => {
-    return "[" + (ICON_MAP[digit] ?? "icon" + digit) + "]";
+    const iconName = ICON_MAP[digit];
+    if (!iconName) throw new Error(`Unknown icon digit "${digit}" in BGA message`);
+    return "[" + iconName + "]";
   });
   // Age spans: <span ... age ...>N</span> -> [N]
   msg = msg.replace(/<span[^>]*age[^>]*>(\d+)<\/span>/g, "[$1]");
@@ -167,9 +169,8 @@ export function processRawLog(rawData: RawExtractionData): GameLog {
   for (const card of gdHand) {
     const cardId = String(card.id);
     const info = gdCards[cardId];
-    if (info?.name) {
-      myHand.push(normalizeName(info.name));
-    }
+    if (!info?.name) throw new Error(`Card ID ${cardId} in initial hand has no name in gamedatas`);
+    myHand.push(normalizeName(info.name));
   }
 
   // Pass 1: collect player-view transferedCard args, grouped by move_id.
@@ -214,8 +215,9 @@ export function processRawLog(rawData: RawExtractionData): GameLog {
 
       if (notifType === "transferedCard_spectator") {
         const iterator = playerTransferIterators.get(moveId);
-        const playerArgsResult = iterator?.next();
-        if (!playerArgsResult || playerArgsResult.done) continue;
+        if (!iterator) throw new Error(`No player transfer data for move ${moveId} to pair with spectator transfer`);
+        const playerArgsResult = iterator.next();
+        if (playerArgsResult.done) throw new Error(`Player transfer iterator exhausted for move ${moveId} — player/spectator transfer count mismatch`);
         const playerArgs = playerArgsResult.value;
 
         const cardName = playerArgs.name ? normalizeName(String(playerArgs.name)) : null;

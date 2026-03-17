@@ -110,8 +110,8 @@ describe("cleanHtml", () => {
     }
   });
 
-  it("falls back for unknown icon digits", () => {
-    expect(cleanHtml('<span class="icon_9"></span>')).toBe("[icon9]");
+  it("throws for unknown icon digits", () => {
+    expect(() => cleanHtml('<span class="icon_9"></span>')).toThrow('Unknown icon digit "9"');
   });
 
   it("converts age spans to [N]", () => {
@@ -336,7 +336,7 @@ describe("processRawLog", () => {
     }
   });
 
-  it("skips spectator transfers without matching player-view data", () => {
+  it("throws when spectator transfer has no matching player-view data", () => {
     const raw: RawExtractionData = {
       players: { "1": "Alice" },
       packets: [
@@ -346,8 +346,7 @@ describe("processRawLog", () => {
         ]),
       ],
     };
-    const result = processRawLog(raw);
-    expect(result.log).toHaveLength(0);
+    expect(() => processRawLog(raw)).toThrow("No player transfer data for move 7");
   });
 
   it("handles multiple transfers in a single move", () => {
@@ -443,7 +442,7 @@ describe("processRawLog", () => {
     expect(result.myHand).toEqual([]);
   });
 
-  it("skips hand cards without name in cards lookup", () => {
+  it("throws when hand card has no name in cards lookup", () => {
     const raw: RawExtractionData = {
       players: {},
       packets: [],
@@ -455,8 +454,7 @@ describe("processRawLog", () => {
         },
       },
     };
-    const result = processRawLog(raw);
-    expect(result.myHand).toEqual(["Archery"]);
+    expect(() => processRawLog(raw)).toThrow("Card ID 99 in initial hand has no name");
   });
 
   it("processes a full multi-move sequence", () => {
