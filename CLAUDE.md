@@ -5,6 +5,8 @@ Always ask clarifying questions before implementing if anything is ambiguous or 
 
 Exclude `node_modules/` from all file and content search patterns — it clogs results with false positives.
 
+Do not inline Python scripts into Bash commands via `python -c`. Instead, write the script to a temporary file (e.g. `tmp/script.py`), execute it with `python tmp/script.py`, then delete it.
+
 ## TypeScript Conventions
 
 This is a TypeScript Chrome extension project. Build with Vite, test with vitest.
