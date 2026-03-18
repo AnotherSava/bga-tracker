@@ -38,7 +38,7 @@ export type ExtractionSource = "click" | "navigation" | "reconnect" | "live";
 
 /** Whether the given extraction source should show a loading indicator. */
 export function shouldShowLoading(source: ExtractionSource): boolean {
-  return source === "click" || source === "navigation";
+  return source === "click" || source === "navigation" || source === "reconnect";
 }
 
 /** What to do in response to a tab navigation event. */
@@ -594,18 +594,23 @@ chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
   console.log("[live] port connected");
   sidePanelOpen = true;
 
-  // Push cached results immediately so the side panel renders without a round trip.
-  if (lastResults) {
-    chrome.runtime.sendMessage({ type: "resultsReady", results: lastResults }).catch(() => {});
-  }
-
-  // After service worker restart, state is lost. Re-extract the active game tab so the
-  // side panel gets fresh results instead of showing stale data from before the restart.
+  // Check the active tab and either push cached results (same table) or
+  // trigger a fresh extraction (different table or no cached results).
   chrome.tabs.query({ active: true, currentWindow: true }).then(async (tabs) => {
     const tab = tabs[0];
     if (!tab?.id || !tab.url) return;
     activeTabId = tab.id;
-    if (!lastResults && !extracting) {
+
+    // If cached results match the active tab's table, push them immediately
+    const nav = classifyNavigation(tab.url);
+    const activeTable = nav.action === "extract" || nav.action === "unsupportedGame" ? nav.tableNumber : null;
+    if (lastResults && lastResults.tableNumber === activeTable) {
+      chrome.runtime.sendMessage({ type: "resultsReady", results: lastResults }).catch(() => {});
+      return;
+    }
+
+    // Different table or no cached results — extract fresh data
+    if (!extracting) {
       extracting = true;
       try {
         await resolveContent(tab.id, tab.url, "reconnect");

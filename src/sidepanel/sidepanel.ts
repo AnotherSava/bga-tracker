@@ -846,8 +846,10 @@ document.getElementById("btn-help")?.addEventListener("click", () => {
 // ---------------------------------------------------------------------------
 
 if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
-  // Start with help page — background will push results via "resultsReady" on port connect.
-  showHelp();
+  // Start with loading indicator — background will push the appropriate message
+  // ("resultsReady", "notAGame", or "gameError") shortly after port connect.
+  const initContent = document.getElementById("content");
+  if (initContent) initContent.innerHTML = '<div class="status">Loading game data...</div>';
 
   // Listen for pushed updates from background
   chrome.runtime.onMessage.addListener((message: { type: string; error?: string; active?: boolean; results?: PipelineResults }) => {

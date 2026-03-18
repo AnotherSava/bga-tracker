@@ -596,8 +596,11 @@ describe("shouldShowLoading", () => {
     expect(shouldShowLoading("navigation")).toBe(true);
   });
 
-  it("returns false for reconnect and live sources", () => {
-    expect(shouldShowLoading("reconnect")).toBe(false);
+  it("returns true for reconnect source", () => {
+    expect(shouldShowLoading("reconnect")).toBe(true);
+  });
+
+  it("returns false for live source", () => {
     expect(shouldShowLoading("live")).toBe(false);
   });
 });
@@ -1260,6 +1263,8 @@ describe("onConnect pushes cached results", () => {
   });
 
   it("sends resultsReady with results on connect when lastResults is cached", async () => {
+    const mockTabsQuery = chrome.tabs.query as ReturnType<typeof vi.fn>;
+
     // First, populate lastResults by navigating to a supported game
     const conn1 = connectSidePanel();
     vi.clearAllMocks();
@@ -1279,7 +1284,8 @@ describe("onConnect pushes cached results", () => {
     vi.clearAllMocks();
     mockSendMessage.mockImplementation(() => Promise.resolve());
 
-    // Now reconnect — should push resultsReady with results payload
+    // Reconnect on the same table — should push cached results immediately
+    mockTabsQuery.mockResolvedValueOnce([tab]);
     const conn2 = connectSidePanel();
     await new Promise((r) => setTimeout(r, 50));
 

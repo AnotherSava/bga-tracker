@@ -27,6 +27,10 @@ Run `npm run build` after each batch of changes so the extension can be reloaded
 
 Keep `README.md` in the project root up to date when code changes affect project structure, features, or usage.
 
+Keep `docs/data-flow.md` up to date when code changes affect data flow, message protocols, or control flow logic. Use the `/document-data-flow` skill.
+
+Any plan that changes or can change logic should include `README.md` and `docs/data-flow.md` updates.
+
 ## Commands
 
 - `npm run build` — build the extension to dist/
@@ -65,3 +69,4 @@ Keep `README.md` in the project root up to date when code changes affect project
 - `assets/bga/innovation/` — Innovation game data (card_info.json, cards/, icons/, sprites/)
 - `assets/bga/azul/tiles/` — Azul tile color PNGs
 - `assets/extension/` — extension icons
+- `docs/data-flow.md` — data flow architecture, message protocols, connection management

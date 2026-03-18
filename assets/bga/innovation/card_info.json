@@ -2420,7 +2420,7 @@
     "echoes": [
       "Draw and meld a <span class=age>3</span>."
     ],
-    "html": "<span cardnum=\"143\" class=\"card b-yellow e\">Deodorant</span><span class=\"age e\">3</span>",
+    "html": "<span cardnum=\"143\" class=\"card b-yellow e\">Deoderant</span><span class=\"age e\">3</span>",
     "icons": [
       "crown",
       "echo",
@@ -2428,7 +2428,7 @@
       "hex"
     ],
     "karmatext": null,
-    "name": "Deodorant",
+    "name": "Deoderant",
     "set": 3
   },
   {

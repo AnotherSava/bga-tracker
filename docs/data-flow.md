@@ -116,12 +116,15 @@ Triggers:
 
 ***Background Service Worker***
 
-1. Transform raw data via `background.runPipeline()`:
+1. Validate player count via `background.isValidPlayerCount()` — reject unsupported configurations (e.g. 2-player Crew)
+2. Transform raw data via `background.runPipeline()`:
    - Innovation: `process_log.processRawLog()` &rarr; `GameState.processLog()` &rarr; `GameState.toJSON()`
    - Azul: `process_log.processAzulLog()` &rarr; `game_state.processLog()` &rarr; `game_state.toJSON()`
-2. Cache `PipelineResults` (with `gameLog` and `gameState`)
-3. Push results to *Side Panel*
-4. Inject live watcher (sets up Live Tracking)
+   - Crew: `process_log.processCrewLog()` &rarr; `game_engine.processCrewState()` &rarr; `serialization.crewToJSON()`
+3. If the pipeline throws, cache a fallback `PipelineResults` with `rawData` only (`gameLog` and `gameState` are `null`) so the *Side Panel* can still offer a raw data download
+4. Cache `PipelineResults` (with `gameLog` and `gameState`)
+5. Push results to *Side Panel*
+6. Inject live watcher (sets up Live Tracking)
 
 </td>
 <td valign="top">
@@ -146,6 +149,7 @@ Triggers:
 1. Reconstruct live objects from serialized state:
    - Innovation: fetch `card_info.json`, call `GameState.fromJSON()`
    - Azul: call `game_state.fromJSON()`
+   - Crew: call `serialization.crewFromJSON()`
 2. Generate HTML, set up tooltips/toggles/zoom
 
 </td>
@@ -218,13 +222,13 @@ Triggers:
 
 ***Background Service Worker***
 
-1. If cached `lastResults` exists: push `"resultsReady"` with the cached `PipelineResults` payload
-2. If `lastResults` is `null` (e.g. after service worker restart): query the active tab
-   and run `background.resolveContent()` to extract fresh results — the `"loading"` message
-   is suppressed for reconnect extractions to avoid flashing over existing content
+1. Query the active tab and classify its URL via `background.classifyNavigation()`
+2. Compare the active tab's table number against `lastResults?.tableNumber`:
+   - **Same table**: push cached `"resultsReady"` immediately (no loading flash)
+   - **Different table or no cached results**: run `background.resolveContent()` with `source: "reconnect"` — sends `"loading"` first, then extracts fresh results
 
 ```
-⇩   "resultsReady" message with PipelineResults payload (if available)
+⇩   "resultsReady" message with PipelineResults payload (cached or freshly extracted)
 ```
 
 ***Side Panel***
@@ -274,7 +278,7 @@ Triggers:
 | `"loading"` | — | Show loading spinner |
 | `"resultsReady"` | `{ results: PipelineResults }` | Push extraction results for rendering |
 | `"notAGame"` | — | Current tab is not a BGA game page — show help |
-| `"gameError"` | `{ error: string }` | Extraction failed — show help with error message |
+| `"gameError"` | `{ error: string, results?: PipelineResults }` | Pipeline failed — show help with error message; if `results` is present (raw data preserved from failed pipeline), enable download button |
 | `"liveStatus"` | `{ active: boolean }` | Update live tracking indicator |
 
 ### *Content Script* &rarr; *Background Service Worker*
@@ -289,10 +293,11 @@ The *Side Panel* maintains a persistent port via `chrome.runtime.connect({name: 
 The *Background Service Worker* uses port connection/disconnection to track whether the
 *Side Panel* is open.
 
-On port connect, the *Background Service Worker* immediately pushes any cached results
-(see [Side Panel Connect](#data-flow-side-panel-connect)). If no results are cached
-(e.g. after a service worker restart), it queries the active tab and triggers extraction
-so the side panel receives fresh data without needing to request it.
+On port connect, the *Background Service Worker* queries the active tab and compares
+its table number against cached results. If they match, cached results are pushed
+immediately (see [Side Panel Connect](#data-flow-side-panel-connect)). If they differ
+(user navigated to a different table while the panel was closed) or no results are cached
+(e.g. after a service worker restart), a fresh extraction runs with a `"loading"` indicator.
 
 ### Service worker shutdown cycle
 
@@ -308,7 +313,7 @@ happens while the *Side Panel* is open, a reconnect cycle occurs:
 This cycle repeats every ~30 seconds during idle periods. Two mechanisms prevent
 unnecessary re-renders and loading flicker:
 
-**Suppressed `"loading"` on reconnect:** `background.resolveContent()` uses `shouldShowLoading(source)` to decide whether to send the `"loading"` message. Sources like `"click"` and `"navigation"` show loading; `"reconnect"` does not. This prevents flashing "Loading game data..." over existing content while re-extraction runs silently.
+**Cached results on same-table reconnect:** On port connect, the *Background Service Worker* checks whether the active tab matches cached `lastResults` by table number. During the idle shutdown cycle the tab hasn't changed, so cached results are pushed directly without re-extraction or loading indicator. Only when the tab has changed (e.g. user navigated while the panel was closed) does a full re-extraction run with `"loading"`.
 
 **Deduplication guard:** the *Side Panel* compares incoming `"resultsReady"` against
 `currentResults` by `tableNumber` and `rawData.packets.length`. If both match, the
