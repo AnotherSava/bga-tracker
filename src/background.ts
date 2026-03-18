@@ -34,11 +34,11 @@ export type PipelineResults =
   | { gameName: string; tableNumber: string; rawData: RawExtractionData; gameLog: null; gameState: null };
 
 /** Where an extraction was triggered from. */
-export type ExtractionSource = "click" | "navigation" | "reconnect" | "live";
+export type ExtractionSource = "click" | "navigation" | "reconnect" | "reopen" | "live";
 
 /** Whether the given extraction source should show a loading indicator. */
 export function shouldShowLoading(source: ExtractionSource): boolean {
-  return source === "click" || source === "navigation" || source === "reconnect";
+  return source === "click" || source === "navigation" || source === "reopen";
 }
 
 /** What to do in response to a tab navigation event. */
@@ -609,11 +609,14 @@ chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
       return;
     }
 
-    // Different table or no cached results — extract fresh data
+    // Different table or no cached results — extract fresh data.
+    // "reopen" shows loading (user navigated while panel was closed);
+    // "reconnect" does not (SW restart on the same table).
     if (!extracting) {
+      const source: ExtractionSource = lastResults ? "reopen" : "reconnect";
       extracting = true;
       try {
-        await resolveContent(tab.id, tab.url, "reconnect");
+        await resolveContent(tab.id, tab.url, source);
       } catch (err) {
         console.warn("Reconnect extraction error:", err);
         chrome.runtime.sendMessage({ type: "notAGame" }).catch(() => {});

@@ -596,11 +596,8 @@ describe("shouldShowLoading", () => {
     expect(shouldShowLoading("navigation")).toBe(true);
   });
 
-  it("returns true for reconnect source", () => {
-    expect(shouldShowLoading("reconnect")).toBe(true);
-  });
-
-  it("returns false for live source", () => {
+  it("returns false for reconnect and live sources", () => {
+    expect(shouldShowLoading("reconnect")).toBe(false);
     expect(shouldShowLoading("live")).toBe(false);
   });
 });
@@ -1391,6 +1388,96 @@ describe("onConnect pushes cached results", () => {
     // Should have sent notAGame
     const notAGameCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "notAGame");
     expect(notAGameCalls.length).toBe(1);
+
+    conn2.triggerDisconnect();
+  });
+
+  it("sends loading then extracts when reopening on a different table", async () => {
+    const mockTabsQuery = chrome.tabs.query as ReturnType<typeof vi.fn>;
+
+    // Populate lastResults on table 789
+    const conn1 = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    mockExecuteScript
+      .mockResolvedValueOnce([{ result: 2 }])
+      .mockResolvedValueOnce([{ result: rawData }]);
+    const tab789 = { id: 1, url: "https://boardgamearena.com/8/innovation?table=789", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(tab789).mockResolvedValueOnce(tab789);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    conn1.triggerDisconnect();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    // Reconnect on a DIFFERENT table — should send loading, then extract
+    const tab999 = { id: 2, url: "https://boardgamearena.com/8/innovation?table=999", status: "complete", windowId: 10 };
+    mockTabsQuery.mockResolvedValueOnce([tab999]);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+    const conn2 = connectSidePanel();
+    await new Promise((r) => setTimeout(r, 100));
+
+    // "loading" should have been sent before extraction
+    const loadingCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "loading");
+    expect(loadingCalls.length).toBe(1);
+
+    // Fresh results should arrive for the new table
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBeGreaterThanOrEqual(1);
+
+    conn2.triggerDisconnect();
+  });
+
+  it("does not send loading on service worker restart reconnect (same table)", async () => {
+    const mockTabsQuery = chrome.tabs.query as ReturnType<typeof vi.fn>;
+
+    // Populate lastResults on table 789
+    const conn1 = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    const rawData = makeRawData({ "1": "Alice", "2": "Bob" }, []);
+    mockExecuteScript
+      .mockResolvedValueOnce([{ result: 2 }])
+      .mockResolvedValueOnce([{ result: rawData }]);
+    const gameTab = { id: 1, url: "https://boardgamearena.com/8/innovation?table=789", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(gameTab).mockResolvedValueOnce(gameTab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Simulate service worker restart: disconnect clears lastResults in SW,
+    // but the user's tab hasn't changed
+    conn1.triggerDisconnect();
+
+    // Navigate to non-game page to clear lastResults (simulates SW restart)
+    const conn1b = connectSidePanel();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+    const nonGameTab = { id: 1, url: "https://example.com", status: "complete", windowId: 10 };
+    mockTabsGet.mockResolvedValueOnce(nonGameTab).mockResolvedValueOnce(nonGameTab);
+    listeners.onActivated({ tabId: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+    conn1b.triggerDisconnect();
+    vi.clearAllMocks();
+    mockSendMessage.mockImplementation(() => Promise.resolve());
+
+    // Reconnect with lastResults=null but same game tab active
+    // This simulates the SW restart cycle
+    mockTabsQuery.mockResolvedValueOnce([gameTab]);
+    mockExecuteScript.mockResolvedValueOnce([{ result: rawData }]);
+    const conn2 = connectSidePanel();
+    await new Promise((r) => setTimeout(r, 100));
+
+    // "loading" should NOT have been sent (lastResults is null = SW restart)
+    const loadingCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "loading");
+    expect(loadingCalls.length).toBe(0);
+
+    // Results should still arrive via extraction
+    const resultsCalls = mockSendMessage.mock.calls.filter((c: any[]) => c[0]?.type === "resultsReady");
+    expect(resultsCalls.length).toBeGreaterThanOrEqual(1);
 
     conn2.triggerDisconnect();
   });

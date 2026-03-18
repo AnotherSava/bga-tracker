@@ -225,7 +225,8 @@ Triggers:
 1. Query the active tab and classify its URL via `background.classifyNavigation()`
 2. Compare the active tab's table number against `lastResults?.tableNumber`:
    - **Same table**: push cached `"resultsReady"` immediately (no loading flash)
-   - **Different table or no cached results**: run `background.resolveContent()` with `source: "reconnect"` — sends `"loading"` first, then extracts fresh results
+   - **Different table** (user navigated while panel was closed): run `background.resolveContent()` with `source: "reopen"` — shows `"loading"`, then extracts fresh results
+   - **No cached results** (service worker restart): run `background.resolveContent()` with `source: "reconnect"` — no `"loading"` to avoid flashing during the idle shutdown cycle
 
 ```
 ⇩   "resultsReady" message with PipelineResults payload (cached or freshly extracted)
