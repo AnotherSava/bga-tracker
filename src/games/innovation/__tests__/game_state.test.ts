@@ -413,6 +413,53 @@ describe("candidate merging", () => {
     expect(age1Cards[0].candidates).toEqual(age1Cards[1].candidates);
   });
 
+  it("preserves construction when one of two age-2-base cards leaves hand (bgaa_823235522)", () => {
+    // Scenario from real game: opponent has construction[2/base] (resolved)
+    // and one unresolved [2/base] card. A grouped age-2-base return triggers
+    // mergeCandidates which pools both candidate sets, destroying the
+    // construction resolution. But construction was NOT the returned card —
+    // the reveal at move 23 confirms it's still in hand.
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", ["agriculture", "archery"]);
+
+    // Give Bob a resolved construction via named draw + a second unresolved age 2
+    engine.move(state, namedAction({
+      cardName: "construction",
+      source: "deck",
+      dest: "hand",
+      destPlayer: "Bob",
+    }));
+    engine.move(state, groupedAction({
+      age: 2,
+      cardSet: CardSet.BASE,
+      source: "deck",
+      dest: "hand",
+      destPlayer: "Bob",
+    }));
+
+    // Verify setup: Bob has construction resolved + one unresolved age 2 base
+    const bobBefore = state.hands.get("Bob")!;
+    expect(bobBefore.some(c => c.resolvedName === "construction")).toBe(true);
+    const age2BaseBefore = bobBefore.filter(c => ageSetKey(c.age, c.cardSet) === ageSetKey(2, CardSet.BASE));
+    expect(age2BaseBefore.length).toBe(2);
+
+    // Return one unknown age 2 base card from hand
+    engine.move(state, groupedAction({
+      age: 2,
+      cardSet: CardSet.BASE,
+      source: "hand",
+      dest: "deck",
+      sourcePlayer: "Bob",
+    }));
+
+    // After the return, construction should still be a candidate in
+    // the remaining age 2 base hand card
+    const bobAfter = state.hands.get("Bob")!;
+    const age2BaseAfter = bobAfter.filter(c => ageSetKey(c.age, c.cardSet) === ageSetKey(2, CardSet.BASE));
+    expect(age2BaseAfter.length).toBe(1);
+    expect(age2BaseAfter[0].candidates.has("construction")).toBe(true);
+  });
+
   it("does not merge when grouped card enters hand from deck", () => {
     // Drawing an unknown card into hand is not ambiguous — no existing
     // hand card moved. mergeCandidates only fires on source=hand, not dest=hand.
@@ -1011,14 +1058,11 @@ describe("processLog", () => {
     expect(bobHand.some(c => c.resolvedName === "philosophy")).toBe(true);
   });
 
-  it.skip("revealHand recovers when propagation eliminated a candidate (bgaa_823235522)", () => {
-    // BUG: hidden-singles propagation incorrectly resolves "construction" to a
-    // deck card, removing it from jamdalla's hand candidates. The reveal then
-    // fails because no hand card has "construction" as a candidate.
+  it("full pipeline succeeds for bgaa_823235522 (construction reveal after merge)", () => {
     // After grouped hand→deck transfers, propagation can eliminate a card
     // from all hand candidates. A subsequent revealHand listing that card
     // should recover by falling back to an unresolved card of matching age/set.
-    const raw = JSON.parse(readFileSync(resolve(thisDir, "../../../../data/bgaa_823235522_23/raw_data.json"), "utf-8"));
+    const raw = JSON.parse(readFileSync(resolve(thisDir, "fixtures/bgaa_823235522.json"), "utf-8"));
     const cardDb = loadCardDatabase();
     const gameLog = processRawLog(raw);
     const players = Object.values(gameLog.players);

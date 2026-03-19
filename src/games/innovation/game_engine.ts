@@ -178,8 +178,9 @@ export class GameEngine {
     }
   }
 
-  /** Process a single log entry: dispatch to move, revealHand, or confirmMeldFilter. */
+  /** Process a single log entry: dispatch to move, revealHand, or confirmMeldFilter. Requires initLog() or processLog() to be called first. */
   processEntry(state: GameState, entry: GameLogEntry): void {
+    if (!this._playerPattern) throw new Error("processEntry() called before initLog() — call initLog() or processLog() first");
     if (entry.type === "transfer") {
       this.processTransfer(state, entry as TransferEntry);
     } else if (entry.type === "logWithCardTooltips") {
@@ -351,6 +352,26 @@ export class GameEngine {
         const found = sourceCards.find(c => ageSetKey(c.age, c.cardSet) === groupKey);
         if (!found) throw new Error(`No card with groupKey "${groupKey}" found in ${action.source}`);
         card = found;
+      }
+    }
+
+    // Named removal from private zone: collect all cards whose candidates
+    // include the named card (the "affected" set from prior merges), pool
+    // their candidates, resolve one to the named card, and distribute the
+    // remaining candidates to the others.
+    if (action.type === "named" && (action.source === "hand" || action.source === "score" || action.source === "forecast")) {
+      const affected = sourceCards.filter(c => c.candidates.has(action.cardName));
+      if (affected.length > 1) {
+        const union = new Set<string>();
+        for (const c of affected) {
+          for (const name of c.candidates) union.add(name);
+        }
+        union.delete(action.cardName);
+        card.candidates = new Set([action.cardName]);
+        for (const c of affected) {
+          if (c !== card) c.candidates = new Set(union);
+        }
+        this.propagate(groupKey);
       }
     }
 
