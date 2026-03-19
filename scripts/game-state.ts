@@ -4,7 +4,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { processGameState } from "../src/pipeline.js";
+import { processGameState, detectEchoes } from "../src/pipeline.js";
 import { CardDatabase, type GameName } from "../src/models/types.js";
 import type { GameLog } from "../src/games/innovation/process_log.js";
 import type { AzulGameLog } from "../src/games/azul/process_log.js";
@@ -44,34 +44,46 @@ function loadCardDb(): CardDatabase {
 
 console.log(`Processing ${gameName} game state from ${inputPath}${debug ? " (debug mode)" : ""}`);
 
-// Full state
 const cardDb = gameName === "innovation" ? loadCardDb() : new CardDatabase([]);
-const gameState = processGameState(gameLog, gameName, cardDb);
+
+interface Snapshot { turn: number; entry: number; state: unknown; }
+
+// Write final state
 const outputPath = join(outputDir, "game_state.json");
-writeFileSync(outputPath, JSON.stringify(gameState, null, 2) + "\n");
-console.log(`Wrote ${outputPath}`);
 
-// Debug snapshots
-if (debug) {
-  const snapshotDir = join(outputDir, "game_states");
-  rmSync(snapshotDir, { recursive: true, force: true });
-  mkdirSync(snapshotDir, { recursive: true });
-  let snapshots: unknown[];
-
+if (!debug) {
+  // Non-debug: compute final state directly (avoids generating all intermediate snapshots)
+  const finalState = processGameState(gameLog, gameName, cardDb);
+  writeFileSync(outputPath, JSON.stringify(finalState, null, 2) + "\n");
+  console.log(`Wrote ${outputPath}`);
+} else {
+  // Debug: generate per-entry snapshots
+  let snapshots: Snapshot[];
   if (gameName === "innovation") {
-    snapshots = innovationDebugSnapshots(gameLog as GameLog, cardDb);
+    snapshots = innovationSnapshots(gameLog as GameLog, cardDb);
   } else if (gameName === "azul") {
-    snapshots = azulDebugSnapshots(gameLog as AzulGameLog);
+    snapshots = azulSnapshots(gameLog as AzulGameLog);
   } else if (gameName === "thecrewdeepsea") {
-    snapshots = crewDebugSnapshots(gameLog as CrewGameLog);
+    snapshots = crewSnapshots(gameLog as CrewGameLog);
   } else {
-    console.error(`Debug snapshots not supported for game: ${gameName}`);
+    console.error(`Unsupported game: ${gameName}`);
     process.exit(1);
   }
 
-  for (let i = 0; i < snapshots.length; i++) {
-    const name = String(i + 1).padStart(4, "0") + ".json";
-    writeFileSync(join(snapshotDir, name), JSON.stringify(snapshots[i], null, 2) + "\n");
+  if (snapshots.length === 0) {
+    console.error("No log entries to process.");
+    process.exit(1);
+  }
+
+  writeFileSync(outputPath, JSON.stringify(snapshots[snapshots.length - 1].state, null, 2) + "\n");
+  console.log(`Wrote ${outputPath}`);
+
+  const snapshotDir = join(outputDir, "game_states");
+  rmSync(snapshotDir, { recursive: true, force: true });
+  mkdirSync(snapshotDir, { recursive: true });
+  for (const snap of snapshots) {
+    const name = `${String(snap.turn).padStart(4, "0")}_${String(snap.entry).padStart(4, "0")}.json`;
+    writeFileSync(join(snapshotDir, name), JSON.stringify(snap.state, null, 2) + "\n");
   }
   console.log(`Wrote ${snapshots.length} snapshots to ${snapshotDir}/`);
 }
@@ -80,69 +92,64 @@ if (debug) {
 // Debug snapshot generators
 // ---------------------------------------------------------------------------
 
-function innovationDebugSnapshots(log: GameLog, cardDb: CardDatabase): unknown[] {
-  const snapshots: unknown[] = [];
+function innovationSnapshots(log: GameLog, cardDb: CardDatabase): Snapshot[] {
+  const snapshots: Snapshot[] = [];
   const players = Object.values(log.players);
   const perspective = log.currentPlayerId && log.players[log.currentPlayerId] ? log.players[log.currentPlayerId] : players[0];
 
-  // Expansion detection already performed by processGameState() above
+  detectEchoes(log, cardDb);
+
   const engine = new GameEngine(cardDb);
   const state = createGameState(players, perspective);
   engine.initGame(state, log.expansions);
   engine.initLog(state, log.log, log.myHand);
 
-  const hasLogIndex = log.actions.length > 0 && log.actions[0].logIndex != null;
-
-  if (log.actions.length === 0 || !hasLogIndex) {
-    // No actions or actions lack logIndex (older/external game_log.json) — process all entries and return a single snapshot
-    for (const entry of log.log) engine.processEntry(state, entry);
-    snapshots.push(innovationToJSON(state));
-    return snapshots;
-  }
-
-  // Process entries action-by-action, snapshotting after each action's entries
-  let logPos = 0;
-  for (let i = 0; i < log.actions.length; i++) {
-    const nextAction = i + 1 < log.actions.length ? log.actions[i + 1] : null;
-    const nextStart = nextAction && nextAction.logIndex != null ? nextAction.logIndex : log.log.length;
-    while (logPos < nextStart) {
-      engine.processEntry(state, log.log[logPos]);
-      logPos++;
+  // Build entry→turn map from actions' logIndex
+  const entryToTurn = new Map<number, number>();
+  let turnNum = 0;
+  for (const action of log.actions) {
+    if (action.logIndex != null) {
+      turnNum++;
+      entryToTurn.set(action.logIndex, turnNum);
     }
-    snapshots.push(innovationToJSON(state));
-    if (nextAction && nextAction.logIndex == null) break;
   }
 
+  let currentTurn = 0;
+  for (let i = 0; i < log.log.length; i++) {
+    if (entryToTurn.has(i)) currentTurn = entryToTurn.get(i)!;
+    try {
+      engine.processEntry(state, log.log[i]);
+    } catch (err) {
+      console.error(`Error at entry ${i} (turn ${currentTurn}): ${(err as Error).message}`);
+      snapshots.push({ turn: currentTurn, entry: i, state: innovationToJSON(state) });
+      break;
+    }
+    snapshots.push({ turn: currentTurn, entry: i, state: innovationToJSON(state) });
+  }
 
   return snapshots;
 }
 
-function azulDebugSnapshots(log: AzulGameLog): unknown[] {
-  const snapshots: unknown[] = [];
-  // Snapshot after each round (wallPlacement or floorClear marks end of round processing)
-  // Re-process incrementally, snapshotting after each factoryFill (start of round)
-  // Actually, snapshot after wallPlacement entries (round completion)
+function azulSnapshots(log: AzulGameLog): Snapshot[] {
+  const snapshots: Snapshot[] = [];
+  let turn = 0;
   for (let i = 0; i < log.log.length; i++) {
-    if (log.log[i].type === "wallPlacement") {
-      // Process log up to and including this entry + any following floorClear
-      let end = i + 1;
-      if (end < log.log.length && log.log[end].type === "floorClear") end++;
-      const slicedLog = { ...log, log: log.log.slice(0, end) };
-      const state = processGameState(slicedLog, "azul", new CardDatabase([]));
-      snapshots.push(state);
-    }
+    if (log.log[i].type === "factoriesFilled") turn++;
+    const slicedLog = { ...log, log: log.log.slice(0, i + 1) };
+    const state = processGameState(slicedLog, "azul", new CardDatabase([]));
+    snapshots.push({ turn, entry: i, state });
   }
   return snapshots;
 }
 
-function crewDebugSnapshots(log: CrewGameLog): unknown[] {
-  const snapshots: unknown[] = [];
+function crewSnapshots(log: CrewGameLog): Snapshot[] {
+  const snapshots: Snapshot[] = [];
+  let turn = 0;
   for (let i = 0; i < log.log.length; i++) {
-    if (log.log[i].type === "trickWon") {
-      const slicedLog = { ...log, log: log.log.slice(0, i + 1) };
-      const state = processCrewState(slicedLog);
-      snapshots.push(crewToJSON(state));
-    }
+    if (log.log[i].type === "trickStart") turn++;
+    const slicedLog = { ...log, log: log.log.slice(0, i + 1) };
+    const state = processCrewState(slicedLog);
+    snapshots.push({ turn, entry: i, state: crewToJSON(state) });
   }
   return snapshots;
 }

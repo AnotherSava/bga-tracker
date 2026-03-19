@@ -10,8 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "game-log": "tsx scripts/game-log.ts",
-    "game-state": "tsx scripts/game-state.ts"
+    "game-log": "node --import tsx/esm scripts/game-log.ts",
+    "game-state": "node --import tsx/esm scripts/game-state.ts"
   },
   "devDependencies": {
     "@types/node": "^25.3.5",

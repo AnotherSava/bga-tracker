@@ -68,7 +68,8 @@ const copyListeners = () => {
   Object.assign(listeners, (globalThis as any).__chromeMockListeners);
 };
 
-import { runPipeline, classifyNavigation, shouldAutoClose, shouldShowLoading, watcherFunction, isValidPlayerCount, type PipelineResults, type NavigationAction, type PinMode } from "../background";
+import { classifyNavigation, shouldAutoClose, shouldShowLoading, watcherFunction, type NavigationAction, type PinMode } from "../background";
+import { runPipeline, isValidPlayerCount, type PipelineResults } from "../pipeline";
 import { CardDatabase } from "../models/types";
 import type { RawExtractionData } from "../models/types";
 import { type GameState, createGameState, cardsAt } from "../games/innovation/game_state";

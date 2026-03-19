@@ -18,8 +18,6 @@ const BGA_DOMAIN_PATTERN = /^https:\/\/([a-z0-9]+\.)?boardgamearena\.com\//;
 // State
 // ---------------------------------------------------------------------------
 
-export type { PipelineResults } from "./pipeline.js";
-
 /**
  * Where an extraction was triggered from.
  * - "click": user clicked the extension icon or pressed the keyboard shortcut
@@ -41,8 +39,6 @@ export type NavigationAction =
   | { action: "extract"; tableNumber: string; gameName: GameName }
   | { action: "showHelp"; url: string }
   | { action: "unsupportedGame"; tableNumber: string; gameName: string };
-
-export { isValidPlayerCount } from "./pipeline.js";
 
 /** Pin mode controlling auto-hide behavior. */
 export type PinMode = "pinned" | "autohide-bga" | "autohide-game";
@@ -83,12 +79,6 @@ chrome.commands.getAll((commands) => {
     chrome.action.setTitle({ title: `BGA Assistant (${cmd.shortcut})` });
   }
 });
-
-// ---------------------------------------------------------------------------
-// Pipeline
-// ---------------------------------------------------------------------------
-
-export { runPipeline } from "./pipeline.js";
 
 // ---------------------------------------------------------------------------
 // Badge helpers

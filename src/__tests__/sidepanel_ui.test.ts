@@ -26,7 +26,7 @@ vi.hoisted(() => {
 
 import { downloadBlob, setupTooltips, setupToggles, render, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode, applyTurnHistoryVisibility } from "../sidepanel/sidepanel";
 import { positionTooltip } from "../render/toggle";
-import type { PipelineResults } from "../background";
+import type { PipelineResults } from "../pipeline";
 
 describe("sidepanel UI functions", () => {
   beforeEach(() => {

@@ -97,8 +97,8 @@ npm run game-state -- data/bgaa_823235522_23/game_log.json
 npm run game-state -- data/bgaa_823235522_23/game_log.json --debug
 ```
 
-- `game-log`: reads `raw_data.json`, auto-detects the game from the `gameName` field, runs the game-specific log processor, and writes `game_log.json` to the same directory.
-- `game-state`: reads `game_log.json`, runs the engine and serialization pipeline, and writes `game_state.json` to the same directory. With `--debug`, also creates a `game_states/` subfolder with numbered per-turn snapshots (`0001.json`, `0002.json`, etc.).
+- `game-log`: reads `raw_data.json`, auto-detects the game from the `gameName` field, runs the game-specific log processor, and writes `game_log.json` to the same directory. If the file lacks a `gameName` field (e.g. older exports), specify `--game <name>` (innovation, azul, thecrewdeepsea).
+- `game-state`: reads `game_log.json`, runs the engine and serialization pipeline, and writes `game_state.json` to the same directory. If the file lacks a `gameName` field, specify `--game <name>`. With `--debug`, also creates a `game_states/` subfolder with per-entry snapshots named by turn and entry index (`0001_0042.json`, `0001_0043.json`, etc.).
 
 ## Architecture
 

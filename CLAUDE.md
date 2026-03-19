@@ -37,8 +37,8 @@ Any plan that changes or can change logic should include `README.md` and `docs/d
 - `npm test` — run all tests
 - `npm run lint` — TypeScript type checking (`tsc --noEmit`)
 - `npm run dev` — watch mode build
-- `npm run game-log -- <raw_data.json>` — process raw data into game log
-- `npm run game-state -- <game_log.json> [--debug]` — process game log into game state (--debug writes per-turn snapshots)
+- `npm run game-log -- <raw_data.json> [--game <name>]` — process raw data into game log
+- `npm run game-state -- <game_log.json> [--debug] [--game <name>]` — process game log into game state (--debug writes per-entry snapshots to game_states/)
 
 ## Project Structure
 

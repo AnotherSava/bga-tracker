@@ -12,6 +12,19 @@ import { processCrewState } from "./games/crew/game_engine.js";
 import { crewToJSON, type SerializedCrewGameState } from "./games/crew/serialization.js";
 import { CardDatabase, CardSet, type GameName, type RawExtractionData } from "./models/types.js";
 
+/** Supplement transfer-based Echoes detection with myHand-based detection. */
+export function detectEchoes(log: GameLog, cardDb: CardDatabase): void {
+  if (!log.expansions.echoes) {
+    for (const name of log.myHand) {
+      const info = cardDb.get(name.toLowerCase());
+      if (info && info.cardSet === CardSet.ECHOES) {
+        log.expansions.echoes = true;
+        break;
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -47,16 +60,7 @@ export function processGameLog(rawData: RawExtractionData, gameName: GameName, c
   if (gameName === "azul") return processAzulLog(rawData);
   if (gameName === "innovation") {
     const gameLog = processRawLog(rawData);
-    // Supplement transfer-based detection with myHand detection
-    if (cardDb && !gameLog.expansions.echoes) {
-      for (const name of gameLog.myHand) {
-        const info = cardDb.get(name.toLowerCase());
-        if (info && info.cardSet === CardSet.ECHOES) {
-          gameLog.expansions.echoes = true;
-          break;
-        }
-      }
-    }
+    if (cardDb) detectEchoes(gameLog, cardDb);
     return gameLog;
   }
   throw new Error(`Log processing not implemented for game: ${gameName}`);
@@ -77,16 +81,7 @@ export function processGameState(gameLog: GameLog | AzulGameLog | CrewGameLog, g
 
   if (gameName === "innovation") {
     const innovationLog = gameLog as GameLog;
-    // Supplement transfer-based detection with myHand detection (handles older/external game_log.json files)
-    if (!innovationLog.expansions.echoes) {
-      for (const name of innovationLog.myHand) {
-        const info = cardDb.get(name.toLowerCase());
-        if (info && info.cardSet === CardSet.ECHOES) {
-          innovationLog.expansions.echoes = true;
-          break;
-        }
-      }
-    }
+    detectEchoes(innovationLog, cardDb);
     const players = Object.values(innovationLog.players);
     const perspective = innovationLog.currentPlayerId && innovationLog.players[innovationLog.currentPlayerId] ? innovationLog.players[innovationLog.currentPlayerId] : players[0];
     const engine = new GameEngine(cardDb);
