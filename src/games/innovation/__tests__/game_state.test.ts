@@ -19,6 +19,7 @@ import {
 import { type GameState, createGameState as newGameState, cardsAt } from "../game_state";
 import { GameEngine } from "../game_engine";
 import { toJSON, fromJSON } from "../serialization";
+import { processRawLog } from "../process_log";
 
 const thisDir = dirname(fileURLToPath(import.meta.url));
 
@@ -354,6 +355,109 @@ describe("candidate merging", () => {
     // Both the moved card and remaining card should share candidates
     const remaining = state.hands.get("Bob")![0];
     expect(remaining.candidates).toEqual(card.candidates);
+  });
+
+  it("preserves resolved cards when unknown card of same age/set is drawn", () => {
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", ["agriculture", "archery"]);
+    // Resolve Bob's hand so both cards are known
+    engine.resolveHand(state, "Bob", ["clothing", "city states"]);
+
+    // Bob draws an unknown age 1 base card — should NOT destroy existing resolutions
+    engine.move(state, groupedAction({
+      age: 1,
+      cardSet: CardSet.BASE,
+      source: "deck",
+      dest: "hand",
+      destPlayer: "Bob",
+    }));
+
+    const bobHand = state.hands.get("Bob")!;
+    expect(bobHand.length).toBe(3);
+    // The two originally resolved cards must stay resolved
+    expect(bobHand.some(c => c.resolvedName === "clothing")).toBe(true);
+    expect(bobHand.some(c => c.resolvedName === "city states")).toBe(true);
+    // The new card should be unresolved
+    const newCard = bobHand.find(c => !c.isResolved);
+    expect(newCard).toBeDefined();
+  });
+
+  it("merges resolved cards when unknown card of same age/set leaves hand", () => {
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", ["agriculture", "archery"]);
+    // Bob has 2 resolved + 1 unresolved of same age/set
+    engine.resolveHand(state, "Bob", ["clothing", "city states"]);
+    engine.move(state, groupedAction({
+      age: 1,
+      cardSet: CardSet.BASE,
+      source: "deck",
+      dest: "hand",
+      destPlayer: "Bob",
+    }));
+
+    // Grouped hand→deck move — we don't know which card left, so
+    // remaining cards of the same age/set lose their resolution
+    engine.move(state, groupedAction({
+      age: 1,
+      cardSet: CardSet.BASE,
+      source: "hand",
+      dest: "deck",
+      sourcePlayer: "Bob",
+    }));
+
+    const bobHand = state.hands.get("Bob")!;
+    expect(bobHand.length).toBe(2);
+    // The two remaining cards should share candidates (ambiguous)
+    const age1Cards = bobHand.filter(c => ageSetKey(c.age, c.cardSet) === ageSetKey(1, CardSet.BASE));
+    expect(age1Cards.length).toBe(2);
+    expect(age1Cards[0].candidates).toEqual(age1Cards[1].candidates);
+  });
+
+  it("does not merge when grouped card enters hand from deck", () => {
+    // Drawing an unknown card into hand is not ambiguous — no existing
+    // hand card moved. mergeCandidates only fires on source=hand, not dest=hand.
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", ["agriculture", "archery"]);
+    engine.resolveHand(state, "Bob", ["clothing", "city states"]);
+
+    const bobHandBefore = state.hands.get("Bob")!.map(c => c.resolvedName);
+
+    engine.move(state, groupedAction({
+      age: 1, cardSet: CardSet.BASE,
+      source: "deck", dest: "hand", destPlayer: "Bob",
+    }));
+
+    const bobHand = state.hands.get("Bob")!;
+    // Existing resolved cards untouched
+    expect(bobHand.filter(c => c.isResolved).map(c => c.resolvedName).sort()).toEqual(bobHandBefore.sort());
+    // New card is unresolved
+    expect(bobHand.filter(c => !c.isResolved).length).toBe(1);
+  });
+
+  it("includes resolved cards in merge when grouped card leaves hand", () => {
+    // When an unknown card leaves, ANY card (including resolved) could be
+    // the one that left. All same-group cards must pool candidates.
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", ["agriculture", "archery"]);
+    engine.resolveHand(state, "Bob", ["clothing", "city states"]);
+
+    // Draw unknown, then send unknown back — resolved cards should merge
+    engine.move(state, groupedAction({
+      age: 1, cardSet: CardSet.BASE,
+      source: "deck", dest: "hand", destPlayer: "Bob",
+    }));
+    engine.move(state, groupedAction({
+      age: 1, cardSet: CardSet.BASE,
+      source: "hand", dest: "deck", sourcePlayer: "Bob",
+    }));
+
+    const bobHand = state.hands.get("Bob")!;
+    const age1Cards = bobHand.filter(c => ageSetKey(c.age, c.cardSet) === ageSetKey(1, CardSet.BASE));
+    // Both remaining cards should have candidates that include clothing AND city states
+    for (const card of age1Cards) {
+      expect(card.candidates.has("clothing")).toBe(true);
+      expect(card.candidates.has("city states")).toBe(true);
+    }
   });
 
   it("does not merge for named moves", () => {
@@ -905,6 +1009,28 @@ describe("processLog", () => {
 
     const bobHand = state.hands.get("Bob")!;
     expect(bobHand.some(c => c.resolvedName === "philosophy")).toBe(true);
+  });
+
+  it.skip("revealHand recovers when propagation eliminated a candidate (bgaa_823235522)", () => {
+    // BUG: hidden-singles propagation incorrectly resolves "construction" to a
+    // deck card, removing it from jamdalla's hand candidates. The reveal then
+    // fails because no hand card has "construction" as a candidate.
+    // After grouped hand→deck transfers, propagation can eliminate a card
+    // from all hand candidates. A subsequent revealHand listing that card
+    // should recover by falling back to an unresolved card of matching age/set.
+    const raw = JSON.parse(readFileSync(resolve(thisDir, "../../../../data/bgaa_823235522_23/raw_data.json"), "utf-8"));
+    const cardDb = loadCardDatabase();
+    const gameLog = processRawLog(raw);
+    const players = Object.values(gameLog.players);
+    const perspective = gameLog.currentPlayerId && gameLog.players[gameLog.currentPlayerId] ? gameLog.players[gameLog.currentPlayerId] : players[0];
+    const engine = new GameEngine(cardDb);
+    const state = newGameState(players, perspective);
+    engine.initGame(state, gameLog.expansions);
+    // Should not throw "Revealed card construction not found among hand candidates"
+    engine.processLog(state, gameLog.log, gameLog.myHand);
+    const jamdalla = state.hands.get("jamdalla")!;
+    const names = jamdalla.map(c => c.resolvedName);
+    expect(names).toContain("construction");
   });
 
   it("skips achievement transfers", () => {
