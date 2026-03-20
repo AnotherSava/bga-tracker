@@ -25,11 +25,11 @@ Do not add logic, data structures, classes, or exports to production code that e
 
 Run `npm run build` after each batch of changes so the extension can be reloaded and tested in the browser.
 
-Keep `README.md` in the project root up to date when code changes affect project structure, features, or usage.
+Keep the relevant page in `docs/pages/` up to date when code changes affect features, setup, or architecture. The `README.md` only needs updating for changes to the supported game list or project description. The per-game descriptions in `README.md` must be exact copies of the first paragraph from the corresponding `docs/pages/` game page — when one changes, update the other to match. The "Standard features" section must be identical across all game pages — when one changes, update all others to match.
 
-Keep `docs/data-flow.md` up to date when code changes affect data flow, message protocols, or control flow logic. Use the `/document-data-flow` skill.
+Keep `docs/pages/data-flow.md` up to date when code changes affect data flow, message protocols, or control flow logic. Use the `/document-data-flow` skill.
 
-Any plan that changes or can change logic should include `README.md` and `docs/data-flow.md` updates.
+Any plan that changes or can change logic should include `docs/pages/` and `docs/pages/data-flow.md` updates.
 
 ## Commands
 
@@ -74,4 +74,4 @@ Any plan that changes or can change logic should include `README.md` and `docs/d
 - `assets/bga/innovation/` — Innovation game data (card_info.json, cards/, icons/, sprites/)
 - `assets/bga/azul/tiles/` — Azul tile color PNGs
 - `assets/extension/` — extension icons
-- `docs/data-flow.md` — data flow architecture, message protocols, connection management
+- `docs/pages/data-flow.md` — data flow architecture, message protocols, connection management

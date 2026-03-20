@@ -11,6 +11,9 @@ assets/bga/innovation/sprites/
 .claude/settings.json
 .claude/settings.local.json
 
+# Spare screenshots
+docs/screenshots/spare/
+
 # Ralphex
 .ralphex/
 coverage/

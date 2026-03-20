@@ -9,7 +9,7 @@ allowed-tools: Bash(unzip *), Bash(ls *), Bash(mkdir *), Bash(npm test*), Bash(n
 
 Investigate a user-reported discrepancy in any supported game's tracker output, create a regression test, and fix the bug.
 
-Supported games and their pipeline files are listed in `CLAUDE.md` under Project Structure. Data flow between components is documented in `docs/data-flow.md`.
+Supported games and their pipeline files are listed in `CLAUDE.md` under Project Structure. Data flow between components is documented in `docs/pages/data-flow.md`.
 
 ## Input
 
@@ -61,7 +61,7 @@ Identify which pipeline stage introduced the error:
 - **game_state.json is wrong but game_log is correct** → bug in the game's engine (`game_state.ts` or `game_engine.ts`)
 - **summary.html is wrong but game_state is correct** → rendering bug in the game's `render.ts`
 
-See `docs/data-flow.md` for the full pipeline flow and serialization boundaries.
+See `docs/pages/data-flow.md` for the full pipeline flow and serialization boundaries.
 
 Document your findings clearly before proceeding.
 

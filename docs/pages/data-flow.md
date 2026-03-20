@@ -1,3 +1,12 @@
+---
+layout: default
+title: Data Flow Architecture
+---
+
+← [Development](development)
+
+---
+
 # Data Flow Architecture
 
 This document traces how data moves between the extension's components, what
