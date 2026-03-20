@@ -236,17 +236,21 @@ export function processRawLog(rawData: RawExtractionData): GameLog {
 
         if (cardSet === "echoes") hasEchoesTransfer = true;
 
+        const dest = String(playerArgs.location_to);
+        const bto = playerArgs.bottom_to;
+        const isBottom = bto === true || bto === 1 || String(bto) === "1";
         const entry: TransferEntry = {
           type: "transfer",
           move: moveId,
           cardSet,
           source: String(playerArgs.location_from),
-          dest: String(playerArgs.location_to),
+          dest,
           cardName,
           cardAge,
           sourceOwner: playerNames[String(playerArgs.owner_from)] ?? null,
           destOwner: playerNames[String(playerArgs.owner_to)] ?? null,
           meldKeyword: Boolean(playerArgs.meld_keyword),
+          topOfDeck: dest === "deck" && !isBottom,
         };
         log.push(entry);
 

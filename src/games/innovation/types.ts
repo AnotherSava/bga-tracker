@@ -243,6 +243,7 @@ interface ActionBase {
   sourcePlayer: string | null;
   destPlayer: string | null;
   meldKeyword: boolean;
+  topOfDeck: boolean;
 }
 
 export interface NamedAction extends ActionBase {
@@ -273,6 +274,7 @@ export interface TransferEntry {
   sourceOwner: string | null;
   destOwner: string | null;
   meldKeyword: boolean;
+  topOfDeck: boolean;
 }
 
 export interface MessageEntry {

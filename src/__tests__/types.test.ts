@@ -325,6 +325,7 @@ describe("Action types", () => {
       sourcePlayer: "Alice",
       destPlayer: "Alice",
       meldKeyword: true,
+      topOfDeck: false,
     };
     expect(action.type).toBe("named");
     expect(action.cardName).toBe("agriculture");
@@ -340,6 +341,7 @@ describe("Action types", () => {
       sourcePlayer: null,
       destPlayer: "Bob",
       meldKeyword: false,
+      topOfDeck: false,
     };
     expect(action.type).toBe("grouped");
     expect(action.age).toBe(3);
@@ -364,6 +366,7 @@ describe("GameLogEntry types", () => {
       sourceOwner: "Alice",
       destOwner: "Alice",
       meldKeyword: true,
+      topOfDeck: false,
     };
     expect(entry.type).toBe("transfer");
     expect(entry.cardName).toBe("Clothing");
@@ -389,7 +392,7 @@ describe("GameLogEntry types", () => {
 
   it("GameLogEntry discriminates on type field", () => {
     const entries: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "hand", cardName: null, cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "hand", cardName: null, cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
       { type: "log", move: 2, msg: "A message" },
     ];
     for (const entry of entries) {

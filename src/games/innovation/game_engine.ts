@@ -226,6 +226,7 @@ export class GameEngine {
         sourcePlayer: entry.source !== "deck" ? entry.sourceOwner : null,
         destPlayer: entry.dest !== "deck" ? entry.destOwner : null,
         meldKeyword: entry.meldKeyword,
+        topOfDeck: entry.topOfDeck,
       };
     } else {
       if (entry.cardAge === null) return;
@@ -238,6 +239,7 @@ export class GameEngine {
         sourcePlayer: entry.source !== "deck" ? entry.sourceOwner : null,
         destPlayer: entry.dest !== "deck" ? entry.destOwner : null,
         meldKeyword: entry.meldKeyword,
+        topOfDeck: entry.topOfDeck,
       };
     }
 
@@ -282,7 +284,7 @@ export class GameEngine {
         const sourceCards = cardsAt(state, action.source, action.sourcePlayer, groupKey);
         const match = sourceCards.find(c => c.isResolved && this.discardNames.has(c.resolvedName!));
         if (match) {
-          action = { type: "named", cardName: match.resolvedName!, source: action.source, dest: action.dest, sourcePlayer: action.sourcePlayer, destPlayer: action.destPlayer, meldKeyword: action.meldKeyword };
+          action = { type: "named", cardName: match.resolvedName!, source: action.source, dest: action.dest, sourcePlayer: action.sourcePlayer, destPlayer: action.destPlayer, meldKeyword: action.meldKeyword, topOfDeck: action.topOfDeck };
         }
       }
       // Decrement for both named and grouped-resolved returns that match discardNames
@@ -293,7 +295,12 @@ export class GameEngine {
     }
 
     const card = this.takeFromSource(state, action, groupKey);
-    this.cardsAtMut(state, action.dest, action.destPlayer, groupKey).push(card);
+    const destCards = this.cardsAtMut(state, action.dest, action.destPlayer, groupKey);
+    if (action.topOfDeck) {
+      destCards.unshift(card);
+    } else {
+      destCards.push(card);
+    }
     this.updateOpponentKnowledge(state, card, action);
 
     return card;

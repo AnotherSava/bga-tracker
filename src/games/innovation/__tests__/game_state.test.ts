@@ -62,6 +62,7 @@ function namedAction(overrides: Partial<NamedAction> & { cardName: string }): Na
     sourcePlayer: null,
     destPlayer: null,
     meldKeyword: false,
+    topOfDeck: false,
     ...overrides,
   };
 }
@@ -74,6 +75,7 @@ function groupedAction(overrides: Partial<GroupedAction> & { age: number; cardSe
     sourcePlayer: null,
     destPlayer: null,
     meldKeyword: false,
+    topOfDeck: false,
     ...overrides,
   };
 }
@@ -899,7 +901,7 @@ describe("deduceInitialHand", () => {
     engine.initGame(state, );
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
     ];
 
     const result = engine.deduceInitialHand(state, log, ["Agriculture", "Archery", "Metalworking"]);
@@ -911,7 +913,7 @@ describe("deduceInitialHand", () => {
     engine.initGame(state, );
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true, topOfDeck: false },
     ];
 
     const result = engine.deduceInitialHand(state, log, ["Archery"]);
@@ -923,8 +925,8 @@ describe("deduceInitialHand", () => {
     engine.initGame(state, );
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
-      { type: "transfer", move: 2, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true, topOfDeck: false },
+      { type: "transfer", move: 2, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
     ];
 
     const result = engine.deduceInitialHand(state, log, ["Archery", "Metalworking"]);
@@ -936,7 +938,7 @@ describe("deduceInitialHand", () => {
     engine.initGame(state, );
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "hand", cardName: "Clothing", cardAge: 1, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "hand", cardName: "Clothing", cardAge: 1, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
     ];
 
     const result = engine.deduceInitialHand(state, log, ["Agriculture", "Archery"]);
@@ -953,8 +955,8 @@ describe("processLog", () => {
     const { state, engine } = createInitializedGS();
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
-      { type: "transfer", move: 2, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true, topOfDeck: false },
+      { type: "transfer", move: 2, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
     ];
     const myHand = ["Archery", "Metalworking"];
 
@@ -1002,20 +1004,20 @@ describe("processLog", () => {
     // Opponent melds Hoi An (cities age 5, icon[5]=crown), triggering meld filter.
     // Draws 5 named age-5 base cards through revealed → hand, then returns 1 unnamed (Coal, no crown).
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "cities", source: "deck", dest: "hand", cardName: "Hoi An", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "cities", source: "hand", dest: "board", cardName: "Hoi An", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: true },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Coal", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Coal", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "The pirate code", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "The pirate code", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Steam engine", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Steam engine", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Astronomy", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Astronomy", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Banking", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Banking", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "cities", source: "deck", dest: "hand", cardName: "Hoi An", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "cities", source: "hand", dest: "board", cardName: "Hoi An", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: true, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Coal", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Coal", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "The pirate code", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "The pirate code", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Steam engine", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Steam engine", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Astronomy", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Astronomy", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Banking", cardAge: 5, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Banking", cardAge: 5, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false, topOfDeck: false },
       { type: "log", move: 1, msg: "The revealed cards with a [crown] will be kept and the others will be returned." },
-      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "deck", cardName: null, cardAge: 5, sourceOwner: "Bob", destOwner: null, meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "deck", cardName: null, cardAge: 5, sourceOwner: "Bob", destOwner: null, meldKeyword: false, topOfDeck: false },
     ];
     const myHand = ["Agriculture", "Archery"];
 
@@ -1036,18 +1038,18 @@ describe("processLog", () => {
     // without castle, then returns both as named transfers. After that, Philosophy should be
     // drawable from deck without error.
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "cities", source: "deck", dest: "hand", cardName: "Nanjing", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "cities", source: "hand", dest: "board", cardName: "Nanjing", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Philosophy", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Philosophy", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Calendar", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
-      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Calendar", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "cities", source: "deck", dest: "hand", cardName: "Nanjing", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "cities", source: "hand", dest: "board", cardName: "Nanjing", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Philosophy", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Philosophy", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "deck", dest: "revealed", cardName: "Calendar", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "revealed", dest: "hand", cardName: "Calendar", cardAge: 2, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false, topOfDeck: false },
       { type: "log", move: 1, msg: "The revealed cards with a [castle] will be kept and the others will be returned." },
-      { type: "transfer", move: 2, cardSet: "base", source: "hand", dest: "deck", cardName: "Calendar", cardAge: 2, sourceOwner: "Alice", destOwner: null, meldKeyword: false },
-      { type: "transfer", move: 2, cardSet: "base", source: "hand", dest: "deck", cardName: "Philosophy", cardAge: 2, sourceOwner: "Alice", destOwner: null, meldKeyword: false },
+      { type: "transfer", move: 2, cardSet: "base", source: "hand", dest: "deck", cardName: "Calendar", cardAge: 2, sourceOwner: "Alice", destOwner: null, meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 2, cardSet: "base", source: "hand", dest: "deck", cardName: "Philosophy", cardAge: 2, sourceOwner: "Alice", destOwner: null, meldKeyword: false, topOfDeck: false },
       // After returns, another player draws Philosophy from deck — should not throw
-      { type: "transfer", move: 3, cardSet: "base", source: "deck", dest: "revealed", cardName: "Philosophy", cardAge: 2, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 3, cardSet: "base", source: "revealed", dest: "hand", cardName: "Philosophy", cardAge: 2, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false },
+      { type: "transfer", move: 3, cardSet: "base", source: "deck", dest: "revealed", cardName: "Philosophy", cardAge: 2, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 3, cardSet: "base", source: "revealed", dest: "hand", cardName: "Philosophy", cardAge: 2, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: false, topOfDeck: false },
     ];
     const myHand = ["Agriculture", "Archery"];
 
@@ -1056,6 +1058,37 @@ describe("processLog", () => {
 
     const bobHand = state.hands.get("Bob")!;
     expect(bobHand.some(c => c.resolvedName === "philosophy")).toBe(true);
+  });
+
+  it("topOfDeck places card at draw position (index 0) in deck", () => {
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", [cardIndex("Agriculture"), cardIndex("Archery")]);
+
+    // Draw Vaccination from age 6 deck, then place it on top of deck
+    engine.move(state, namedAction({ cardName: cardIndex("Vaccination"), source: "deck", dest: "hand", destPlayer: "Alice" }));
+    engine.move(state, namedAction({ cardName: cardIndex("Vaccination"), source: "hand", dest: "deck", sourcePlayer: "Alice", topOfDeck: true }));
+
+    // Vaccination should be at index 0 (top/draw position) of the base age 6 deck
+    const deck6 = cardsAt(state, "deck", null, ageSetKey(6, CardSet.BASE));
+    expect(deck6[0].resolvedName).toBe(cardIndex("Vaccination"));
+
+    // Next draw from age 6 should get Vaccination
+    const drawn = engine.move(state, groupedAction({ age: 6, cardSet: CardSet.BASE, dest: "hand", destPlayer: "Bob" }));
+    expect(drawn.resolvedName).toBe(cardIndex("Vaccination"));
+  });
+
+  it("return to bottom of deck (topOfDeck=false) places card at end", () => {
+    const { state, engine } = createInitializedGS();
+    engine.resolveHand(state, "Alice", [cardIndex("Agriculture"), cardIndex("Archery")]);
+
+    // Draw Vaccination, then return it to bottom of deck (default behavior)
+    engine.move(state, namedAction({ cardName: cardIndex("Vaccination"), source: "deck", dest: "hand", destPlayer: "Alice" }));
+    engine.move(state, namedAction({ cardName: cardIndex("Vaccination"), source: "hand", dest: "deck", sourcePlayer: "Alice", topOfDeck: false }));
+
+    // Vaccination should NOT be at index 0 — it's at the bottom
+    const deck6 = cardsAt(state, "deck", null, ageSetKey(6, CardSet.BASE));
+    expect(deck6[0].resolvedName).not.toBe(cardIndex("Vaccination"));
+    expect(deck6[deck6.length - 1].resolvedName).toBe(cardIndex("Vaccination"));
   });
 
   it("full pipeline succeeds for bgaa_823235522 (construction reveal after merge)", () => {
@@ -1081,7 +1114,7 @@ describe("processLog", () => {
     const { state, engine } = createInitializedGS();
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "board", dest: "achievements", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "board", dest: "achievements", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false, topOfDeck: false },
     ];
     const myHand = ["Agriculture", "Archery"];
 
@@ -1276,12 +1309,12 @@ describe("full game sequence", () => {
     const { state, engine } = createInitializedGS();
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
-      { type: "transfer", move: 2, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
-      { type: "transfer", move: 3, cardSet: "base", source: "hand", dest: "board", cardName: null, cardAge: 1, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: true },
-      { type: "transfer", move: 4, cardSet: "base", source: "deck", dest: "hand", cardName: null, cardAge: 1, sourceOwner: null, destOwner: "Bob", meldKeyword: false },
-      { type: "transfer", move: 5, cardSet: "base", source: "hand", dest: "score", cardName: "Archery", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false },
-      { type: "transfer", move: 6, cardSet: "base", source: "deck", dest: "hand", cardName: "Calendar", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true, topOfDeck: false },
+      { type: "transfer", move: 2, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 3, cardSet: "base", source: "hand", dest: "board", cardName: null, cardAge: 1, sourceOwner: "Bob", destOwner: "Bob", meldKeyword: true, topOfDeck: false },
+      { type: "transfer", move: 4, cardSet: "base", source: "deck", dest: "hand", cardName: null, cardAge: 1, sourceOwner: null, destOwner: "Bob", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 5, cardSet: "base", source: "hand", dest: "score", cardName: "Archery", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: false, topOfDeck: false },
+      { type: "transfer", move: 6, cardSet: "base", source: "deck", dest: "hand", cardName: "Calendar", cardAge: 2, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
     ];
     const myHand = ["Metalworking", "Calendar"];
 
@@ -1306,9 +1339,9 @@ describe("full game sequence", () => {
     const { state, engine } = createInitializedGS();
 
     const log: GameLogEntry[] = [
-      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true },
+      { type: "transfer", move: 1, cardSet: "base", source: "hand", dest: "board", cardName: "Agriculture", cardAge: 1, sourceOwner: "Alice", destOwner: "Alice", meldKeyword: true, topOfDeck: false },
       { type: "logWithCardTooltips", move: 2, msg: "Bob reveals his hand: [1] Clothing, [1] City States." },
-      { type: "transfer", move: 3, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false },
+      { type: "transfer", move: 3, cardSet: "base", source: "deck", dest: "hand", cardName: "Metalworking", cardAge: 1, sourceOwner: null, destOwner: "Alice", meldKeyword: false, topOfDeck: false },
     ];
     const myHand = ["Archery", "Metalworking"];
 
