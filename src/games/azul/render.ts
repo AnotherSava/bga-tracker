@@ -30,7 +30,7 @@ export function renderAzulSummary(state: AzulGameState): string {
   html += '<table class="azul-table"><thead><tr>';
   html += '<th></th>';
   for (let t = 1; t <= 5; t++) {
-    html += `<th><img src="${resolveAssetUrl(`assets/bga/azul/tiles/tile_${t}.png`)}" width="24" height="24" alt="${TILE_COLORS[t]}"></th>`;
+    html += `<th><span class="azul-tile-icon"><img src="${resolveAssetUrl(`assets/bga/azul/tiles/tile_${t}.svg`)}" width="24" height="24" alt="${TILE_COLORS[t]}"></span></th>`;
   }
   html += '</tr></thead><tbody>';
 

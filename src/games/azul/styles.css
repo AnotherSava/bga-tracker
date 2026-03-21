@@ -1,0 +1,13 @@
+/* Azul summary table */
+.azul-summary { margin-top: 30px; }
+.azul-table { border-collapse: collapse; }
+.azul-table th, .azul-table td { padding: 4px 10px; text-align: center; }
+.azul-table th img { display: block; border-radius: 5px; }
+.azul-tile-icon { position: relative; display: inline-block; overflow: hidden; border-radius: 5px; }
+.azul-tile-icon::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: linear-gradient(110deg, transparent 15%, #fff 50%, transparent 85%); opacity: 0.15; animation: azul-shimmer 3s ease-in-out infinite; pointer-events: none; }
+.azul-tile-icon.shimmer-off::after { animation: none; opacity: 0; }
+@keyframes azul-shimmer { 0% { transform: translateX(-200%); } 100% { transform: translateX(200%); } }
+.azul-row-label { font-size: 12px; color: #aaa; text-align: right; padding-right: 8px; white-space: nowrap; }
+.azul-count { font-size: 16px; font-weight: bold; color: #ddd; font-family: 'Russo One', sans-serif; }
+.azul-zero { color: #555; }
+.azul-refill-note { font-size: 11px; color: #b08040; margin-top: 6px; }

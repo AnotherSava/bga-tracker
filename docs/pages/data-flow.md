@@ -71,7 +71,9 @@ Responsibilities:
 Key files:
 - `src/sidepanel/sidepanel.ts` — UI logic, message handling, downloads, zoom, toggles
 - `src/games/*/render.ts` — game-specific HTML rendering
+- `src/games/*/display.ts` — per-game display menu construction and display-option application (section visibility, shimmer)
 - `src/render/help.ts` — help page content
+- `src/sidepanel/settings.ts` — shared localStorage persistence (loadSetting/saveSetting with typed defaults)
 - `src/render/toggle.ts` — shared toggle/tooltip logic (used by both side panel and ZIP export)
 
 ## Data Flow: Full Extraction
@@ -162,7 +164,7 @@ Triggers:
    - Innovation: fetch `card_info.json`, call `GameState.fromJSON()`
    - Azul: call `game_state.fromJSON()`
    - Crew: call `serialization.crewFromJSON()`
-2. Generate HTML, set up tooltips/toggles/zoom
+2. Generate HTML, set up tooltips/toggles/zoom, apply per-game display options
 
 </td>
 <td valign="top">
@@ -226,7 +228,8 @@ Triggers:
 ***Side Panel***
 
 1. Start in help page state by default
-2. Establish port via `chrome.runtime.connect({name: "sidepanel"})`
+2. Load persisted pin mode from localStorage and push to background via `setPinMode`
+3. Establish port via `chrome.runtime.connect({name: "sidepanel"})`
 
 ```
 ⇩   Port connection event
@@ -279,8 +282,7 @@ Triggers:
 
 | Message | Response | Purpose |
 |---------|----------|---------|
-| `"getPinMode"` | `PinMode` | Get current auto-hide mode |
-| `"setPinMode"` | — | Set auto-hide mode (persisted to `chrome.storage.local`) |
+| `"setPinMode"` | `true` | Set auto-hide mode (background keeps in-memory copy; sidepanel persists via localStorage) |
 | `"pauseLive"` | — | Stop live tracking |
 | `"resumeLive"` | — | Re-inject watcher on active tab |
 

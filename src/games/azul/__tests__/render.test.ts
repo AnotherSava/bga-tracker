@@ -28,10 +28,10 @@ describe("renderAzulSummary", () => {
   it("renders a table with 5 tile icon column headers", () => {
     const html = renderAzulSummary(makeState());
     for (let t = 1; t <= 5; t++) {
-      expect(html).toContain(`assets/bga/azul/tiles/tile_${t}.png`);
+      expect(html).toContain(`assets/bga/azul/tiles/tile_${t}.svg`);
     }
     // 5 th elements with img tags
-    const thMatches = html.match(/<th><img /g);
+    const thMatches = html.match(/<th><span class="azul-tile-icon"><img /g);
     expect(thMatches).toHaveLength(5);
   });
 
@@ -108,8 +108,8 @@ describe("renderAzulSummary", () => {
   it("uses asset resolver for tile image URLs", () => {
     setAssetResolver((path: string) => `chrome-extension://abc/${path}`);
     const html = renderAzulSummary(makeState());
-    expect(html).toContain('src="chrome-extension://abc/assets/bga/azul/tiles/tile_1.png"');
-    expect(html).toContain('src="chrome-extension://abc/assets/bga/azul/tiles/tile_5.png"');
+    expect(html).toContain('src="chrome-extension://abc/assets/bga/azul/tiles/tile_1.svg"');
+    expect(html).toContain('src="chrome-extension://abc/assets/bga/azul/tiles/tile_5.svg"');
   });
 
   it("renders valid table structure with thead and tbody", () => {

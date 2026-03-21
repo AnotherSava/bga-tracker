@@ -17,6 +17,7 @@ The side panel shows bag and box counts for each of the five tile colors, updati
 
 - **Bag and box tracking**: shows how many tiles of each color remain in the bag and the box lid (discard pile)
 - **Refill detection**: annotates when the bag was refilled from the box mid-round
+- **Shimmer toggle**: display option to enable or disable the tile shimmer animation (persisted across sessions)
 
 ### Standard features
 

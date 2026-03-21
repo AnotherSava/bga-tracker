@@ -2,7 +2,8 @@
 
 import JSZip from "jszip";
 import { renderSummary, renderFullPage, renderTurnHistory, setAssetResolver } from "../games/innovation/render.js";
-import { SECTION_IDS, SECTION_LABELS, ECHOES_ONLY_SECTIONS } from "../games/innovation/config.js";
+import { buildInnovationDisplayMenu, applyInnovationDisplayOptions } from "../games/innovation/display.js";
+import { buildAzulDisplayMenu, applyAzulDisplayOptions } from "../games/azul/display.js";
 import { recentTurns } from "../games/innovation/turn_history.js";
 import { renderHelp } from "../render/help.js";
 import { positionTooltip, applyToggleMode } from "../render/toggle.js";
@@ -12,10 +13,12 @@ import { fromJSON as innovationFromJSON } from "../games/innovation/serializatio
 import { renderAzulSummary, renderAzulFullPage, setAssetResolver as setAzulAssetResolver } from "../games/azul/render.js";
 import { renderCrewSummary, renderCrewFullPage } from "../games/crew/render.js";
 import { crewFromJSON } from "../games/crew/serialization.js";
+import "../games/azul/styles.css";
 import "../games/crew/styles.css";
 import { fromJSON as azulFromJSON } from "../games/azul/game_state.js";
 import type { PipelineResults } from "../pipeline.js";
 import type { PinMode } from "../background.js";
+import { loadSetting, saveSetting } from "./settings.js";
 
 // ---------------------------------------------------------------------------
 // State
@@ -43,6 +46,8 @@ if (typeof chrome !== "undefined" && chrome.runtime?.connect) {
     if (disconnectTimer) { clearTimeout(disconnectTimer); disconnectTimer = undefined; }
     try {
       const port = chrome.runtime.connect(undefined, { name: "sidepanel" });
+      // Re-push persisted pin mode after service worker restart
+      chrome.runtime.sendMessage({ type: "setPinMode", mode: currentPinMode }).catch(() => {});
       port.onDisconnect.addListener(() => {
         disconnectTimer = window.setTimeout(() => {
           const indicator = document.getElementById("live-indicator");
@@ -126,25 +131,12 @@ function setupTooltips(): void {
 // Toggle handlers (visibility + layout) with persistence
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY_HELP_TAB = "bgaa_help_tab";
-const STORAGE_KEY_TOGGLES = "bgaa_toggle_state";
-
-function loadToggleState(): Record<string, string[]> {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY_TOGGLES);
-    if (stored) return JSON.parse(stored);
-  } catch { /* ignore */ }
-  return {};
-}
-
-function saveToggleState(state: Record<string, string[]>): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_TOGGLES, JSON.stringify(state));
-  } catch { /* ignore */ }
-}
+const KEY_HELP_TAB = "bgaa_help_tab";
+const KEY_TOGGLES = "bgaa_toggle_state";
+const TOGGLE_DEFAULTS: Record<string, string[]> = {};
 
 function persistToggleMode(targetId: string, toggle: HTMLElement, mode: string): void {
-  const state = loadToggleState();
+  const state = loadSetting(KEY_TOGGLES, TOGGLE_DEFAULTS);
   const modes = state[targetId] ?? [];
   // Find which slot this toggle occupies (by DOM order among siblings with same target)
   const allToggles = Array.from(toggle.parentElement?.querySelectorAll<HTMLElement>(`.tri-toggle[data-target="${targetId}"]`) ?? []);
@@ -152,12 +144,12 @@ function persistToggleMode(targetId: string, toggle: HTMLElement, mode: string):
   while (modes.length <= idx) modes.push("");
   modes[idx] = mode;
   state[targetId] = modes;
-  saveToggleState(state);
+  saveSetting(KEY_TOGGLES, state);
 }
 
 function setupToggles(): void {
   // Restore saved state
-  const saved = loadToggleState();
+  const saved = loadSetting(KEY_TOGGLES, TOGGLE_DEFAULTS);
   for (const [targetId, modes] of Object.entries(saved)) {
     const toggles = Array.from(document.querySelectorAll<HTMLElement>(`.tri-toggle[data-target="${targetId}"]`));
     for (let i = 0; i < Math.min(modes.length, toggles.length); i++) {
@@ -192,10 +184,11 @@ function render(results: PipelineResults): void {
   if (results.gameName === "azul" && results.gameState !== null) {
     const azulState = azulFromJSON(results.gameState);
     contentEl.innerHTML = renderAzulSummary(azulState);
+    applyAzulDisplayOptions();
 
-    // Hide Innovation-only features
+    // Enable eye button, hide turn history
     const btnSections = document.getElementById("btn-sections");
-    if (btnSections) btnSections.classList.add("disabled");
+    if (btnSections) btnSections.classList.remove("disabled");
     const turnHistoryEl = document.getElementById("turn-history");
     if (turnHistoryEl) turnHistoryEl.innerHTML = "";
 
@@ -329,15 +322,15 @@ function renderWithDb(cardDb: CardDatabase, results: InnovationResults, contentE
   // Set up interactivity
   setupTooltips();
   setupToggles();
-  applySectionVisibility();
 
   // Render turn history
   const turnHistoryEl = document.getElementById("turn-history");
   if (turnHistoryEl) {
     const recent = recentTurns(gameLog.actions, 3);
     turnHistoryEl.innerHTML = renderTurnHistory(recent, cardDb, perspective);
-    applyTurnHistoryVisibility(); // also calls updateHandMargins()
   }
+
+  applyInnovationDisplayOptions({ echoes: currentExpansions.echoes, zoomLevel });
 
   // Cache CSS for downloads
   loadCss();
@@ -391,36 +384,28 @@ function loadCss(): void {
 const ZOOM_STEP = 0.1;
 const ZOOM_MIN = 0.5;
 const ZOOM_MAX = 2.0;
-let zoomLevel = 1.0;
+const KEY_ZOOM = "bgaa_zoom_levels";
+const ZOOM_DEFAULT = 1.0;
+
+let zoomLevel = ZOOM_DEFAULT;
 let zoomFadeTimeout: ReturnType<typeof setTimeout> | undefined;
 let currentZoomContext = "help";
 
-function zoomStorageKey(): string {
-  return `bgaa_zoom_${currentZoomContext}`;
-}
-
 function switchZoomContext(context: string): void {
   currentZoomContext = context;
-  let level = 1.0;
-  try {
-    const stored = localStorage.getItem(zoomStorageKey());
-    if (stored) {
-      const parsed = parseFloat(stored);
-      if (parsed >= ZOOM_MIN && parsed <= ZOOM_MAX) level = parsed;
-    }
-  } catch { /* ignore */ }
-  zoomLevel = level;
+  const levels = loadSetting<Record<string, number>>(KEY_ZOOM, {});
+  const stored = levels[context];
+  zoomLevel = stored !== undefined && stored >= ZOOM_MIN && stored <= ZOOM_MAX ? stored : ZOOM_DEFAULT;
   const contentEl = document.getElementById("content");
   if (contentEl) contentEl.style.zoom = String(zoomLevel);
 }
-
-// Remove legacy single-zoom key
-try { localStorage.removeItem("bgaa_zoom"); } catch { /* ignore */ }
 
 function applyZoom(): void {
   const contentEl = document.getElementById("content");
   if (contentEl) contentEl.style.zoom = String(zoomLevel);
-  try { localStorage.setItem(zoomStorageKey(), String(zoomLevel)); } catch { /* ignore */ }
+  const levels = loadSetting<Record<string, number>>(KEY_ZOOM, {});
+  levels[currentZoomContext] = zoomLevel;
+  saveSetting(KEY_ZOOM, levels);
   const indicator = document.getElementById("zoom-indicator");
   if (indicator) {
     indicator.textContent = `${Math.round(zoomLevel * 100)}%`;
@@ -428,7 +413,9 @@ function applyZoom(): void {
     clearTimeout(zoomFadeTimeout);
     zoomFadeTimeout = setTimeout(() => indicator.classList.remove("visible"), 1200);
   }
-  updateHandMargins();
+  if (currentResults?.gameName === "innovation") {
+    applyInnovationDisplayOptions({ echoes: currentExpansions.echoes, zoomLevel });
+  }
 }
 
 document.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -461,119 +448,19 @@ document.getElementById("btn-zoom-in")?.addEventListener("click", () => {
 // Section selector (eye button)
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY_SECTIONS = "bgaa_section_visibility";
-
-function loadSectionVisibility(): Record<string, boolean> {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY_SECTIONS);
-    if (stored) return JSON.parse(stored);
-  } catch { /* ignore */ }
-  return {};
-}
-
-function saveSectionVisibility(state: Record<string, boolean>): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(state));
-  } catch { /* ignore */ }
-}
-
-function buildSectionSelector(): void {
-  const panel = document.getElementById("section-selector");
-  if (!panel) return;
-
-  const state = loadSectionVisibility();
-  panel.innerHTML = "";
-
-  // Header
-  const header = document.createElement("div");
-  header.className = "dropdown-header";
-  header.textContent = "Display sections:";
-  panel.appendChild(header);
-
-  // Turn history toggle (not a card section, separate element)
-  {
-    const checked = state["turn-history"] !== false;
-    const label = document.createElement("label");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = checked;
-    checkbox.dataset.sectionId = "turn-history";
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(SECTION_LABELS["turn-history"]));
-    panel.appendChild(label);
-
-    checkbox.addEventListener("change", () => {
-      const current = loadSectionVisibility();
-      current["turn-history"] = checkbox.checked;
-      saveSectionVisibility(current);
-      applyTurnHistoryVisibility();
-    });
-  }
-
-  for (const id of SECTION_IDS) {
-    const isEchoesOnly = ECHOES_ONLY_SECTIONS.has(id);
-    const disabled = isEchoesOnly && !currentExpansions.echoes;
-    const checked = !disabled && state[id] !== false;
-    const label = document.createElement("label");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = checked;
-    checkbox.disabled = disabled;
-    checkbox.dataset.sectionId = id;
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(SECTION_LABELS[id]));
-    if (disabled) label.style.opacity = "0.4";
-    panel.appendChild(label);
-
-    checkbox.addEventListener("change", () => {
-      const current = loadSectionVisibility();
-      current[id] = checkbox.checked;
-      saveSectionVisibility(current);
-      applySectionVisibility();
-    });
-  }
-}
-
-function applyTurnHistoryVisibility(): void {
-  const state = loadSectionVisibility();
-  const visible = state["turn-history"] !== false;
-  const el = document.getElementById("turn-history");
-  if (el) el.style.display = visible ? "" : "none";
-  updateHandMargins();
-}
-
-function updateHandMargins(): void {
-  const turnHistoryEl = document.getElementById("turn-history");
-  const handOpponent = document.querySelector<HTMLElement>('.section[data-section="hand-opponent"]');
-  const handMe = document.querySelector<HTMLElement>('.section[data-section="hand-me"]');
-  if (!turnHistoryEl || (!handOpponent && !handMe)) return;
-
-  const isVisible = turnHistoryEl.style.display !== "none" && turnHistoryEl.innerHTML !== "";
-  const width = isVisible ? turnHistoryEl.offsetWidth : 0;
-  const marginPx = width > 0 ? `${Math.ceil((width + 8) / zoomLevel)}px` : "";
-
-  if (handOpponent) handOpponent.style.marginRight = marginPx;
-  if (handMe) handMe.style.marginRight = marginPx;
-}
-
-function applySectionVisibility(): void {
-  const state = loadSectionVisibility();
-  for (const id of SECTION_IDS) {
-    const visible = state[id] !== false;
-    const sectionEl = document.querySelector<HTMLElement>(`.section[data-section="${id}"]`);
-    if (sectionEl) {
-      sectionEl.classList.toggle("section-hidden", !visible);
-    }
-  }
-}
-
 document.getElementById("btn-sections")?.addEventListener("click", (e) => {
   e.stopPropagation();
   const panel = document.getElementById("section-selector");
   if (!panel) return;
   if (panel.style.display === "none") {
     closePinDropdown();
-    buildSectionSelector();
+    if (currentResults?.gameName === "azul") {
+      buildAzulDisplayMenu(panel);
+    } else if (currentResults?.gameName === "innovation") {
+      buildInnovationDisplayMenu(panel, { echoes: currentExpansions.echoes, zoomLevel });
+    } else {
+      return;
+    }
     panel.style.display = "";
   } else {
     panel.style.display = "none";
@@ -614,7 +501,10 @@ const PIN_LABELS: Record<PinMode, string> = {
 
 const PIN_ORDER: PinMode[] = ["pinned", "autohide-bga", "autohide-game"];
 
-let currentPinMode: PinMode = "pinned";
+const KEY_PIN_MODE = "bgaa_pin_mode";
+const PIN_MODE_DEFAULT: PinMode = "pinned";
+
+let currentPinMode: PinMode = loadSetting(KEY_PIN_MODE, PIN_MODE_DEFAULT);
 let pinDropdownOpen = false;
 
 
@@ -712,6 +602,7 @@ function closePinDropdown(): void {
 
 function selectPinMode(mode: PinMode): void {
   currentPinMode = mode;
+  saveSetting(KEY_PIN_MODE, mode);
   updatePinButtonIcon();
   closePinDropdown();
   if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
@@ -747,14 +638,9 @@ document.addEventListener("mouseup", (e: MouseEvent) => {
   }
 });
 
-// Load initial pin mode from background
+// Push persisted pin mode to background on startup
 if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
-  chrome.runtime.sendMessage({ type: "getPinMode" }).then((mode: PinMode | null) => {
-    if (mode) {
-      currentPinMode = mode;
-      updatePinButtonIcon();
-    }
-  }).catch(() => {});
+  chrome.runtime.sendMessage({ type: "setPinMode", mode: currentPinMode }).catch(() => {});
 }
 
 initPinButton();
@@ -769,16 +655,10 @@ function showHelp(errorMessage?: string, forceGameTab?: GameName): void {
   switchZoomContext("help");
 
   // Resolve effective tab: forceGameTab > localStorage > "innovation"
-  let effectiveTab: GameName = "innovation";
-  if (forceGameTab) {
-    effectiveTab = forceGameTab;
-  } else {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY_HELP_TAB);
-      if (stored === "azul" || stored === "innovation" || stored === "thecrewdeepsea") effectiveTab = stored;
-    } catch { /* ignore */ }
-  }
-  try { localStorage.setItem(STORAGE_KEY_HELP_TAB, effectiveTab); } catch { /* ignore */ }
+  const HELP_TAB_DEFAULT: GameName = "innovation";
+  let effectiveTab: GameName = forceGameTab ?? loadSetting(KEY_HELP_TAB, HELP_TAB_DEFAULT);
+  if (effectiveTab !== "azul" && effectiveTab !== "innovation" && effectiveTab !== "thecrewdeepsea") effectiveTab = HELP_TAB_DEFAULT;
+  saveSetting(KEY_HELP_TAB, effectiveTab);
 
   contentEl.innerHTML = renderHelp(errorMessage, effectiveTab);
   setupHelpTabs();
@@ -822,7 +702,7 @@ function setupHelpTabs(): void {
       // Toggle active class on panels
       document.querySelectorAll<HTMLElement>(".help-tab-content").forEach((p) => p.classList.toggle("active", p.getAttribute("data-help-panel") === tabName));
 
-      try { localStorage.setItem(STORAGE_KEY_HELP_TAB, tabName); } catch { /* ignore */ }
+      saveSetting(KEY_HELP_TAB, tabName);
     });
   });
 }
@@ -914,4 +794,4 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
 function getCurrentPinMode(): PinMode { return currentPinMode; }
 
 // Export for testing
-export { render, showHelp, showHelpWithRawData, setupTooltips, setupToggles, applySectionVisibility, applyTurnHistoryVisibility, downloadBlob, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode, setupHelpTabs, switchZoomContext, PIN_ICONS };
+export { render, showHelp, showHelpWithRawData, setupTooltips, setupToggles, downloadBlob, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode, setupHelpTabs, switchZoomContext, PIN_ICONS };

@@ -3,7 +3,7 @@
   "name": "BGA Assistant",
   "version": "1.0",
   "description": "Game assistant for Board Game Arena.",
-  "permissions": ["activeTab", "scripting", "sidePanel", "storage", "tabs"],
+  "permissions": ["activeTab", "scripting", "sidePanel", "tabs"],
   "host_permissions": ["https://boardgamearena.com/*", "https://*.boardgamearena.com/*"],
   "action": {
     "default_icon": {

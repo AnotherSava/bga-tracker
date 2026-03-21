@@ -24,7 +24,8 @@ vi.hoisted(() => {
   };
 });
 
-import { downloadBlob, setupTooltips, setupToggles, render, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode, applyTurnHistoryVisibility } from "../sidepanel/sidepanel";
+import { downloadBlob, setupTooltips, setupToggles, render, fetchCardDb, initPinButton, openPinDropdown, closePinDropdown, selectPinMode, updatePinButtonIcon, getCurrentPinMode } from "../sidepanel/sidepanel";
+import { applyInnovationDisplayOptions } from "../games/innovation/display";
 import { positionTooltip } from "../render/toggle";
 import type { PipelineResults } from "../pipeline";
 
@@ -576,14 +577,14 @@ describe("turn history integration", () => {
   it("hides turn-history when toggled off via localStorage", () => {
     document.body.innerHTML = '<div id="turn-history">some content</div>';
     localStorage.setItem("bgaa_section_visibility", JSON.stringify({ "turn-history": false }));
-    applyTurnHistoryVisibility();
+    applyInnovationDisplayOptions({ echoes: false, zoomLevel: 1.0 });
     const el = document.getElementById("turn-history")!;
     expect(el.style.display).toBe("none");
   });
 
   it("shows turn-history by default", () => {
     document.body.innerHTML = '<div id="turn-history">some content</div>';
-    applyTurnHistoryVisibility();
+    applyInnovationDisplayOptions({ echoes: false, zoomLevel: 1.0 });
     const el = document.getElementById("turn-history")!;
     expect(el.style.display).toBe("");
   });

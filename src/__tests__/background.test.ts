@@ -40,12 +40,6 @@ vi.hoisted(() => {
       sendMessage: vi.fn(() => Promise.resolve()),
       getURL: vi.fn((path: string) => `chrome-extension://test${path}`),
     },
-    storage: {
-      local: {
-        get: vi.fn(() => Promise.resolve({})),
-        set: vi.fn(() => Promise.resolve()),
-      },
-    },
     commands: {
       onCommand: { addListener: vi.fn() },
       getAll: vi.fn((cb: any) => cb([{ name: "toggle-sidepanel", shortcut: "" }])),
@@ -674,8 +668,6 @@ describe("isValidPlayerCount", () => {
 });
 
 describe("pin mode message handlers", () => {
-  const mockStorageSet = chrome.storage.local.set as ReturnType<typeof vi.fn>;
-
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset pin mode to default
@@ -683,24 +675,16 @@ describe("pin mode message handlers", () => {
     vi.clearAllMocks();
   });
 
-  it("getPinMode returns pinned by default", () => {
-    const sendResponse = vi.fn();
-    listeners.onMessage({ type: "getPinMode" }, {}, sendResponse);
-    expect(sendResponse).toHaveBeenCalledWith("pinned");
-  });
-
-  it("setPinMode updates mode and persists to storage", () => {
+  it("setPinMode updates in-memory mode", () => {
     const sendResponse = vi.fn();
     listeners.onMessage({ type: "setPinMode", mode: "autohide-bga" }, {}, sendResponse);
     expect(sendResponse).toHaveBeenCalledWith(true);
-    expect(mockStorageSet).toHaveBeenCalledWith({ pinMode: "autohide-bga" });
   });
 
-  it("getPinMode returns updated mode after setPinMode", () => {
-    listeners.onMessage({ type: "setPinMode", mode: "autohide-game" }, {}, () => {});
+  it("setPinMode accepts valid mode", () => {
     const sendResponse = vi.fn();
-    listeners.onMessage({ type: "getPinMode" }, {}, sendResponse);
-    expect(sendResponse).toHaveBeenCalledWith("autohide-game");
+    listeners.onMessage({ type: "setPinMode", mode: "autohide-game" }, {}, sendResponse);
+    expect(sendResponse).toHaveBeenCalledWith(true);
   });
 });
 

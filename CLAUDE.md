@@ -51,13 +51,16 @@ Any plan that changes or can change logic should include `docs/pages/` and `docs
 - `src/games/innovation/turn_history.ts` — Turn action types (TurnAction, ActionDetail, ActionType) and recent-turns grouping
 - `src/games/innovation/render.ts` — Innovation HTML summary renderer
 - `src/games/innovation/config.ts` — Innovation section layout configuration
+- `src/games/innovation/display.ts` — Innovation display menu (section visibility persistence + margin updates)
 - `src/games/azul/process_log.ts` — Azul BGA packet processing
 - `src/games/azul/game_state.ts` — Azul bag/discard/wall tracking
 - `src/games/azul/render.ts` — Azul tile count table renderer
+- `src/games/azul/display.ts` — Azul display menu (shimmer toggle with persistence)
+- `src/games/azul/styles.css` — Azul-specific CSS styles (tile table, shimmer animation)
 - `src/games/crew/types.ts` — Crew types (suit constants, ALL_SUITS, CrewCard, card key helper, SUIT_VALUES)
 - `src/games/crew/process_log.ts` — Crew BGA packet processing (missions, tricks, communications)
 - `src/games/crew/game_state.ts` — CardGuess candidate model, Trick interface, CrewGameState interface, createCrewGameState() factory
-- `src/games/crew/game_engine.ts` — processCrewState() pipeline entry, CardGuess candidate narrowing, constraint propagation, getPlayedCards(), playerSuitStatus()
+- `src/games/crew/game_engine.ts` — Crew game engine (candidate narrowing, suit tracking, constraint propagation)
 - `src/games/crew/serialization.ts` — toJSON/fromJSON serialization for Crew game state
 - `src/games/crew/render.ts` — Crew HTML renderer (card grid, suit matrix, trick history)
 - `src/games/crew/styles.css` — Crew-specific CSS styles
@@ -70,8 +73,9 @@ Any plan that changes or can change logic should include `docs/pages/` and `docs
 - `scripts/game-log.ts` — CLI: raw_data.json → game_log.json
 - `scripts/game-state.ts` — CLI: game_log.json → game_state.json (+ --debug snapshots)
 - `sidepanel.html` — side panel HTML entry point (project root, Vite input)
+- `src/sidepanel/settings.ts` — shared localStorage persistence (loadSetting/saveSetting with typed defaults)
 - `src/sidepanel/` — side panel UI (game-type-aware rendering dispatch)
 - `assets/bga/innovation/` — Innovation game data (card_info.json, cards/, icons/, sprites/)
-- `assets/bga/azul/tiles/` — Azul tile color PNGs
+- `assets/bga/azul/tiles/` — Azul tile color SVGs
 - `assets/extension/` — extension icons
 - `docs/pages/data-flow.md` — data flow architecture, message protocols, connection management

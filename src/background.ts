@@ -67,10 +67,7 @@ chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
   }
 });
 
-// Load pin mode from storage on service worker startup
-chrome.storage.local.get("pinMode").then((result) => {
-  if (result.pinMode && VALID_PIN_MODES.has(result.pinMode)) pinMode = result.pinMode as PinMode;
-});
+// Pin mode is loaded from sidepanel localStorage and pushed via setPinMode on connect.
 
 // Show keyboard shortcut in the extension icon tooltip
 chrome.commands.getAll((commands) => {
@@ -733,12 +730,10 @@ chrome.runtime.onMessage.addListener(
       stopLiveTracking("help page opened");
     } else if (message.type === "resumeLive") {
       if (activeTabId !== null) injectWatcher(activeTabId);
-    } else if (message.type === "getPinMode") {
-      sendResponse(pinMode);
     } else if (message.type === "setPinMode") {
       if (typeof message.mode !== "string" || !VALID_PIN_MODES.has(message.mode)) { sendResponse(false); return; }
       pinMode = message.mode as PinMode;
-      chrome.storage.local.set({ pinMode });
+      // Persisted by sidepanel via localStorage; background only keeps in-memory copy.
       sendResponse(true);
     } else if (message.type === "gameLogChanged") {
       if (sender.tab?.id !== liveTabId) { console.log("[live] ignored: sender tab", sender.tab?.id, "!= liveTabId", liveTabId); return; }
