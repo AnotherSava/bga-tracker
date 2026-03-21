@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from "vite";
 import { resolve } from "path";
+import { cpSync } from "fs";
 
 /**
  * Strip ES module export statements from extract.js output.
@@ -42,7 +43,15 @@ export default defineConfig({
     minify: false,
     sourcemap: true,
   },
-  plugins: [stripExtractExports()],
+  plugins: [
+    stripExtractExports(),
+    {
+      name: "copy-fonts",
+      writeBundle() {
+        cpSync(resolve(__dirname, "assets/fonts"), resolve(__dirname, "dist/assets/fonts"), { recursive: true });
+      },
+    },
+  ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),

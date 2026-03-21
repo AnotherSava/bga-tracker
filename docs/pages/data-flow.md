@@ -3,7 +3,7 @@ layout: default
 title: Data Flow Architecture
 ---
 
-[Home](..) | [Innovation](innovation) | [Azul](azul) | [Crew](crew) | [Development](development)
+[Home](..) | [Innovation](innovation) | [Azul](azul) | [Crew](crew) | [Development](development) | [Privacy](privacy)
 
 ---
 

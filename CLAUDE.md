@@ -47,6 +47,7 @@ Keep `docs/pages/data-flow.md` up to date when code changes affect data flow, me
 - `npm run dev` — watch mode build
 - `npm run game-log -- <raw_data.json> [--game <name>]` — process raw data into game log
 - `npm run game-state -- <game_log.json> [--debug] [--game <name>]` — process game log into game state (--debug writes per-entry snapshots to game_states/)
+- `npm run package` — build and create Chrome Web Store ZIP (bga-assistant-{version}.zip)
 
 ## Project Structure
 
@@ -83,7 +84,8 @@ Keep `docs/pages/data-flow.md` up to date when code changes affect data flow, me
 - `sidepanel.html` — side panel HTML entry point (project root, Vite input)
 - `src/sidepanel/settings.ts` — shared localStorage persistence (loadSetting/saveSetting with typed defaults)
 - `src/sidepanel/` — side panel UI (game-type-aware rendering dispatch)
-- `assets/bga/innovation/` — Innovation game data (card_info.json, cards/, icons/, sprites/)
+- `assets/bga/innovation/` — Innovation game data (card_info.json, cards/ (WebP), icons/, sprites/)
 - `assets/bga/azul/tiles/` — Azul tile color SVGs
+- `assets/fonts/` — bundled Google Fonts (Russo One, Barlow Condensed)
 - `assets/extension/` — extension icons
 - `docs/pages/data-flow.md` — data flow architecture, message protocols, connection management

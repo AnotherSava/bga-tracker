@@ -1,5 +1,21 @@
 /* BGA Assistant Side Panel — dark theme, card grids, tooltips */
 
+@font-face {
+  font-family: 'Russo One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/russo-one-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/barlow-condensed-regular.woff2') format('woff2');
+}
+
 body {
   background: #1e1e1e;
   color: #d4d4d4;

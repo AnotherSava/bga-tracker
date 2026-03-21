@@ -3,7 +3,7 @@ layout: default
 title: BGA Assistant
 ---
 
-[Home](.) | [Innovation](pages/innovation) | [Azul](pages/azul) | [Crew](pages/crew) | [Development](pages/development)
+[Home](.) | [Innovation](pages/innovation) | [Azul](pages/azul) | [Crew](pages/crew) | [Development](pages/development) | [Privacy](pages/privacy)
 
 ---
 
