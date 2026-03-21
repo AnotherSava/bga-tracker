@@ -4,7 +4,7 @@
 
 Turn-based games on BGA can stretch across days or weeks — by the time it's your turn, you may have forgotten what was drawn, returned, transferred, or scored several moves ago. BGA Assistant reads the game log and reconstructs the complete picture for you. The side panel includes a built-in help page — click ? for a detailed guide on each game's features.
 
-![Innovation hand and forecast tracking](docs/screenshots/innovation-hand.png)
+![BGA Assistant](docs/screenshots/cover.png)
 
 **[Innovation](https://anothersava.github.io/bga-assistant/pages/innovation)** — Reads the full game log from Innovation 2-player tables and reconstructs the game state — hand contents and score piles according to revealed cards, and deck stack order with returned cards — displayed as a visual summary in a side panel. Supports the base game and the Echoes of the Past and Cities of Destiny expansions.
 
