@@ -30,6 +30,10 @@ let cachedCardDb: CardDatabase | null = null;
 let disconnectTimer: number | undefined;
 let currentExpansions: { echoes: boolean } = { echoes: false };
 
+const KEY_PIN_MODE = "bgaa_pin_mode";
+const PIN_MODE_DEFAULT: PinMode = "pinned";
+let currentPinMode: PinMode = loadSetting(KEY_PIN_MODE, PIN_MODE_DEFAULT);
+
 // ---------------------------------------------------------------------------
 // Asset URL resolution for Chrome extension context
 // ---------------------------------------------------------------------------
@@ -45,10 +49,13 @@ if (typeof chrome !== "undefined" && chrome.runtime?.connect) {
   const connectToBackground = (): void => {
     if (disconnectTimer) { clearTimeout(disconnectTimer); disconnectTimer = undefined; }
     try {
+      console.log("[panel] connecting to background...");
       const port = chrome.runtime.connect(undefined, { name: "sidepanel" });
+      console.log("[panel] port connected");
       // Re-push persisted pin mode after service worker restart
       chrome.runtime.sendMessage({ type: "setPinMode", mode: currentPinMode }).catch(() => {});
       port.onDisconnect.addListener(() => {
+        console.log("[panel] port disconnected, reconnecting in 1s");
         disconnectTimer = window.setTimeout(() => {
           const indicator = document.getElementById("live-indicator");
           if (indicator && indicator.style.display !== "none") {
@@ -57,8 +64,9 @@ if (typeof chrome !== "undefined" && chrome.runtime?.connect) {
         }, 3000);
         setTimeout(connectToBackground, 1000);
       });
-    } catch {
+    } catch (err) {
       // Extension context invalidated (e.g. after update/uninstall); stop reconnecting.
+      console.log("[panel] connect failed (context invalidated):", err);
     }
   };
   connectToBackground();
@@ -501,10 +509,6 @@ const PIN_LABELS: Record<PinMode, string> = {
 
 const PIN_ORDER: PinMode[] = ["pinned", "autohide-bga", "autohide-game"];
 
-const KEY_PIN_MODE = "bgaa_pin_mode";
-const PIN_MODE_DEFAULT: PinMode = "pinned";
-
-let currentPinMode: PinMode = loadSetting(KEY_PIN_MODE, PIN_MODE_DEFAULT);
 let pinDropdownOpen = false;
 
 

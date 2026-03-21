@@ -517,7 +517,7 @@ async function resolveContent(tabId: number, tabUrl: string, source: ExtractionS
 // Track side panel open/close via port connection
 chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
   if (port.name !== "sidepanel") return;
-  console.log("[live] port connected");
+  console.log("[live] port connected, was sidePanelOpen=", sidePanelOpen);
   sidePanelOpen = true;
 
   // Check the active tab and either push cached results (same table) or
@@ -639,9 +639,12 @@ async function handleNavigation(initialTabId: number, source: ExtractionSource =
     extracting = true;
     try {
       const tab = await chrome.tabs.get(tabId);
-      if (tab.status !== "complete") break;
+      console.log("[nav] handleNavigation: tab", tabId, "url=", tab.url, "status=", tab.status, "pinMode=", pinMode);
+      if (tab.status !== "complete") { console.log("[nav] handleNavigation: tab not complete, break"); break; }
 
       // Auto-close when pin mode requires it
+      const nav = classifyNavigation(tab.url);
+      console.log("[nav] handleNavigation: classified as", nav.action, "shouldAutoClose=", shouldAutoClose(tab.url, pinMode));
       if (shouldAutoClose(tab.url, pinMode)) {
         try {
           await chrome.sidePanel.close({ windowId: tab.windowId });
@@ -678,11 +681,13 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     const tab = await chrome.tabs.get(activeInfo.tabId);
     updateIcon(activeInfo.tabId, tab.url);
   } catch { /* tab may have been closed */ }
-  if (!sidePanelOpen) return;
+  if (!sidePanelOpen) { console.log("[nav] onActivated: panel closed, skip"); return; }
   if (extracting) {
+    console.log("[nav] onActivated: extracting, queued tab", activeInfo.tabId);
     pendingNavTabId = activeInfo.tabId;
     return;
   }
+  console.log("[nav] onActivated: handleNavigation tab", activeInfo.tabId);
   handleNavigation(activeInfo.tabId);
 });
 
@@ -695,13 +700,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   const isPageLoadComplete = changeInfo.status === "complete";
   const isSpaNavigation = changeInfo.url !== undefined && changeInfo.status === undefined;
   if (!isPageLoadComplete && !isSpaNavigation) return;
+  console.log("[nav] onUpdated: triggered", isPageLoadComplete ? "pageLoad" : "SPA", changeInfo.url ?? "");
   // Update lit icon based on whether tab is a supported game
   chrome.tabs.get(tabId).then((tab) => updateIcon(tabId, tab.url)).catch(() => {});
-  if (!sidePanelOpen) return;
+  if (!sidePanelOpen) { console.log("[nav] onUpdated: panel closed, skip. sidePanelOpen=", sidePanelOpen, "tabId=", tabId, "activeTabId=", activeTabId); return; }
   if (extracting) {
+    console.log("[nav] onUpdated: extracting, queued tab", tabId);
     pendingNavTabId = tabId;
     return;
   }
+  console.log("[nav] onUpdated: handleNavigation tab", tabId);
   handleNavigation(tabId);
 });
 
